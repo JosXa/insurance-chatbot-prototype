@@ -22,7 +22,7 @@ class FacebookClient(IBotAPIClient):
         self.page = None  # type: Page
 
     def _webhook(self):
-        all_args = request.args.lists()
+        all_args = request.args
         pprint(all_args)
         return all_args['hub.challenge']
 
