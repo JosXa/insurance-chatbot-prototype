@@ -9,7 +9,7 @@ class IBotAPIClient(object, metaclass=ABCMeta):
     def start_listening(self): pass
 
     @abstractmethod
-    def send_message(self): pass
+    def add_plaintext_handler(self, callback): pass
 
     @abstractmethod
-    def send_message(self): pass
+    def send_message(self, recipient, text): pass
