@@ -4,7 +4,7 @@ from pprint import pprint
 from threading import Thread
 
 from fbmq import Page
-from flask import Flask, request
+from flask import Flask, request, jsonify
 
 import settings
 from clients.botapiclients import IBotAPIClient
@@ -22,10 +22,9 @@ class FacebookClient(IBotAPIClient):
         self.page = None  # type: Page
 
     def _webhook(self):
-        data = request.get_data(as_text=True)
-        # TODO
-        pprint(request.data)
-        return 345
+        all_args = request.args.lists()
+        pprint(all_args)
+        return all_args['hub.challenge']
 
     def initialize(self):
         self.page = Page(self.token)
