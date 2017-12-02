@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 from pprint import pprint
+from threading import Thread
 
 from fbmq import Page
 from flask import Flask, request
@@ -22,6 +23,7 @@ class FacebookClient(IBotAPIClient):
 
     def _webhook(self):
         data = request.get_data(as_text=True)
+        # TODO
         pprint(request.data)
         return 345
 
@@ -38,7 +40,10 @@ class FacebookClient(IBotAPIClient):
         #     print("Could not contact 1441586482543309.")
 
     def start_listening(self):
-        app.run(host='0.0.0.0', port=settings.TELEGRAM_WEBHOOK_PORT)
+        # TODO: break control
+        thread = Thread(target=lambda: app.run(host='0.0.0.0', port=settings.TELEGRAM_WEBHOOK_PORT))
+        return thread.run()
+
 
     def add_plaintext_handler(self, callback):
         pass
