@@ -4,7 +4,7 @@ from pprint import pprint
 from threading import Thread
 
 from fbmq import Page, NotificationType
-from flask import Flask, request, jsonify
+from flask import Flask, request
 
 import settings
 from clients.botapiclients import IBotAPIClient
@@ -33,23 +33,23 @@ class FacebookClient(IBotAPIClient):
         # Add webhook handler
         app.add_url_rule('/', 'index', self._webhook, methods=['GET'])
 
-        try:
-            self.page.send(1441586482543309, "Up and running.")
-        except:
-            print("Could not contact 1441586482543309.")
+        # try:
+        #     self.page.send(1441586482543309, "Up and running.")
+        # except:
+        #     print("Could not contact 1441586482543309.")
 
     def start_listening(self):
         # TODO: break control
         thread = Thread(target=lambda: app.run(host='0.0.0.0', port=settings.TELEGRAM_WEBHOOK_PORT))
         return thread.run()
 
-
     def add_plaintext_handler(self, callback):
         self.page._webhook_handlers['message'] = callback
 
     def send_message(self, recipient_id, text):
         self.page.send(recipient_id, text, callback=None,
-                   notification_type=NotificationType.REGULAR)
+                       notification_type=NotificationType.REGULAR)
+
 
 """
 import logging
