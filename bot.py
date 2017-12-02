@@ -34,8 +34,6 @@ def test_handler_fb(page, event):
     message_attachments = message.get("attachments")
     quick_reply = message.get("quick_reply")
 
-    pprint(__dict__)
-
     seq_id = sender_id + ':' + recipient_id
     if USER_SEQ.get(seq_id, -1) >= seq:
         print("Ignore duplicated request")
