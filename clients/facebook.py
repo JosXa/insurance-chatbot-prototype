@@ -23,8 +23,12 @@ class FacebookClient(IBotAPIClient):
 
     def _webhook(self):
         all_args = request.args
-        pprint(all_args)
-        return all_args['hub.challenge']
+        if 'hub.challenge' in all_args:
+            return all_args['hub.challenge']
+
+    def _request(self):
+        self.page.handle_webhook(request.get_data(as_text=True))
+        return "ok"
 
     def initialize(self):
         self.page = Page(self.token)
@@ -32,6 +36,7 @@ class FacebookClient(IBotAPIClient):
 
         # Add webhook handler
         app.add_url_rule('/', 'index', self._webhook, methods=['GET'])
+        app.add_url_rule('/', 'request', self._request, methods=['POST'])
 
         # try:
         #     self.page.send(1441586482543309, "Up and running.")
