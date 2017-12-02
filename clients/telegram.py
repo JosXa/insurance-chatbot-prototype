@@ -22,6 +22,7 @@ class TelegramClient(IBotAPIClient):
 
     def initialize(self):
         self.updater = Updater(token=self.token)
+        self.bot = self.updater.bot
 
     def add_plaintext_handler(self, callback: Callable):
         self.updater.dispatcher.add_handler(MessageHandler(Filters.text, callback))
@@ -40,5 +41,5 @@ class TelegramClient(IBotAPIClient):
     def connect(self):
         pass
 
-    def send_message(self, recipient: User, text):
-        pass
+    def send_message(self, recipient_id, text):
+        self.bot.send_message(recipient_id, text)

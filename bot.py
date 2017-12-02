@@ -15,11 +15,11 @@ threads = list()  # type: List[Thread]
 USER_SEQ = dict()
 
 
-def test_handler_tg(bot: Bot, update: Update):
+def test_handler_tg(client, update: Update):
     update.effective_message.reply_text(update.message.text)
 
 
-def test_handler_fb(page, event):
+def test_handler_fb(client, event):
     sender_id = event.sender_id
     recipient_id = event.recipient_id
     time_of_message = event.timestamp
@@ -45,12 +45,12 @@ def test_handler_fb(page, event):
         quick_reply_payload = quick_reply.get('payload')
         print("quick reply for message %s with payload %s" % (message_id, quick_reply_payload))
 
-        page.send(sender_id, "Quick reply tapped")
+        client.page.send(sender_id, "Quick reply tapped")
 
     if message_text:
-        page.send_message(sender_id, message_text)
+        client.send_message(sender_id, message_text)
     elif message_attachments:
-        page.send(sender_id, "Message with attachment received")
+        client.send_message(sender_id, "Message with attachment received")
 
 
 def stop_threads():

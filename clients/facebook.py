@@ -48,7 +48,7 @@ class FacebookClient(IBotAPIClient):
         return thread.run()
 
     def add_plaintext_handler(self, callback):
-        self.page._webhook_handlers['message'] = lambda cb: callback(self.page, cb)
+        self.page._webhook_handlers['message'] = lambda cb: callback(self, cb)
 
     def send_message(self, recipient_id, text):
         self.page.send(recipient_id, text, callback=None,
