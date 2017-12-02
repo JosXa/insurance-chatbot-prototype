@@ -25,7 +25,7 @@ class FacebookClient(IBotAPIClient):
         log.error(type(data))
         log.error(data)
         self.page.handle_webhook(data)
-        return "ok"
+        return 345
 
     def initialize(self):
         self.page = Page(self.token)
