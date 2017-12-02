@@ -1,5 +1,6 @@
 from signal import signal, SIGTERM
 from threading import Thread
+from time import sleep
 
 from telegram import Bot, Update
 from typing import List
@@ -10,15 +11,18 @@ from clients.telegram import TelegramClient
 
 threads = list()  # type: List[Thread]
 
+
 def test_handler(bot: Bot, update: Update):
     update.effective_message.reply_text(update.message.text)
 
+
 def stop_threads():
+    # TODO
     for t in threads:
-        t.join()
+        pass
+
 
 def main():
-
     fb = FacebookClient(
         settings.FACEBOOK_ACCESS_TOKEN
     )
@@ -34,12 +38,12 @@ def main():
 
     tg.add_plaintext_handler(test_handler)
 
-    threads.append(fb.start_listening())
-    threads.append(tg.start_listening())
+    fb.start_listening()
+    tg.start_listening()
 
     signal(SIGTERM, stop_threads())
-
-
+    while True:
+        sleep(1)
 
 
 if __name__ == '__main__':
