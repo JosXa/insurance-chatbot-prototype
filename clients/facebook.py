@@ -7,6 +7,7 @@ from flask import Flask, request
 import settings
 from clients.botapiclients import IBotAPIClient
 
+logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
 log = logging.getLogger(__name__)
 
 app = Flask(__name__)
