@@ -24,6 +24,7 @@ class FacebookClient(IBotAPIClient):
         data = request.get_data(as_text=True)
         log.error(type(data))
         log.error(data)
+        pprint(data)
         self.page.handle_webhook(data)
         return 345
 
@@ -32,7 +33,7 @@ class FacebookClient(IBotAPIClient):
         self.page.show_starting_button("START_BOT")
 
         # Add webhook handler
-        app.add_url_rule('/', 'index', self._webhook)
+        app.add_url_rule('/', 'index', self._webhook, methods=['POST'])
 
         # try:
         #     self.page.send(1441586482543309, "Up and running.")
