@@ -10,6 +10,13 @@ def test_handler(bot: Bot, update: Update):
 
 
 def main():
+
+    fb = FacebookClient(
+        settings.FACEBOOK_ACCESS_TOKEN
+    )
+    fb.initialize()
+    fb.start_listening()
+
     tg = TelegramClient(
         settings.TELEGRAM_ACCESS_TOKEN,
         settings.TELEGRAM_WEBHOOK_URL,
@@ -21,12 +28,6 @@ def main():
     tg.add_plaintext_handler(test_handler)
 
     tg.start_listening()
-
-    fb = FacebookClient(
-        settings.FACEBOOK_ACCESS_TOKEN
-    )
-    fb.initialize()
-    fb.start_listening()
 
 
 if __name__ == '__main__':
