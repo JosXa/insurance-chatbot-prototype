@@ -16,7 +16,7 @@ USER_SEQ = dict()
 
 
 def test_handler_tg(client, update: Update):
-    update.effective_message.reply_text(update.message.text)
+    client.send_message(update.effective_user.id, update.message.text)
 
 
 def test_handler_fb(client, event):
