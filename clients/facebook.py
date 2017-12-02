@@ -25,10 +25,10 @@ class FacebookClient(IBotAPIClient):
         # Add webhook handler
         app.add_url_rule('/', 'index', self._webhook)
 
-        try:
-            self.page.send(1441586482543309, "Up and running.")
-        except:
-            print("Could not contact 1441586482543309.")
+        # try:
+        #     self.page.send(1441586482543309, "Up and running.")
+        # except:
+        #     print("Could not contact 1441586482543309.")
 
     def start_listening(self):
         app.run(host='0.0.0.0', port=settings.TELEGRAM_WEBHOOK_PORT)
