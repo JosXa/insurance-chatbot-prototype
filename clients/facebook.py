@@ -33,7 +33,7 @@ class FacebookClient(IBotAPIClient):
         self.page.show_starting_button("START_BOT")
 
         # Add webhook handler
-        app.add_url_rule('/', 'index', self._webhook, methods=['POST'])
+        app.add_url_rule('/', 'index', self._webhook, methods=['GET'])
 
         # try:
         #     self.page.send(1441586482543309, "Up and running.")
