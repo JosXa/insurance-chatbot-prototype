@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
+from pprint import pprint
 
 from fbmq import Page
 from flask import Flask, request
@@ -18,11 +19,12 @@ class FacebookClient(IBotAPIClient):
         self.token = token
 
         self.page = None  # type: Page
-        print("DOES THIS PRINT?")
-        log.info("DOES THIS PRINT?")
 
     def _webhook(self):
-        self.page.handle_webhook(request.get_data(as_text=True))
+        data = request.get_data(as_text=True)
+        log.error(type(data))
+        log.error(data)
+        self.page.handle_webhook(data)
         return "ok"
 
     def initialize(self):
