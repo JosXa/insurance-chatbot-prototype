@@ -76,8 +76,8 @@ def main():
     tg.add_plaintext_handler(test_handler_tg)
     fb.add_plaintext_handler(test_handler_fb)
 
-    fb.start_listening()
     tg.start_listening()
+    fb.start_listening()
 
     signal(SIGTERM, stop_threads())
     while True:
