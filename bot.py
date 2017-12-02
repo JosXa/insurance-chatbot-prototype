@@ -1,6 +1,7 @@
 from telegram import Bot, Update
 
 import settings
+from clients.facebook import FacebookClient
 from clients.telegram import TelegramClient
 
 
@@ -20,6 +21,12 @@ def main():
     tg.add_plaintext_handler(test_handler)
 
     tg.start_listening()
+
+    fb = FacebookClient(
+        settings.FACEBOOK_ACCESS_TOKEN
+    )
+    fb.initialize()
+    fb.start_listening()
 
 
 if __name__ == '__main__':

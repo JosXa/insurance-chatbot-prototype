@@ -1,4 +1,44 @@
 # -*- coding: utf-8 -*-
+from fbmq import Page
+from flask import Flask, request
+
+import settings
+from clients.botapiclients import IBotAPIClient
+
+app = Flask(__name__)
+
+
+class FacebookClient(IBotAPIClient):
+    def __init__(self, token):
+        self.token = token
+
+        self.page = None  # type: Page
+
+    def initialize(self):
+        self.page = Page(self.token)
+        self.page.show_starting_button("START_BOT")
+
+        # Add webhook handler
+        app.add_url_rule('/', 'index', lambda: self.page.handle_webhook(
+            request.get_data(as_text=True)
+        ))
+
+        try:
+            self.page.send(1441586482543309, "Up and running.")
+        except:
+            print("Could not contact 1441586482543309.")
+
+    def start_listening(self):
+        app.run(host='0.0.0.0', port=settings.TELEGRAM_WEBHOOK_PORT)
+
+    def add_plaintext_handler(self, callback):
+        pass
+
+    def send_message(self, recipient, text):
+        pass
+
+
+"""
 import logging
 import random
 
@@ -9,10 +49,8 @@ from flask import request, Flask
 
 import settings
 from model import User
-
 # parentdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # os.sys.path.insert(0, parentdir)
-
 log = logging.getLogger(__name__)
 
 app = Flask(__name__)
@@ -69,3 +107,4 @@ def start():
     app.run(host=config('WEBHOOK_URL'), port=config('WEBHOOK_PORT'), ssl_context=(
         '/home/joscha/cert/josxa.jumpingcrab.com/fullchain.pem',
         '/home/joscha/cert/josxa.jumpingcrab.com/privkey.pem'))
+"""

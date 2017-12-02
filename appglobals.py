@@ -3,6 +3,8 @@ import os
 from decouple import config
 from playhouse.sqlite_ext import SqliteExtDatabase
 
+import settings
+
 _db = None
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -10,7 +12,7 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 def db():
     global _db
     if not _db:
-        db_path = config('DATABASE_URI', default=os.path.expanduser('~/data/botlistbot.sqlite3'))
+        db_path = settings.DATABASE_URL
         _db = SqliteExtDatabase(db_path)
     return _db
 
