@@ -80,6 +80,7 @@ def main():
     fb.start_listening()
 
     signal(SIGTERM, stop_threads())
+
     while True:
         sleep(1)
 

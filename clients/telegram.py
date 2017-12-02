@@ -33,9 +33,6 @@ class TelegramClient(IBotAPIClient):
                                    url_path=self.token)
         self.updater.bot.set_webhook(self.webhook_url + self.token)
 
-        self.updater.idle()
-        # Thread(target=self.updater.idle).start()
-
     def stop_listening(self):
         pass  # OK
 
