@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import logging
-from pprint import pprint
 from threading import Thread
 
 from fbmq import Page, NotificationType
@@ -21,12 +20,12 @@ class FacebookClient(IBotAPIClient):
 
         self.page = None  # type: Page
 
-    def _webhook(self):
+    def _authentication(self):
         all_args = request.args
         if 'hub.challenge' in all_args:
             return all_args['hub.challenge']
 
-    def _request(self):
+    def _webhook(self):
         self.page.handle_webhook(request.get_data(as_text=True))
         return "ok"
 
@@ -35,8 +34,8 @@ class FacebookClient(IBotAPIClient):
         self.page.show_starting_button("START_BOT")
 
         # Add webhook handler
-        app.add_url_rule('/', 'index', self._webhook, methods=['GET'])
-        app.add_url_rule('/', 'request', self._request, methods=['POST'])
+        app.add_url_rule('/', 'index', self._authentication, methods=['GET'])
+        app.add_url_rule('/', 'request', self._webhook, methods=['POST'])
 
         # try:
         #     self.page.send(1441586482543309, "Up and running.")
@@ -49,7 +48,7 @@ class FacebookClient(IBotAPIClient):
         return thread.run()
 
     def add_plaintext_handler(self, callback):
-        self.page._webhook_handlers['message'] = callback
+        self.page._webhook_handlers['message'] = lambda cb: callback(self.page, cb)
 
     def send_message(self, recipient_id, text):
         self.page.send(recipient_id, text, callback=None,
