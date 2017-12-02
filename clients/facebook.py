@@ -3,7 +3,7 @@ import logging
 from pprint import pprint
 from threading import Thread
 
-from fbmq import Page
+from fbmq import Page, NotificationType
 from flask import Flask, request, jsonify
 
 import settings
@@ -45,11 +45,11 @@ class FacebookClient(IBotAPIClient):
 
 
     def add_plaintext_handler(self, callback):
-        pass
+        self.page._webhook_handlers['message'] = callback
 
-    def send_message(self, recipient, text):
-        pass
-
+    def send_message(self, recipient_id, text):
+        self.page.send(recipient_id, text, callback=None,
+                   notification_type=NotificationType.REGULAR)
 
 """
 import logging
