@@ -21,7 +21,7 @@ class TelegramClient(IBotAPIClient):
     def initialize(self):
         self.updater = Updater(token=self.token)
 
-    def add_plaintext_handler(self, callback: Callable[IBotAPIClient, object]):
+    def add_plaintext_handler(self, callback: Callable):
         # TODO: `Update` object
         self.updater.dispatcher.add_handler(MessageHandler(Filters.text, callback))
 
