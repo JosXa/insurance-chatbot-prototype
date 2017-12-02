@@ -22,8 +22,7 @@ class FacebookClient(IBotAPIClient):
 
     def _webhook(self):
         data = request.get_data(as_text=True)
-        pprint(data)
-        self.page.handle_webhook(data)
+        pprint(request.data)
         return 345
 
     def initialize(self):
