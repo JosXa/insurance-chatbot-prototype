@@ -37,9 +37,6 @@ class TelegramClient(IBotAPIClient):
     def _webhook_endpoint(self):
         data = request.get_data(as_text=True)
         self.updater.update_queue.put(data)
-        print(len(self.updater.update_queue))
-        time.sleep(2000)
-        print(len(self.updater.update_queue))
         return 'OK'
 
     def start_listening(self):
