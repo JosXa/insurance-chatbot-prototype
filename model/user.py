@@ -2,12 +2,12 @@
 from peewee import *
 
 from model.basemodel import BaseModel
+from telegram import User as TelegramUser
 
 
 class User(BaseModel):
     id = PrimaryKeyField()
-    insurance_id = IntegerField()
-    telegram_id = IntegerField()
-    facebook_id = IntegerField()
-
+    insurance_id = IntegerField(null=True)
+    telegram_id = IntegerField(null=True)
+    facebook_id = IntegerField(null=True)
 

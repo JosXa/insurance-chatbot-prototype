@@ -32,8 +32,6 @@ class TelegramClient(IBotAPIClient):
     def initialize(self):
         self.updater = Updater(token=self._token)
         self.bot = self.updater.bot
-        logger = logging.getLogger()
-        logger.setLevel(logging.DEBUG)
 
     def _webhook_endpoint(self):
         data = request.get_json()

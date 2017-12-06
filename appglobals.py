@@ -26,4 +26,3 @@ def disconnect():
 # globals
 db = db()
 
-app = Flask(__name__)

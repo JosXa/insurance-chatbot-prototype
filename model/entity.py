@@ -32,4 +32,5 @@ class PhoneNumberEntity(BaseEntity):
         )
 
     def __str__(self):
+        pass
 

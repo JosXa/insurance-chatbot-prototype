@@ -1,20 +1,25 @@
 import json
-from pprint import pprint
+from abc import ABCMeta, abstractmethod
 
 import apiai
 
 from model import User
-from settings import DIALOGFLOW_ACCESS_TOKEN
-
-ai = apiai.ApiAI(DIALOGFLOW_ACCESS_TOKEN)
 
 
-class DialogflowClient:
-    def __init__(self):
-        pass
+class NLPEngine(metaclass=ABCMeta):
+    @abstractmethod
+    def text_request(self, user: User, text: str): pass
+
+    @abstractmethod
+    def get_user_entities(self, user: User): pass
+
+
+class DialogflowClient(NLPEngine):
+    def __init__(self, token):
+        self.ai = apiai.ApiAI(token)
 
     def text_request(self, user: User, text: str):
-        request = ai.text_request()
+        request = self.ai.text_request()
 
         request.lang = 'de'
         request.session_id = user.id
@@ -24,7 +29,7 @@ class DialogflowClient:
         return json.loads(response.read())
 
     def user_entities_request(self, user):
-        request = ai.user_entities_request()
+        request = self.ai.user_entities_request()
 
         response = request.getresponse()
         return json.loads(response.read())

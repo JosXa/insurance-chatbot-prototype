@@ -1,13 +1,15 @@
 from threading import Thread
 
+from flask import Flask
 from logzero import logger
 from telegram import Update
 from typing import List
 
 import settings
-from appglobals import app
 from clients.facebook import FacebookClient
+from clients.nlpclients import DialogflowClient
 from clients.telegram import TelegramClient
+from managers.conversationmanager import ConversationManager
 
 threads = list()  # type: List[Thread]
 
@@ -57,24 +59,28 @@ def test_handler_fb(client, event):
 
 
 def main():
-    fb = FacebookClient(
+    app = Flask(__name__)
+    facebook_client = FacebookClient(
         app,
         settings.FACEBOOK_ACCESS_TOKEN
     )
-    fb.initialize()
+    facebook_client.initialize()
 
-    tg = TelegramClient(
+    telegram_client = TelegramClient(
         app,
         settings.APP_URL,
         settings.TELEGRAM_ACCESS_TOKEN
     )
-    tg.initialize()
+    telegram_client.initialize()
 
-    tg.add_plaintext_handler(test_handler_tg)
-    fb.add_plaintext_handler(test_handler_fb)
+    telegram_client.add_plaintext_handler(test_handler_tg)
+    facebook_client.add_plaintext_handler(test_handler_fb)
 
-    tg.start_listening()
-    fb.start_listening()
+    telegram_client.start_listening()
+    facebook_client.start_listening()
+
+    dialogflow_client = DialogflowClient(settings.DIALOGFLOW_ACCESS_TOKEN)
+    cm = ConversationManager([telegram_client, facebook_client], dialogflow_client)
 
     app.run(host='0.0.0.0', port=settings.PORT)
 
