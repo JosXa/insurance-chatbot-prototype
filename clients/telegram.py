@@ -1,6 +1,7 @@
 from pprint import pprint
 from threading import Thread
 
+import time
 from flask import logging, Flask, request
 from telegram import Bot
 from telegram.ext import Updater, Filters, MessageHandler
@@ -34,7 +35,9 @@ class TelegramClient(IBotAPIClient):
     def _webhook_endpoint(self):
         data = request.get_data(as_text=True)
         self.updater.update_queue.put(data)
-        pprint(self.updater.update_queue)
+        print(len(self.updater.update_queue))
+        time.sleep(2000)
+        print(len(self.updater.update_queue))
         return 'OK'
 
     def start_listening(self):
