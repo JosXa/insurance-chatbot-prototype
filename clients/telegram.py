@@ -35,6 +35,7 @@ class TelegramClient(IBotAPIClient):
         data = request.get_data(as_text=True)
         pprint(data)
         self.updater.update_queue.put(data)
+        return 'OK'
 
     def start_listening(self):
         # Start ptb threads
