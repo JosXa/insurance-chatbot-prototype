@@ -9,6 +9,7 @@ from typing import List
 import settings
 from clients.facebook import FacebookClient
 from clients.telegram import TelegramClient
+from appglobals import app
 
 threads = list()  # type: List[Thread]
 
@@ -61,14 +62,16 @@ def stop_threads():
 
 def main():
     fb = FacebookClient(
+        app,
         settings.FACEBOOK_ACCESS_TOKEN
     )
     fb.initialize()
 
     tg = TelegramClient(
+        app,
         settings.TELEGRAM_ACCESS_TOKEN,
         settings.TELEGRAM_WEBHOOK_URL,
-        settings.TELEGRAM_WEBHOOK_PORT,
+        settings.PORT,
         worker_count=4
     )
     tg.initialize()

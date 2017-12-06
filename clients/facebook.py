@@ -11,14 +11,27 @@ from clients.botapiclients import IBotAPIClient
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
 log = logging.getLogger(__name__)
 
-app = Flask(__name__)
-
 
 class FacebookClient(IBotAPIClient):
-    def __init__(self, token):
+    def __init__(self, app, token):
+        self._app = app
         self._token = token
 
         self._page = None  # type: Page
+
+    def initialize(self):
+        self._page = Page(self._token)
+        self._page.show_starting_button("START_BOT")
+
+        # Add webhook handlers
+        self._app.add_url_rule('/', 'index', self._authentication, methods=['GET'])
+        self._app.add_url_rule('/', 'request', self._webhook, methods=['POST'])
+
+        # try:
+        #     self.page.send(1441586482543309, "Up and running.")
+        # except:
+        #     print("Could not contact 1441586482543309.")
+
 
     def _authentication(self):
         all_args = request.args
@@ -35,24 +48,8 @@ class FacebookClient(IBotAPIClient):
             raise RuntimeError('Not running with the Werkzeug Server')
         func()
 
-    def initialize(self):
-        self._page = Page(self._token)
-        self._page.show_starting_button("START_BOT")
-
-        # Add webhook handlers
-        app.add_url_rule('/', 'index', self._authentication, methods=['GET'])
-        app.add_url_rule('/', 'request', self._webhook, methods=['POST'])
-
-        # try:
-        #     self.page.send(1441586482543309, "Up and running.")
-        # except:
-        #     print("Could not contact 1441586482543309.")
-
     def start_listening(self):
-        # TODO: break control
-        print('before')
-        app.run(host='0.0.0.0', port=settings.TELEGRAM_WEBHOOK_PORT)
-        print('after')
+        pass
 
     def stop_listening(self):
         self.__shutdown_server()

@@ -1,4 +1,6 @@
 import os
+PORT = os.environ.get('PORT', 5000)
+
 DATABASE_URL = os.environ.get('DATABASE_URL', os.path.expanduser('~/data/'))
 
 DIALOGFLOW_ACCESS_TOKEN = '57d6b837eb594919b0a35290387a3020'
@@ -7,6 +9,5 @@ FACEBOOK_ACCESS_TOKEN = 'EAACJPDO6INEBALMOSECRRfwYKlYCNteaKtKh9QASJp9DWEVZAHjQDc
 
 TELEGRAM_ACCESS_TOKEN = '480873241:AAE5m0ymhMsUGFhQehveFN3Htm1_v8X90JA'
 TELEGRAM_WEBHOOK_URL = 'https://bachelor-thesis.herokuapp.com/'
-TELEGRAM_WEBHOOK_PORT = os.environ.get('PORT', 5000)
 
 

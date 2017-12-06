@@ -1,6 +1,6 @@
 import os
 
-from decouple import config
+from flask import Flask
 from playhouse.sqlite_ext import SqliteExtDatabase
 
 import settings
@@ -26,3 +26,4 @@ def disconnect():
 # globals
 db = db()
 
+app = Flask(__name__)
