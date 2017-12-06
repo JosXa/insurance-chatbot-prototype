@@ -54,12 +54,6 @@ def test_handler_fb(client, event):
         client.send_message(sender_id, "Message with attachment received")
 
 
-def stop_threads():
-    # TODO
-    for t in threads:
-        pass
-
-
 def main():
     fb = FacebookClient(
         app,
@@ -69,10 +63,8 @@ def main():
 
     tg = TelegramClient(
         app,
-        settings.TELEGRAM_ACCESS_TOKEN,
-        settings.TELEGRAM_WEBHOOK_URL,
-        settings.PORT,
-        worker_count=4
+        settings.APP_URL,
+        settings.TELEGRAM_ACCESS_TOKEN
     )
     tg.initialize()
 
@@ -82,10 +74,7 @@ def main():
     tg.start_listening()
     fb.start_listening()
 
-    signal(SIGTERM, stop_threads())
-
-    while True:
-        sleep(1)
+    app.run(host='0.0.0.0', port=settings.PORT)
 
 
 if __name__ == '__main__':
