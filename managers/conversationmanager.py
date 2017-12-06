@@ -27,7 +27,7 @@ class ConversationManager:
 
     def update_received(self, update: Update):
         # Parse intents and entities
-        nlp_response = self.nlp.text_request(update.message_text)
+        nlp_response = self.nlp.text_request(update.user, update.message_text)
         pprint(nlp_response)
 
         # Add intents and entities to Update
