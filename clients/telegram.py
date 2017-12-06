@@ -3,7 +3,7 @@ from threading import Thread
 
 import time
 from flask import logging, Flask, request
-from telegram import Bot
+from telegram import Bot, Update
 from telegram.ext import Updater, Filters, MessageHandler
 from typing import Callable
 
@@ -35,8 +35,10 @@ class TelegramClient(IBotAPIClient):
         logger.setLevel(logging.DEBUG)
 
     def _webhook_endpoint(self):
-        data = request.get_data(as_text=True)
-        self.updater.update_queue.put(data)
+        data = request.get_json()
+        update = Update.de_json(data, self.updater.bot)
+        self.updater.update_queue.put(update)
+
         return 'OK'
 
     def start_listening(self):
