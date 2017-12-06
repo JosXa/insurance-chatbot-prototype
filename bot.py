@@ -73,8 +73,8 @@ def main():
     )
     telegram_client.initialize()
 
-    telegram_client.add_plaintext_handler(test_handler_tg)
-    facebook_client.add_plaintext_handler(test_handler_fb)
+    # telegram_client.add_plaintext_handler(test_handler_tg)
+    # facebook_client.add_plaintext_handler(test_handler_fb)
 
     telegram_client.start_listening()
     facebook_client.start_listening()
