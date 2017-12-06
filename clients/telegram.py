@@ -28,13 +28,14 @@ class TelegramClient(IBotAPIClient):
         self.updater.dispatcher.add_handler(MessageHandler(Filters.text, callback))
 
     def start_listening(self):
-        self.updater.start_webhook(listen="0.0.0.0",
-                                   port=int(self.webhook_port),
-                                   url_path=self.token)
-        self.updater.bot.set_webhook(self.webhook_url + self.token)
+        # self.updater.start_webhook(listen="0.0.0.0",
+        #                            port=int(self.webhook_port),
+        #                            url_path=self.token)
+        # self.updater.bot.set_webhook(self.webhook_url + self.token)
+        self.updater.start_polling()
 
     def stop_listening(self):
-        pass  # OK
+        self.updater.stop()
 
     def connect(self):
         pass

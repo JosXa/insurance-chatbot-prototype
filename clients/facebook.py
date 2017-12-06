@@ -16,9 +16,9 @@ app = Flask(__name__)
 
 class FacebookClient(IBotAPIClient):
     def __init__(self, token):
-        self.token = token
+        self._token = token
 
-        self.page = None  # type: Page
+        self._page = None  # type: Page
 
     def _authentication(self):
         all_args = request.args
@@ -26,14 +26,20 @@ class FacebookClient(IBotAPIClient):
             return all_args['hub.challenge']
 
     def _webhook(self):
-        self.page.handle_webhook(request.get_data(as_text=True))
+        self._page.handle_webhook(request.get_data(as_text=True))
         return "ok"
 
-    def initialize(self):
-        self.page = Page(self.token)
-        self.page.show_starting_button("START_BOT")
+    def __shutdown_server(self):
+        func = request.environ.get('werkzeug.server.shutdown')
+        if func is None:
+            raise RuntimeError('Not running with the Werkzeug Server')
+        func()
 
-        # Add webhook handler
+    def initialize(self):
+        self._page = Page(self._token)
+        self._page.show_starting_button("START_BOT")
+
+        # Add webhook handlers
         app.add_url_rule('/', 'index', self._authentication, methods=['GET'])
         app.add_url_rule('/', 'request', self._webhook, methods=['POST'])
 
@@ -44,15 +50,19 @@ class FacebookClient(IBotAPIClient):
 
     def start_listening(self):
         # TODO: break control
-        thread = Thread(target=lambda: app.run(host='0.0.0.0', port=settings.TELEGRAM_WEBHOOK_PORT))
-        return thread.run()
+        print('before')
+        app.run(host='0.0.0.0', port=settings.TELEGRAM_WEBHOOK_PORT)
+        print('after')
+
+    def stop_listening(self):
+        self.__shutdown_server()
 
     def add_plaintext_handler(self, callback):
-        self.page._webhook_handlers['message'] = lambda cb: callback(self, cb)
+        self._page._webhook_handlers['message'] = lambda cb: callback(self, cb)
 
     def send_message(self, recipient_id, text):
-        self.page.send(recipient_id, text, callback=None,
-                       notification_type=NotificationType.REGULAR)
+        self._page.send(recipient_id, text, callback=None,
+                        notification_type=NotificationType.REGULAR)
 
 
 """
