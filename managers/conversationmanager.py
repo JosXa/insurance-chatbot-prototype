@@ -1,13 +1,12 @@
 from pprint import pprint
 from typing import List
 
-from clients.botapiclients import IBotAPIClient
 from fbmq import Event as FacebookEvent
 from telegram import Update as TelegramUpdate
 
+from clients.botapiclients import IBotAPIClient
 from clients.common.update import Update
 from clients.nlpclients import NLPEngine
-from model import User
 
 
 class ConversationManager:
@@ -27,8 +26,6 @@ class ConversationManager:
             raise ValueError(f"Invalid update type: {type(update)}")
 
     def update_received(self, update: Update):
-        # TODO
-
         # Parse intents and entities
         nlp_response = self.nlp.text_request(update.message_text)
         pprint(nlp_response)

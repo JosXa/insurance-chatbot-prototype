@@ -28,7 +28,7 @@ class DialogflowClient(NLPEngine):
         response = request.getresponse()
         return json.loads(response.read())
 
-    def user_entities_request(self, user):
+    def get_user_entities(self, user):
         request = self.ai.user_entities_request()
 
         response = request.getresponse()
