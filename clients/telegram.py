@@ -13,6 +13,7 @@ log = logging.getLogger(__name__)
 
 
 class TelegramClient(IBotAPIClient):
+
     def __init__(self, app: Flask, webhook_url, token):
         self._webhook_url = webhook_url
         self._app = app
@@ -63,3 +64,7 @@ class TelegramClient(IBotAPIClient):
 
     def send_message(self, recipient_id, text):
         self.bot.send_message(recipient_id, text)
+
+    def add_error_handler(self, callback: Callable):
+        self.updater.dispatcher.add_error_handler(callback)
+

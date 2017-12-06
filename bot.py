@@ -1,19 +1,21 @@
-from pprint import pprint
-from signal import signal, SIGTERM
 from threading import Thread
-from time import sleep
 
-from telegram import Bot, Update
+from logzero import logger
+from telegram import Update
 from typing import List
 
 import settings
+from appglobals import app
 from clients.facebook import FacebookClient
 from clients.telegram import TelegramClient
-from appglobals import app
 
 threads = list()  # type: List[Thread]
 
 USER_SEQ = dict()
+
+
+def error_handler(error):
+    logger.exception(error)
 
 
 def test_handler_tg(client, update: Update):

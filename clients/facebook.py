@@ -13,6 +13,7 @@ log = logging.getLogger(__name__)
 
 
 class FacebookClient(IBotAPIClient):
+
     def __init__(self, app, token):
         self._app = app
         self._token = token
@@ -60,6 +61,10 @@ class FacebookClient(IBotAPIClient):
     def send_message(self, recipient_id, text):
         self._page.send(recipient_id, text, callback=None,
                         notification_type=NotificationType.REGULAR)
+
+    def add_error_handler(self, callback):
+        # TODO
+        self._error_handler = callback
 
 
 """
