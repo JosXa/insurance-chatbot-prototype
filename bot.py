@@ -1,3 +1,4 @@
+from pprint import pprint
 from threading import Thread
 
 from flask import Flask
@@ -10,6 +11,7 @@ from clients.facebook import FacebookClient
 from clients.nlpclients import DialogflowClient
 from clients.telegram import TelegramClient
 from managers.conversationmanager import ConversationManager
+from model import User
 
 threads = list()  # type: List[Thread]
 
@@ -59,6 +61,7 @@ def test_handler_fb(client, event):
 
 
 def main():
+    pprint(dir(User))
     app = Flask(__name__)
     facebook_client = FacebookClient(
         app,

@@ -2,7 +2,6 @@
 from peewee import *
 
 from model.basemodel import BaseModel
-from telegram import User as TelegramUser
 
 
 class User(BaseModel):
