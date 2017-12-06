@@ -11,8 +11,7 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 def db():
     global _db
     if not _db:
-        db_path = settings.DATABASE_URL
-        _db = PostgresqlDatabase()
+        _db = PostgresqlDatabase(settings.DATABASE_URL)
     return _db
 
 
