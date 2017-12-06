@@ -17,7 +17,7 @@ class TelegramClient(IBotAPIClient):
         self._token = token
 
         self.updater = None  # type: Updater
-        self.bot = None  #type: Bot
+        self.bot = None  # type: Bot
         self._running = False
 
     def initialize(self):
@@ -36,7 +36,9 @@ class TelegramClient(IBotAPIClient):
         self.updater.job_queue.start()
         url = self._webhook_url + self._token
         self.bot.set_webhook(url)
-        self._app.add_url_rule(f"/{self._token}", view_func=self._webhook_endpoint)
+        self._app.add_url_rule(f"/{self._token}",
+                               view_func=self._webhook_endpoint,
+                               methods=['POST', 'GET'])
 
     def stop_listening(self):
         self.updater.stop()
