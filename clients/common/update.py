@@ -24,6 +24,7 @@ class Update:
 
         # obj.user = User.get_or_create(telegram_id=update.effective_user.id)
         obj.message_text = update.effective_message.text
+        return obj
 
     @classmethod
     def from_facebook_event(cls, event: FacebookEvent):

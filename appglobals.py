@@ -1,7 +1,6 @@
 import os
 
-from flask import Flask
-from playhouse.sqlite_ext import SqliteExtDatabase
+from playhouse.sqlite_ext import PostgresqlDatabase
 
 import settings
 
@@ -13,7 +12,7 @@ def db():
     global _db
     if not _db:
         db_path = settings.DATABASE_URL
-        _db = SqliteExtDatabase(db_path)
+        _db = PostgresqlDatabase()
     return _db
 
 
