@@ -3,6 +3,7 @@ import logging
 
 from fbmq import Page, NotificationType
 from flask import request
+from telegram.ext import Handler
 
 from clients.botapiclients import IBotAPIClient
 from model import User
@@ -21,6 +22,7 @@ class FacebookClient(IBotAPIClient):
         self._token = token
 
         self._page = None  # type: Page
+        self._error_handler = None  # type: Handler
 
     def initialize(self):
         self._page = Page(self._token)
