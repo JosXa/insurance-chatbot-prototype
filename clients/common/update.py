@@ -1,3 +1,4 @@
+import datetime
 from typing import List
 
 from fbmq import Event as FacebookEvent
@@ -13,6 +14,7 @@ class Update:
         self.user = None  # type: User
         self.message_text = None  # type: str
         self.message_id = None  # type: int
+        self.datetime = None  # type: datetime.datetime
 
         self._intents = None  # type: List
         self._contexts = None  # type: List

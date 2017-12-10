@@ -17,6 +17,7 @@ class TelegramClient(IBotAPIClient):
         ud = Update()
         ud.original_update = update
         ud.client_name = self.client_name
+        # ud.datetime = update.message.da
 
         ud.user, created = User.get_or_create(telegram_id=update.effective_user.id)
         if created:
