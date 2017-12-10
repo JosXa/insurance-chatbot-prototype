@@ -15,7 +15,7 @@ class Update:
         self.message_id = None  # type: int
 
         self._intents = None  # type: List
-        self._entities = None  # type: List
+        self._contexts = None  # type: List
         self._parameters = None  # type: List
 
     @property
@@ -25,10 +25,10 @@ class Update:
     def intents(self, value): self._intents = value
 
     @property
-    def entities(self): return self._entities
+    def contexts(self): return self._contexts
 
-    @entities.setter
-    def entities(self, value): self._entities = value
+    @contexts.setter
+    def contexts(self, value): self._contexts = value
 
     @property
     def parameters(self): return self._parameters

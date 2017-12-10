@@ -22,15 +22,13 @@ class DialogflowClient(NLPEngine):
     def insert_understanding(self, update: Update):
         nlp_response = self.text_request(update.user, update.message_text)
 
-        contexts = []
         if nlp_response.get('result', None) is not None:
             nlu = nlp_response['result']
             # Add intents and entities to Update
             try:
                 update.intents = nlu['metadata']['intentName']
-                # update.entities = nlu['metadata']['intentName']
                 update.parameters = nlu['parameters']
-                contexts = nlu['contexts']
+                update.contexts = nlu['contexts']
                 # TODO:  nlu['score'] ?
             except AttributeError:
                 pass

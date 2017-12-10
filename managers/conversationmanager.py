@@ -30,8 +30,9 @@ class ConversationManager:
         # Generate response
 
         # Send response to user
-        bot.send_message(update.user, f"Intents: *{update.intents}*\nParameters: "
-                                      f"*{update.parameters}*")
+        bot.send_message(update.user, f"Intents: *{update.intents}*"
+                                      f"\nParameters: *{update.parameters}*"
+                                      f"\nContexts: *{update.contexts}*")
 
         # Update ContextManager
         pass
