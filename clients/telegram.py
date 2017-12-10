@@ -2,7 +2,7 @@ from threading import Thread
 from typing import Callable
 
 from flask import logging, Flask, request
-from telegram import Bot, Update as TelegramUpdate
+from telegram import Bot, Update as TelegramUpdate, ParseMode
 from telegram.ext import Updater, Filters, MessageHandler
 
 from clients.botapiclients import IBotAPIClient
@@ -79,7 +79,7 @@ class TelegramClient(IBotAPIClient):
             ))
 
     def send_message(self, recipient: User, text):
-        self.bot.send_message(recipient.telegram_id, text)
+        self.bot.send_message(recipient.telegram_id, text, parse_mode=ParseMode.MARKDOWN)
 
     def add_error_handler(self, callback: Callable):
         self.updater.dispatcher.add_error_handler(callback)
