@@ -3,7 +3,7 @@ PORT = os.environ.get('PORT', 5000)
 
 APP_URL = 'https://bachelor-thesis.herokuapp.com/'
 
-DATABASE_URL = os.environ.get('DATABASE_URL', os.path.expanduser('~/data/'))
+DATABASE_URL = os.environ.get('DATABASE_URL', 'postgres://zudibytvipthsa:c8c2d7f0bbe8da76cdd1b66375d0d4c56f9c8d98447f9ace26aa09eec3dcc4bd@ec2-79-125-13-42.eu-west-1.compute.amazonaws.com:5432/ddhs2ptave6514')
 
 DIALOGFLOW_ACCESS_TOKEN = '57d6b837eb594919b0a35290387a3020'
 

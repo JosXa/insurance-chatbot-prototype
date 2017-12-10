@@ -61,7 +61,6 @@ def test_handler_fb(client, event):
 
 
 def main():
-    pprint(dir(User))
     app = Flask(__name__)
     facebook_client = FacebookClient(
         app,
