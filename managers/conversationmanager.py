@@ -14,11 +14,7 @@ class ConversationManager:
         self.nlp = nlp_client
 
         for bot in bot_clients:
-            bot.add_plaintext_handler(self.__unify_update)
-
-    def __unify_update(self, update):
-        bot = self.__get_client_by_name(update.client_name)
-        self.update_received(bot.unify_update(update))
+            bot.add_plaintext_handler(self.update_received)
 
     def __get_client_by_name(self, client_name):
         return next(x for x in self.bots if client_name == x.client_name)
