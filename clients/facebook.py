@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 import logging
 
-from fbmq import Page, NotificationType
+from fbmq import Page, NotificationType, Event
 from flask import request
 from telegram.ext import Handler
 
 from clients.botapiclients import IBotAPIClient
+from clients.common.update import Update
 from model import User
 
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
@@ -13,16 +14,30 @@ log = logging.getLogger(__name__)
 
 
 class FacebookClient(IBotAPIClient):
-    @property
-    def client_name(self):
-        return 'facebook'
-
     def __init__(self, app, token):
         self._app = app
         self._token = token
 
         self._page = None  # type: Page
         self._error_handler = None  # type: Handler
+
+    @property
+    def client_name(self):
+        return 'facebook'
+
+    def unify_update(self, event: Event):
+        ud = Update()
+        ud.original_update = event
+        ud.client_name = self.client_name
+        ud.message_id = event.message_mid
+
+        ud.user, created = User.get_or_create(facebook_id=event.sender_id)
+        if created:
+            ud.user.save()
+
+        if hasattr(event, 'message_text'):
+            ud.message_text = event.message_text
+        return ud
 
     def initialize(self):
         self._page = Page(self._token)

@@ -22,3 +22,6 @@ class IBotAPIClient(object, metaclass=ABCMeta):
 
     @abstractmethod
     def add_error_handler(self, callback): pass
+
+    @abstractmethod
+    def unify_update(self, update): pass

@@ -2,16 +2,28 @@ from threading import Thread
 from typing import Callable
 
 from flask import logging, Flask, request
-from telegram import Bot, Update
+from telegram import Bot, Update as TelegramUpdate
 from telegram.ext import Updater, Filters, MessageHandler
 
 from clients.botapiclients import IBotAPIClient
+from clients.common.update import Update
 from model import User
 
 log = logging.getLogger(__name__)
 
 
 class TelegramClient(IBotAPIClient):
+    def unify_update(self, update: TelegramUpdate):
+        ud = Update()
+        ud.original_update = update
+        ud.client_name = self.client_name
+
+        ud.user, created = User.get_or_create(telegram_id=update.effective_user.id)
+        if created:
+            ud.user.save()
+        ud.message_text = update.effective_message.text
+        return ud
+
     @property
     def client_name(self):
         return 'telegram'
@@ -37,7 +49,7 @@ class TelegramClient(IBotAPIClient):
 
     def _webhook_endpoint(self):
         data = request.get_json()
-        update = Update.de_json(data, self.updater.bot)
+        update = TelegramUpdate.de_json(data, self.updater.bot)
         self.updater.update_queue.put(update)
 
         return 'OK'

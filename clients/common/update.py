@@ -12,26 +12,11 @@ class Update:
         self.client_name = None  # type: str
         self.user = None  # type: User
         self.message_text = None  # type: str
+        self.message_id = None  # type: int
 
         self._intents = None  # type: List
         self._entities = None  # type: List
         self._parameters = None  # type: List
-
-    @classmethod
-    def from_telegram_update(cls, update: TelegramUpdate):
-        obj = cls()
-        obj.original_update = update
-        obj.client_name = 'telegram'
-
-        obj.user, created = User.get_or_create(telegram_id=update.effective_user.id)
-        if created:
-            obj.user.save()
-        obj.message_text = update.effective_message.text
-        return obj
-
-    @classmethod
-    def from_facebook_event(cls, event: FacebookEvent):
-        pass
 
     @property
     def intents(self): return self._intents
