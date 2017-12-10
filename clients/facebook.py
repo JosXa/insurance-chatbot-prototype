@@ -1,18 +1,20 @@
 # -*- coding: utf-8 -*-
 import logging
-from threading import Thread
 
 from fbmq import Page, NotificationType
-from flask import Flask, request
+from flask import request
 
-import settings
 from clients.botapiclients import IBotAPIClient
+from model import User
 
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
 log = logging.getLogger(__name__)
 
 
 class FacebookClient(IBotAPIClient):
+    @property
+    def client_name(self):
+        return 'facebook'
 
     def __init__(self, app, token):
         self._app = app
@@ -32,7 +34,6 @@ class FacebookClient(IBotAPIClient):
         #     self.page.send(1441586482543309, "Up and running.")
         # except:
         #     print("Could not contact 1441586482543309.")
-
 
     def _authentication(self):
         all_args = request.args
@@ -58,8 +59,10 @@ class FacebookClient(IBotAPIClient):
     def add_plaintext_handler(self, callback):
         self._page._webhook_handlers['message'] = lambda cb: callback(self, cb)
 
-    def send_message(self, recipient_id, text):
-        self._page.send(recipient_id, text, callback=None,
+    def send_message(self, recipient: User, text):
+        self._page.send(recipient.facebook_id,
+                        text,
+                        callback=None,
                         notification_type=NotificationType.REGULAR)
 
     def add_error_handler(self, callback):

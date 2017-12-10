@@ -1,7 +1,13 @@
 from abc import ABCMeta, abstractmethod
 
+from model import User
+
 
 class IBotAPIClient(object, metaclass=ABCMeta):
+    @property
+    @abstractmethod
+    def client_name(self): raise NotImplementedError()
+
     @abstractmethod
     def initialize(self): pass
 
@@ -12,7 +18,7 @@ class IBotAPIClient(object, metaclass=ABCMeta):
     def add_plaintext_handler(self, callback): pass
 
     @abstractmethod
-    def send_message(self, recipient, text): pass
+    def send_message(self, recipient: User, text: str): pass
 
     @abstractmethod
     def add_error_handler(self, callback): pass

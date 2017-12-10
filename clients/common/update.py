@@ -15,6 +15,7 @@ class Update:
 
         self._intents = None  # type: List
         self._entities = None  # type: List
+        self._parameters = None  # type: List
 
     @classmethod
     def from_telegram_update(cls, update: TelegramUpdate):
@@ -43,3 +44,9 @@ class Update:
 
     @entities.setter
     def entities(self, value): self._entities = value
+
+    @property
+    def parameters(self): return self._parameters
+
+    @parameters.setter
+    def parameters(self, value): self._parameters = value
