@@ -10,3 +10,7 @@ class User(BaseModel):
     telegram_id = IntegerField(null=True)
     facebook_id = IntegerField(null=True)
 
+    @staticmethod
+    def merge_same_user(user1: 'User', user2: 'User') -> 'User':
+        pass
+
