@@ -22,7 +22,9 @@ class Update:
         obj.original_update = update
         obj.client_name = 'telegram'
 
-        obj.user = User.get_or_create(telegram_id=update.effective_user.id)
+        obj.user, created = User.get_or_create(telegram_id=update.effective_user.id)
+        if created:
+            obj.user.save()
         obj.message_text = update.effective_message.text
         return obj
 
