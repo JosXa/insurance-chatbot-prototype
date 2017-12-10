@@ -36,9 +36,6 @@ class ConversationManager:
             except AttributeError:
                 pass
 
-        print(update.intents)
-        print(update.parameters)
-
         # Hand parameters to ContextManager
 
         # Ask PlanningAgent what to do next
@@ -46,7 +43,7 @@ class ConversationManager:
         # Generate response
 
         # Send response to user
-        bot.send_message(update.user, update.message_text)
+        bot.send_message(update.user, f"Intents: {update.intents}\nParameters: {update.parameters}")
 
         # Update ContextManager
         pass
