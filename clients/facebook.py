@@ -78,6 +78,9 @@ class FacebookClient(IBotAPIClient):
             self, self.unify_update(event))
 
     def send_message(self, recipient: User, text):
+        """
+        Sends a markdown-formatted message to the `recipient`.
+        """
         self._page.send(recipient.facebook_id,
                         text,
                         callback=None,

@@ -79,6 +79,9 @@ class TelegramClient(IBotAPIClient):
             ))
 
     def send_message(self, recipient: User, text):
+        """
+        Sends a markdown-formatted message to the `recipient`.
+        """
         self.bot.send_message(recipient.telegram_id, text, parse_mode=ParseMode.MARKDOWN)
 
     def add_error_handler(self, callback: Callable):

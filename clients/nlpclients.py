@@ -3,6 +3,7 @@ from abc import ABCMeta, abstractmethod
 
 import apiai
 
+from clients.common.update import Update
 from model import User
 
 
@@ -13,8 +14,27 @@ class NLPEngine(metaclass=ABCMeta):
     @abstractmethod
     def get_user_entities(self, user: User): pass
 
+    @abstractmethod
+    def insert_understanding(self, update: Update): pass
+
 
 class DialogflowClient(NLPEngine):
+    def insert_understanding(self, update: Update):
+        nlp_response = self.text_request(update.user, update.message_text)
+
+        contexts = []
+        if nlp_response.get('result', None) is not None:
+            nlu = nlp_response['result']
+            # Add intents and entities to Update
+            try:
+                update.intents = nlu['metadata']['intentName']
+                # update.entities = nlu['metadata']['intentName']
+                update.parameters = nlu['parameters']
+                contexts = nlu['contexts']
+                # TODO:  nlu['score'] ?
+            except AttributeError:
+                pass
+
     def __init__(self, token):
         self.ai = apiai.ApiAI(token)
 

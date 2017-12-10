@@ -21,20 +21,7 @@ class ConversationManager:
 
     def update_received(self, bot, update: Update):
         # Parse intents and entities
-        nlp_response = self.nlp.text_request(update.user, update.message_text)
-
-        contexts = []
-        if nlp_response.get('result', None) is not None:
-            nlu = nlp_response['result']
-            # Add intents and entities to Update
-            try:
-                update.intents = nlu['metadata']['intentName']
-                # update.entities = nlu['metadata']['intentName']
-                update.parameters = nlu['parameters']
-                contexts = nlu['contexts']
-                # TODO:  nlu['score'] ?
-            except AttributeError:
-                pass
+        self.nlp.insert_understanding(update)
 
         # Hand parameters to ContextManager
 
@@ -43,7 +30,7 @@ class ConversationManager:
         # Generate response
 
         # Send response to user
-        bot.send_message(update.user, f"Intents: <b>{update.intents}</b>*\nParameters: "
+        bot.send_message(update.user, f"Intents: *{update.intents}*\nParameters: "
                                       f"*{update.parameters}*")
 
         # Update ContextManager
