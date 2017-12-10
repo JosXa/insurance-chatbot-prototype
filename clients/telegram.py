@@ -75,7 +75,7 @@ class TelegramClient(IBotAPIClient):
         self.updater.dispatcher.add_handler(
             MessageHandler(
                 Filters.text,
-                lambda bot, update: callback(self.unify_update(update))
+                lambda bot, update: callback(self, self.unify_update(update))
             ))
 
     def send_message(self, recipient: User, text):

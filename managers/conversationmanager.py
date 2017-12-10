@@ -19,7 +19,7 @@ class ConversationManager:
     def __get_client_by_name(self, client_name):
         return next(x for x in self.bots if client_name == x.client_name)
 
-    def update_received(self, update: Update):
+    def update_received(self, bot, update: Update):
         # Parse intents and entities
         nlp_response = self.nlp.text_request(update.user, update.message_text)
 
@@ -43,7 +43,6 @@ class ConversationManager:
         # Generate response
 
         # Send response to user
-        bot = self.__get_client_by_name(update.client_name)
         # TODO: Bisher nur echo
         bot.send_message(update.user, update.message_text)
 
