@@ -1,5 +1,6 @@
 import json
 from abc import ABCMeta, abstractmethod
+from pprint import pprint
 
 import apiai
 
@@ -22,6 +23,7 @@ class DialogflowClient(NLPEngine):
     def insert_understanding(self, update: Update):
         nlp_response = self.text_request(update.user, update.message_text)
 
+        pprint(nlp_response)
         if nlp_response.get('result', None) is not None:
             nlu = nlp_response['result']
             # Add intents and entities to Update
