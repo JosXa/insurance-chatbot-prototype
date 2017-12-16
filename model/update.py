@@ -1,24 +1,28 @@
-import datetime
+from datetime import datetime
 from typing import List
 
 from fbmq import Event as FacebookEvent
 from telegram import Update as TelegramUpdate
 
 from model import User
+from model.basemodel import BaseModel
+from peewee import *
 
 
-class Update:
-    def __init__(self):
+class Update(BaseModel):
+    user = ForeignKeyField(User)  # type: User
+    client_name = CharField()  # type: str
+    message_text = TextField()  # type: str
+    message_id = IntegerField()  # type: int
+    datetime = DateTimeField()  # type: datetime
+
+    def __init__(self, *args, **kwargs):
         self.original_update = None  # type: [FacebookEvent,TelegramUpdate]
-        self.client_name = None  # type: str
-        self.user = None  # type: User
-        self.message_text = None  # type: str
-        self.message_id = None  # type: int
-        self.datetime = None  # type: datetime.datetime
 
         self._intents = None  # type: List
         self._contexts = None  # type: List
         self._parameters = None  # type: List
+        super().__init__(*args, **kwargs)
 
     @property
     def intents(self): return self._intents

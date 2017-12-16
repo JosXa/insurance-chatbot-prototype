@@ -1,17 +1,19 @@
 from typing import List
 
-from fbmq import Event as FacebookEvent
-from telegram import Update as TelegramUpdate
-
 from clients.botapiclients import IBotAPIClient
-from clients.common.update import Update
 from clients.nlpclients import NLPEngine
+from managers.context import ContextManager
+from managers.planning import PlanningAgent
+from model.update import Update
 
 
 class ConversationManager:
     def __init__(self, bot_clients: List[IBotAPIClient], nlp_client: NLPEngine):
         self.bots = bot_clients
         self.nlp = nlp_client
+
+        self.context_manager = ContextManager()
+        self.planning_agent = PlanningAgent(self.context_manager)
 
         for bot in bot_clients:
             bot.add_plaintext_handler(self.update_received)
@@ -24,6 +26,7 @@ class ConversationManager:
         self.nlp.insert_understanding(update)
 
         # Hand parameters to ContextManager
+        self.context_manager.add_update(update)
 
         # Ask PlanningAgent what to do next
 

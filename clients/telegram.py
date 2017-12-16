@@ -6,8 +6,8 @@ from telegram import Bot, Update as TelegramUpdate, ParseMode
 from telegram.ext import Updater, Filters, MessageHandler
 
 from clients.botapiclients import IBotAPIClient
-from clients.common.update import Update
 from model import User
+from model.update import Update
 
 log = logging.getLogger(__name__)
 
@@ -23,6 +23,7 @@ class TelegramClient(IBotAPIClient):
         if created:
             ud.user.save()
         ud.message_text = update.effective_message.text
+        ud.save()
         return ud
 
     @property

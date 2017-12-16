@@ -6,8 +6,8 @@ from flask import request
 from telegram.ext import Handler
 
 from clients.botapiclients import IBotAPIClient
-from clients.common.update import Update
 from model import User
+from model.update import Update
 
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
 log = logging.getLogger(__name__)
@@ -39,6 +39,7 @@ class FacebookClient(IBotAPIClient):
 
         if hasattr(event, 'message_text'):
             ud.message_text = event.message_text
+        ud.save()
         return ud
 
     def initialize(self):

@@ -10,7 +10,7 @@ import settings
 from clients.facebook import FacebookClient
 from clients.nlpclients import DialogflowClient
 from clients.telegram import TelegramClient
-from managers.conversationmanager import ConversationManager
+from managers.conversation import ConversationManager
 from model import User
 
 threads = list()  # type: List[Thread]

@@ -3,8 +3,8 @@ from abc import ABCMeta, abstractmethod
 
 import apiai
 
-from clients.common.update import Update
 from model import User
+from model.update import Update
 
 
 class NLPEngine(metaclass=ABCMeta):
