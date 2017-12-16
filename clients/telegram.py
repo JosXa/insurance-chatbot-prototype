@@ -24,6 +24,7 @@ class TelegramClient(IBotAPIClient):
             ud.user.save()
         ud.message_id = update.effective_message.message_id
         ud.message_text = update.effective_message.text
+        ud.datetime = update.effective_message.date
         ud.save()
         return ud
 
