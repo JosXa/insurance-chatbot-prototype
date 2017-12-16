@@ -22,7 +22,7 @@ class TelegramClient(IBotAPIClient):
         ud.user, created = User.get_or_create(telegram_id=update.effective_user.id)
         if created:
             ud.user.save()
-        ud.message_id = update.effective_message.id
+        ud.message_id = update.effective_message.message_id
         ud.message_text = update.effective_message.text
         ud.save()
         return ud
