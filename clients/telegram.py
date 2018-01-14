@@ -1,11 +1,16 @@
+import time
+from pprint import pprint
 from threading import Thread
-from typing import Callable
+from typing import Callable, List
 
 from flask import logging, Flask, request
-from telegram import Bot, Update as TelegramUpdate, ParseMode
+from telegram import *
+from telegram import ChatAction as TelegramChatAction
+from telegram import Update as TelegramUpdate
 from telegram.ext import Updater, Filters, MessageHandler
 
 from clients.botapiclients import IBotAPIClient
+from logic.chataction import ChatAction
 from model import User
 from model.update import Update
 
@@ -13,6 +18,17 @@ log = logging.getLogger(__name__)
 
 
 class TelegramClient(IBotAPIClient):
+    def __init__(self, app: Flask, webhook_url, token, test_mode=False):
+        self._webhook_url = webhook_url
+        self._app = app
+        self._token = token
+
+        self.updater = None  # type: Updater
+        self.bot = None  # type: Bot
+        self._test_mode = test_mode
+        self._running = False
+        self.__threads = list()
+
     def unify_update(self, update: TelegramUpdate):
         ud = Update()
         ud.original_update = update
@@ -27,19 +43,22 @@ class TelegramClient(IBotAPIClient):
         ud.save()
         return ud
 
+    def perform_actions(self, actions: List[ChatAction]):
+
+        for action in actions:
+            chat_id = action.peer.telegram_id
+            show_typing = action.show_typing
+
+            if show_typing:
+                self.bot.send_chat_action(chat_id, TelegramChatAction.TYPING)
+            if action.delay:
+                time.sleep(action.delay.value)
+
+            self._send_message(peer=action.peer, text=action.render())
+
     @property
     def client_name(self):
         return 'telegram'
-
-    def __init__(self, app: Flask, webhook_url, token):
-        self._webhook_url = webhook_url
-        self._app = app
-        self._token = token
-
-        self.updater = None  # type: Updater
-        self.bot = None  # type: Bot
-        self._running = False
-        self.__threads = list()
 
     def _init_thread(self, target, *args, **kwargs):
         thr = Thread(target=target, args=args, kwargs=kwargs)
@@ -62,6 +81,10 @@ class TelegramClient(IBotAPIClient):
         self.updater.job_queue.start()
         self._init_thread(self.updater.dispatcher.start)
 
+        if self._test_mode:
+            self.updater.start_polling()
+            return
+
         # Construct URL and set webhook
         url = self._webhook_url + self._token
         self.bot.set_webhook(url)
@@ -81,11 +104,20 @@ class TelegramClient(IBotAPIClient):
                 lambda bot, update: callback(self, self.unify_update(update))
             ))
 
-    def send_message(self, recipient: User, text):
+    def _send_message(self, peer: User, text: str, markup=None):
         """
         Sends a markdown-formatted message to the `recipient`.
         """
-        self.bot.send_message(recipient.telegram_id, text, parse_mode=ParseMode.MARKDOWN)
+        self.bot.send_message(peer.telegram_id, text, parse_mode=ParseMode.MARKDOWN,
+                              reply_markup=markup)
 
     def add_error_handler(self, callback: Callable):
         self.updater.dispatcher.add_error_handler(callback)
+
+    def create_reply_keyboard(self, buttons, n_cols=2):
+        button_objects = [KeyboardButton(b) for b in buttons]
+        # TODO: incorporate util.build_menu
+        reply_markup = ReplyKeyboardMarkup(button_objects,
+                                           one_time_keyboard=True,
+                                           resize_keyboard=True)
+        return reply_markup

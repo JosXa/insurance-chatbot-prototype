@@ -1,0 +1,24 @@
+well_done:
+  choices:
+    - text: "Gut gemacht!"
+      min_completion:
+        questionnaire: 0.6
+    - text: "Super!"
+      min_completion:
+        questionnaire: 0.2
+    - text: "Danke {{user.name}}!"
+      min_completion:
+        questionnaire: 0.2
+    - text: "Klasse, vielen Dank."
+      min_completion:
+        questionnaire: 0
+    - text: "Ok."
+      min_completion:
+        questionnaire: 0.3
+    - text: "Sehr schön."
+      min_completion:
+        questionnaire: 0
+    - text: "Alles klar."
+      min_completion:
+        questionnaire: 1.0
+

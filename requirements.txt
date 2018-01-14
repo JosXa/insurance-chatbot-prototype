@@ -1,3 +1,5 @@
+jinja2
+telethon
 apiai==1.2.3
 fbmq==2.1.0
 python-telegram-bot==8.1.1

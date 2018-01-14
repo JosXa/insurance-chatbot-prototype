@@ -10,7 +10,12 @@ class User(BaseModel):
     telegram_id = IntegerField(null=True)
     facebook_id = BigIntegerField(null=True)
 
+    formal_address = BooleanField(default=True)
+
     @staticmethod
     def merge_same_user(user1: 'User', user2: 'User') -> 'User':
-        pass
+        pass  # TODO
 
+    @property
+    def name(self):
+        return "Max Mustermann"  # TODO

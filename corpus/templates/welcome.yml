@@ -1,0 +1,7 @@
+hello:
+  choices:
+    - "Guten Tag {{user.name}}!"
+
+what_i_can_do:
+  Ich kann {{'dir' if informal else 'Ihnen'}} helfen, einen Schaden an
+  {{'deinem' if informal else 'Ihrem'}} Smartphone zu beanstanden.

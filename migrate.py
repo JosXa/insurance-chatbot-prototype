@@ -1,6 +1,8 @@
 from model import *
 
-User.drop_table(fail_silently=True)
-User.create_table()
-Update.drop_table(fail_silently=True)
+Update.drop_table(fail_silently=True, cascade=True)
 Update.create_table()
+UserAnswers.drop_table(fail_silently=True, cascade=True)
+UserAnswers.create_table()
+User.drop_table(fail_silently=True, cascade=True)
+User.create_table()

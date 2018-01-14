@@ -1,0 +1,18 @@
+question_surrounding:
+  choices:
+    - "Ich benötige nun {{question.title}}"
+    - "Bitte jetzt {{question.title}}"
+    - "Als nächstes brauche ich {{question.title}}"
+    - "Wir brauchen auch {{question.title}}"
+    - "Es wäre schön, wenn {{'Sie' if formal else 'du'}} mir {{question.title}} nennen {{'könnten'
+    if formal else 'könntest'}}."
+    - "Bitte {{'senden Sie' if formal else 'sende'}} mir jetzt {{question.title}}"
+hint_surrounding:
+  choices:
+    - "Es handelt sich dabei um {{question.hint}}"
+    - "Das ist {{question.hint}}"
+questionnaire_finished:
+  choices:
+    - "Erledigt"
+    - "Mit diesem Teil wären wir fertig"
+    - "Alles klar soweit"

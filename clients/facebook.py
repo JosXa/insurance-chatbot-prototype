@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 import logging
 
-from fbmq import Page, NotificationType, Event
+from fbmq import Page, NotificationType, Event, Buttons
 from flask import request
 from telegram.ext import Handler
 
 from clients.botapiclients import IBotAPIClient
+from logic.chataction import ChatAction
 from model import User
 from model.update import Update
 
@@ -14,6 +15,8 @@ log = logging.getLogger(__name__)
 
 
 class FacebookClient(IBotAPIClient):
+
+
     def __init__(self, app, token):
         self._app = app
         self._token = token
@@ -31,7 +34,6 @@ class FacebookClient(IBotAPIClient):
         ud.client_name = self.client_name
         ud.message_id = event.message_mid
         ud.datetime = event.timestamp
-        print(ud.datetime)
 
         ud.user, created = User.get_or_create(facebook_id=event.sender_id)
         if created:
@@ -80,7 +82,7 @@ class FacebookClient(IBotAPIClient):
         self._page._webhook_handlers['message'] = lambda event: callback(
             self, self.unify_update(event))
 
-    def send_message(self, recipient: User, text):
+    def _send_message(self, recipient: User, text):
         """
         Sends a markdown-formatted message to the `recipient`.
         """
@@ -92,6 +94,12 @@ class FacebookClient(IBotAPIClient):
     def add_error_handler(self, callback):
         # TODO
         self._error_handler = callback
+
+    def create_reply_keyboard(self, buttons, n_cols=None):
+        pass  # TODO
+
+    def perform_actions(self, action: ChatAction):
+        pass  # TODO
 
 
 """

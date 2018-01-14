@@ -1,0 +1,19 @@
+personal details:
+  title: "Details zu {{'Ihrer' if formal else 'deiner'}} Person"
+  questions:
+    name:
+      title: "{{'Ihren' if formal else 'deinen'}} vollständigen Namen"
+      hint: "den Vor- und Nachnamen"
+
+phone_details:
+  title: "Informationen zum beschädigten Gerät"
+  questions:
+    imei:
+      title: "die IMEI-Nummer"
+      match_regex: "[0-9]{15}([0-9]{15})*"
+      hint: "die elektronische Gerätenummer - diese 15-stellige Nummer ist auf dem Typenschild des Gerätes oder über die Tastenkombination *#06# zu finden"
+      example: "990000862471854"
+    model_identifier:
+      title: "die Modellbezeichnung"
+      hint: "die Typbezeichnung des Smartphones"
+      example: "iPhone 6S Samsung Galaxy S7"

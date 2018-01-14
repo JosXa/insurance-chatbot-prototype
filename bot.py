@@ -10,7 +10,7 @@ import settings
 from clients.facebook import FacebookClient
 from clients.nlpclients import DialogflowClient
 from clients.telegram import TelegramClient
-from managers.conversation import ConversationManager
+from logic.conversation import ConversationManager
 from model import User
 
 threads = list()  # type: List[Thread]
@@ -23,7 +23,7 @@ def error_handler(error):
 
 
 def test_handler_tg(client, update: Update):
-    client.send_message(update.effective_user.id, update.message.text)
+    client._send_message(update.effective_user.id, update.message.text)
 
 
 def test_handler_fb(client, event):
@@ -55,9 +55,9 @@ def test_handler_fb(client, event):
         client.page.send(sender_id, "Quick reply tapped")
 
     if message_text:
-        client.send_message(sender_id, message_text)
+        client._send_message(sender_id, message_text)
     elif message_attachments:
-        client.send_message(sender_id, "Message with attachment received")
+        client._send_message(sender_id, "Message with attachment received")
 
 
 def main():
@@ -71,7 +71,8 @@ def main():
     telegram_client = TelegramClient(
         app,
         settings.APP_URL,
-        settings.TELEGRAM_ACCESS_TOKEN
+        settings.TELEGRAM_ACCESS_TOKEN,
+        test_mode=settings.TEST_MODE
     )
     telegram_client.initialize()
 
@@ -84,7 +85,11 @@ def main():
     dialogflow_client = DialogflowClient(settings.DIALOGFLOW_ACCESS_TOKEN)
     cm = ConversationManager([telegram_client, facebook_client], dialogflow_client)
 
-    app.run(host='0.0.0.0', port=settings.PORT)
+    if settings.TEST_MODE:
+        logger.info("Listening...")
+        telegram_client.updater.idle()
+    else:
+        app.run(host='0.0.0.0', port=settings.PORT)
 
 
 if __name__ == '__main__':
