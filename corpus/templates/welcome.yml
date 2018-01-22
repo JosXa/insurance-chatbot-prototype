@@ -1,6 +1,9 @@
 hello:
   choices:
     - "Guten Tag {{user.name}}!"
+    - text: "{{'Hi' if informal else 'Hallo'}} {{user.name}}, wie kann ich {{'dir' if informal else 'Ihnen'}} heute
+    behilflich sein?"
+      condition: "{{bot_recent('hello')}}"
 
 what_i_can_do:
   Ich kann {{'dir' if informal else 'Ihnen'}} helfen, einen Schaden an

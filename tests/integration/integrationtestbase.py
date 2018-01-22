@@ -38,7 +38,7 @@ class IntegrationTestBase(unittest.TestCase):
         self.client.add_update_handler(self._update_handler)
 
     def tearDown(self):
-        self.client.log_out()
+        self.client.disconnect()
 
     def _update_handler(self, update):
 

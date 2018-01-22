@@ -1,0 +1,20 @@
+skip_this_question:
+  choices:
+    - "Dann überspringen wir diese Frage."
+    - "{{'Sie müssen' if formal else 'du musst'}} das nicht beantworten."
+    - "Die Frage nach {{question.title}} {{'müssen Sie' if formal else 'musst du'}} nicht unbedingt beantworten."
+
+cannot_skip_this_question:
+  choices:
+    - "{{'Sie können' if formal else 'Du kannst'}} diese Frage nicht überspringen."
+
+continue_anyway:
+  choices:
+    - "Sollen wir weitermachen?"
+    - "Trotzdem fortfahren?"
+
+example:
+  choices:
+    - "Beispiel: "
+    - "Zum Beispiel: "
+    - "Das könnte zum Beispiel sein: "

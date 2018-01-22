@@ -11,9 +11,11 @@ QUESTIONNAIRE_FILE = os.path.join(PATH, 'questionnaires.yml')
 
 
 class Question:
-    def __init__(self, qid, title, hint=None, example=None, match_regex=None):
+    def __init__(self, qid, title, is_required, choices: List = None, hint=None, example=None, match_regex=None):
         self.id = qid
         self.title = title
+        self.is_required = is_required
+        self.choices = choices
         self.match_regex = re.compile(match_regex) if match_regex else None
         self.hint = hint
         self.example = example
@@ -23,7 +25,9 @@ class Question:
         return cls(
             qid=id,
             title=values['title'],
+            is_required=values.get('required', False),
             hint=values.get('hint'),
+            choices=values.get('choices'),
             example=values.get('example'),
             match_regex=values.get('match_regex')
         )
@@ -50,10 +54,14 @@ class Questionnaire:
         return self.questions.index(question) == 0
 
     def next_question(self, answered_question_ids: List[str]) -> Question:
-        return next(x for x in self.questions if x.id not in answered_question_ids)
+        try:
+            return next(x for x in self.questions if x.id not in answered_question_ids)
+        except StopIteration:
+            return None
 
     def completion_ratio(self, answered_question_ids: List[str]) -> Question:
-        return len(answered_question_ids) / len(self.questions)
+        relevant_ids = [x.id for x in self.questions if x.id in answered_question_ids]
+        return len(relevant_ids) / len(self.questions)
 
     def random_question(self, answered_question_ids: List[str]) -> Question:
         all_unanswered = [x for x in self.questions if x.id not in answered_question_ids]

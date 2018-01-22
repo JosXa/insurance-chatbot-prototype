@@ -1,0 +1,30 @@
+- user_says: hi
+  intent: hello
+  parameters: {}
+  responses:
+  - hello
+  - what_i_can_do
+- user_says: waddup
+  intent: fallback
+  parameters: {}
+  responses:
+  - claim_damage
+- user_says: ja
+  intent: yes
+  parameters:
+    yes: ja
+  responses:
+  - with_pleasure
+  - policy_nr
+- user_says: nein
+  intent: clarify
+  parameters:
+    no: nein
+  responses:
+  - clarify
+- user_says: vielleicht
+  intent: fallback
+  parameters: {}
+  responses:
+  - ok_thank_you
+  - name

@@ -1,16 +1,27 @@
 question_surrounding:
   choices:
-    - "Ich benötige nun {{question.title}}"
-    - "Bitte jetzt {{question.title}}"
-    - "Als nächstes brauche ich {{question.title}}"
-    - "Wir brauchen auch {{question.title}}"
-    - "Es wäre schön, wenn {{'Sie' if formal else 'du'}} mir {{question.title}} nennen {{'könnten'
-    if formal else 'könntest'}}."
-    - "Bitte {{'senden Sie' if formal else 'sende'}} mir jetzt {{question.title}}"
+    - text: "Dann brauche ich jetzt bitte {{question.title}}"
+      condition: "{{overall_completion >= 0}}"
+    - text: "Ich benötige nun {{question.title}}"
+      condition: "{{questionnaire_completion >= 0}}"
+    - text: "Bitte {{'senden Sie' if formal else 'sende'}} jetzt {{question.title}}"
+      condition: "{{questionnaire_completion >= 0.5}}"
+    - text: "Als nächstes brauche ich bitte {{question.title}}"
+      condition: "{{overall_completion >= 0.2}}"
+    - text: "Wir brauchen auch {{question.title}}"
+      condition: "{{questionnaire_completion >= 0.6}}"
+    - text: "Es wäre schön, wenn {{'Sie' if formal else 'du'}} mir {{question.title}} nennen {{'könnten' if formal else 'könntest'}}."
+      condition: "{{overall_completion >= 0.1}}"
+    - text: "Bitte {{'senden Sie' if formal else 'sende'}} mir jetzt {{question.title}}"
+      condition: "{{questionnaire_completion >= 0.1}}"
+    - text: "Um {{'Ihre' if formal else 'deine'}} Angaben zu vervollständigen, benötigen wir noch {{question.title}}"
+      condition: "{{questionnaire_completion >= 0.9}}"
+
 hint_surrounding:
   choices:
     - "Es handelt sich dabei um {{question.hint}}"
-    - "Das ist {{question.hint}}"
+    - "Es geht um {{question.hint}}"
+
 questionnaire_finished:
   choices:
     - "Erledigt"

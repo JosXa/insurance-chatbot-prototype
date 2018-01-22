@@ -1,8 +1,9 @@
 from abc import ABCMeta, abstractmethod
+from typing import TypeVar
 
-from logic.chataction import ChatAction
 from model import User
 
+ChatAction = TypeVar('ChatAction')
 
 class IBotAPIClient(object, metaclass=ABCMeta):
     @property
@@ -17,6 +18,9 @@ class IBotAPIClient(object, metaclass=ABCMeta):
 
     @abstractmethod
     def add_plaintext_handler(self, callback): pass
+
+    @abstractmethod
+    def set_start_handler(self, callback): pass
 
     @abstractmethod
     def _send_message(self, recipient: User, text: str, markup): pass

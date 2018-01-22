@@ -1,16 +1,15 @@
 import time
-from pprint import pprint
 from threading import Thread
 from typing import Callable, List
 
-from flask import logging, Flask, request
+from flask import Flask, logging, request
 from telegram import *
-from telegram import ChatAction as TelegramChatAction
-from telegram import Update as TelegramUpdate
-from telegram.ext import Updater, Filters, MessageHandler
+from telegram import ChatAction as TelegramChatAction, Update as TelegramUpdate
+from telegram.ext import CommandHandler, Filters, MessageHandler, Updater
 
+import utils
 from clients.botapiclients import IBotAPIClient
-from logic.chataction import ChatAction
+from logic import ChatAction
 from model import User
 from model.update import Update
 
@@ -47,14 +46,24 @@ class TelegramClient(IBotAPIClient):
 
         for action in actions:
             chat_id = action.peer.telegram_id
-            show_typing = action.show_typing
 
-            if show_typing:
+            if action.show_typing:
                 self.bot.send_chat_action(chat_id, TelegramChatAction.TYPING)
             if action.delay:
                 time.sleep(action.delay.value)
 
-            self._send_message(peer=action.peer, text=action.render())
+            markup = None
+            if action.action_type == ChatAction.Type.ASKING_QUESTION:
+                if action.choices:
+                    buttons = [KeyboardButton(x) for x in action.choices]
+                    markup = ReplyKeyboardMarkup(utils.build_menu(buttons, 3),
+                                                 resize_keyboard=True,
+                                                 one_time_keyboard=True,
+                                                 selective=True)
+                else:
+                    markup = ForceReply()
+
+            self._send_message(peer=action.peer, text=action.render(), markup=markup)
 
     @property
     def client_name(self):
@@ -104,11 +113,18 @@ class TelegramClient(IBotAPIClient):
                 lambda bot, update: callback(self, self.unify_update(update))
             ))
 
+    def set_start_handler(self, callback: Callable):
+        self.updater.dispatcher.add_handler(
+            CommandHandler(
+                "start",
+                lambda bot, update: callback(self, self.unify_update(update))
+            ))
+
     def _send_message(self, peer: User, text: str, markup=None):
         """
         Sends a markdown-formatted message to the `recipient`.
         """
-        self.bot.send_message(peer.telegram_id, text, parse_mode=ParseMode.MARKDOWN,
+        self.bot.send_message(peer.telegram_id, text, parse_mode=ParseMode.HTML,
                               reply_markup=markup)
 
     def add_error_handler(self, callback: Callable):

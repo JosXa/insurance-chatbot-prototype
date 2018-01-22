@@ -1,11 +1,8 @@
 well_done:
   choices:
     - text: "Gut gemacht!"
-      min_completion:
-        questionnaire: 0.6
     - text: "Super!"
-      min_completion:
-        questionnaire: 0.2
+      condition: "{{questionnaire_completion >= 0.2}}"
     - text: "Danke {{user.name}}!"
       min_completion:
         questionnaire: 0.2
@@ -21,4 +18,47 @@ well_done:
     - text: "Alles klar."
       min_completion:
         questionnaire: 1.0
+
+ok_thank_you:
+  choices:
+    - "Okay, dankeschön."
+    - "Okay, vielen Dank."
+    - "Alles klar, ist notiert."
+    - "Das passt."
+    - "Perfekt, dankeschön."
+    - "Gut, danke."
+
+claim_damage:
+  "Soll ich {{'Ihnen' if formal else 'dir'}} helfen, einen Schaden an {{'Ihrem' if formal else 'deinem'}}
+    Smartphone zu beanstanden?"
+
+all_done:
+  "Ich habe alle Informationen von {{'Ihnen' if formal else 'dir'}}, die wir benötigen um Ihren Schadensfall
+  schnellstmöglich zu bearbeiten."
+
+again:
+  choices:
+    - "Noch einmal"
+
+with_pleasure:
+  choices:
+    - "Gerne"
+    - "Natürlich"
+    - "Sehr gerne"
+    - "Natürlich, {{user.name}}"
+
+affirm:
+  choices:
+    - "Ja"
+    - "Ja, gerne"
+    - "Okay"
+    - "OK"
+
+negate:
+  choices:
+    - "Nein"
+    - "Nein, bitte nicht"
+    - "Lieber nicht"
+    - "Besser nicht"
+
 

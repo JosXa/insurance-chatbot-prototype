@@ -1,0 +1,16 @@
+sorry_for_that:
+  choices:
+    - "Es tut mir leid das zu hören 😕"
+    - "Das tut mir leid 😕"
+
+sorry:
+  choices:
+    - "Entschuldigung"
+    - "Bitte {{'entschuldigen Sie' if formal else 'entschuldige'}}"
+    - "Es tut mir leid"
+
+did_not_understand:
+  choices:
+    - "Ich habe {{'Sie' if formal else 'dich'}} nicht verstanden."
+    - "Was {{'meinen Sie' if formal else 'meinst du'}} damit?"
+    - "{{'Können Sie' if formal else 'kannst du'}} das noch einmal anders formulieren?"

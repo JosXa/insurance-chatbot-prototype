@@ -1,61 +1,65 @@
 from abc import ABCMeta, abstractmethod
-from typing import Tuple
 
-from corpus import all_questionnaires
-from corpus.questions import Questionnaire, Question
-from corpus.responsetemplates import TemplateSelector, TemplateRenderer
-from logic.chataction import ChatActionsBuilder
-from logic.context import Context
-from model.useranswers import UserAnswers
+from corpus.responsecomposer import ResponseComposer
+from corpus.templates import SelectiveTemplateLoader
+from logic.controller import Controller
 
 
 class IPlanningAgent(metaclass=ABCMeta):
     @abstractmethod
-    def build_next_actions(self) -> ChatActionsBuilder: pass
+    def build_next_actions(self, context) -> ResponseComposer: pass
 
 
 class PlanningAgent(IPlanningAgent):
-    def __init__(self, context: Context):
-        self.context = context
-        self.user = self.context.user
-        self.templates = TemplateRenderer(user=self.user)
-        self.answered_ids = UserAnswers.get_answered_question_ids(self.user)
+    def __init__(self, controller: Controller):
+        self.controller = controller
 
-    def _get_next_question(self) -> Tuple[Questionnaire, float, Question]:
-        try:
-            qn = next(q for q in all_questionnaires if q.next_question(self.answered_ids))
-            completion = qn.completion_ratio(self.answered_ids)
-            return qn, completion, qn.next_question(self.answered_ids)
-        except StopIteration:
-            return None
+    def build_next_actions(self, context) -> ResponseComposer:
+        user_utterance = context.last_user_utterance
 
-    def _me_said_recently(self, intent):
-        result = self.context.find_outgoing_utterances(
-            lambda ca: intent in ca.intents,
-            only_latest=True
+        load_and_selection_context = dict(
+            questionnaire_completion=context.questionnaire_completion_ratio,
+            user_recent=context.has_user_intent,
+            bot_recent=context.has_outgoing_intent,
+            question=context.current_question,
+            questionnaire=context.current_questionnaire,
+            overall_completion=context.overall_completion_ratio
         )
-        return bool(result)
-
-    def _recently_spoke_about(self, intent):
-        pass  # TODO
-
-    def build_next_actions(self) -> ChatActionsBuilder:
-        user_utterance = self.context.last_incoming_utterance
-        current_questionnaire, qn_completion_ratio, next_question = self._get_next_question()
-
-        builder = ChatActionsBuilder(
-            self.context.user,
-            TemplateSelector(qn_completion_ratio),
+        composer = ResponseComposer(
+            context.user,
+            SelectiveTemplateLoader(load_and_selection_context),
         )
 
-        # Static responses
-        if user_utterance.intent == 'hello':
-            builder.say("hello")
-            if not self._me_said_recently("what i can do"):
-                builder.say("what i can do")
+        print(f"New incoming message '{user_utterance.text}' with INTENT['{user_utterance.intent}'], "
+              f"PARAMETERS['{user_utterance.parameters}']")
 
-        if current_questionnaire.is_first_question(next_question) and len(self.answered_ids) > 0:
-            # started a new questionnaire
-            builder.say("well done").say("questionnaire finished").then_say(current_questionnaire.title)
+        # Rule-based planning algorithm
+        rule = self.controller.get_state_handler(
+            context.state,
+            user_utterance.intent,
+            user_utterance.parameters,
+        )
+        fallback_rule = self.controller.get_fallback_handler(user_utterance.intent, user_utterance.parameters)
+        stateless_rules = self.controller.get_stateless_handlers(user_utterance.intent, user_utterance.parameters)
 
-        return builder
+        if stateless_rules:
+            for r in stateless_rules:
+                r.handler(composer, context)
+        if rule:
+            new_state = rule.handler(composer, context)
+        elif fallback_rule:
+            new_state = fallback_rule.handler(composer, context)
+        else:
+            # should not happen
+            print(f"No matching rule found in state {context.state} with intent "
+                  f"{user_utterance.intent} and parameters {user_utterance.parameters}. Consider adding "
+                  f"a fallback to the controller.")
+            composer.say('sorry').concat('did not understand')
+            return composer
+        if new_state is not None:
+            # Keep the state if method returned None
+            context.state = new_state
+            print(f"New state: {new_state}")
+
+        print(f"Overall completion ratio: {context.overall_completion_ratio}")
+        return composer

@@ -1,13 +1,13 @@
-from datetime import datetime
-from typing import List
+from typing import TypeVar
 
 from fbmq import Event as FacebookEvent
+from peewee import *
 from telegram import Update as TelegramUpdate
 
-from clients.nlpclients import MessageUnderstanding
 from model import User
 from model.basemodel import BaseModel
-from peewee import *
+
+MessageUnderstanding = TypeVar('MessageUnderstanding')
 
 
 class Update(BaseModel):
@@ -18,16 +18,15 @@ class Update(BaseModel):
     datetime = DateTimeField()  # type: datetime
 
     def __init__(self, *args, **kwargs):
-
         self.original_update = None  # type: [FacebookEvent,TelegramUpdate]
         self._understanding = None  # type: MessageUnderstanding
 
         super().__init__(*args, **kwargs)
 
     @property
-    def understanding(self):
+    def understanding(self) -> MessageUnderstanding:
         return self._understanding
 
     @understanding.setter
-    def understanding(self, value):
+    def understanding(self, value: MessageUnderstanding):
         self._understanding = value

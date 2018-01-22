@@ -1,21 +1,21 @@
 # -*- coding: utf-8 -*-
 import logging
 
-from fbmq import Page, NotificationType, Event, Buttons
+from fbmq import Event, NotificationType, Page
 from flask import request
 from telegram.ext import Handler
+from typing import TypeVar
 
 from clients.botapiclients import IBotAPIClient
-from logic.chataction import ChatAction
-from model import User
-from model.update import Update
+from model import Update, User
 
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
 log = logging.getLogger(__name__)
 
+ChatAction = TypeVar('ChatAction')
+
 
 class FacebookClient(IBotAPIClient):
-
 
     def __init__(self, app, token):
         self._app = app
@@ -79,8 +79,11 @@ class FacebookClient(IBotAPIClient):
         self.__shutdown_server()
 
     def add_plaintext_handler(self, callback):
-        self._page._webhook_handlers['message'] = lambda event: callback(
-            self, self.unify_update(event))
+        # XXX: An issue was written to fbmq on GitHub to expose the `page` attribute as a public member
+        self._page._webhook_handlers['message'] = lambda event: callback(self, self.unify_update(event))
+
+    def set_start_handler(self, callback):
+        pass
 
     def _send_message(self, recipient: User, text):
         """

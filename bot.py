@@ -1,29 +1,25 @@
-from pprint import pprint
 from threading import Thread
+from typing import List
 
 from flask import Flask
 from logzero import logger
-from telegram import Update
-from typing import List
 
+import migrate
 import settings
 from clients.facebook import FacebookClient
 from clients.nlpclients import DialogflowClient
 from clients.telegram import TelegramClient
-from logic.conversation import ConversationManager
+from logic import ConversationManager
 from model import User
+from tests.recorder import ConversationRecorder
 
 threads = list()  # type: List[Thread]
 
 USER_SEQ = dict()
 
 
-def error_handler(error):
+def error_handler(bot, update, error):
     logger.exception(error)
-
-
-def test_handler_tg(client, update: Update):
-    client._send_message(update.effective_user.id, update.message.text)
 
 
 def test_handler_fb(client, event):
@@ -61,6 +57,8 @@ def test_handler_fb(client, event):
 
 
 def main():
+    migrate.reset_answers()  # TODO
+
     app = Flask(__name__)
     facebook_client = FacebookClient(
         app,
@@ -82,8 +80,15 @@ def main():
     telegram_client.start_listening()
     facebook_client.start_listening()
 
+    telegram_client.add_error_handler(error_handler)
+
     dialogflow_client = DialogflowClient(settings.DIALOGFLOW_ACCESS_TOKEN)
-    cm = ConversationManager([telegram_client, facebook_client], dialogflow_client)
+
+    conversation_recorder = None
+    if settings.ENABLE_CONVERSATION_RECORDING:
+        conversation_recorder = ConversationRecorder(User.get(telegram_id=62056065))
+
+    ConversationManager([telegram_client, facebook_client], dialogflow_client, conversation_recorder)
 
     if settings.TEST_MODE:
         logger.info("Listening...")
