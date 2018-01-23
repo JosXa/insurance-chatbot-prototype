@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
+import datetime
 import logging
 import time
 import traceback
 from typing import Callable, List, TypeVar
 
-import dateutil
 from fbmq import Event, NotificationType, Page, QuickReply
 from flask import request
 
@@ -35,8 +35,7 @@ class FacebookClient(IBotAPIClient):
         ud.original_update = event
         ud.client_name = self.client_name
         ud.message_id = event.message_mid
-        print(event.timestamp)
-        ud.datetime = dateutil.parser.parse(event.timestamp)
+        ud.datetime = datetime.datetime.fromtimestamp(event.timestamp)
 
         ud.user, created = User.get_or_create(facebook_id=event.sender_id)
         if created:
