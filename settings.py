@@ -1,5 +1,5 @@
 import os
-PORT = os.environ.get('PORT', 5000)
+PORT = int(os.environ.get('PORT', 5000))
 
 APP_URL = 'https://bachelor-thesis.herokuapp.com/'
 
