@@ -4,20 +4,13 @@ well_done:
     - text: "Super!"
       condition: "{{questionnaire_completion >= 0.2}}"
     - text: "Danke {{user.name}}!"
-      min_completion:
-        questionnaire: 0.2
+      condition: "{{questionnaire_completion >= 0.2}}"
     - text: "Klasse, vielen Dank."
-      min_completion:
-        questionnaire: 0
     - text: "Ok."
-      min_completion:
-        questionnaire: 0.3
+      condition: "{{questionnaire_completion >= 0.3}}"
     - text: "Sehr schön."
-      min_completion:
-        questionnaire: 0
     - text: "Alles klar."
-      min_completion:
-        questionnaire: 1.0
+      condition: "{{questionnaire_completion == 0.9}}"
 
 ok_thank_you:
   choices:
