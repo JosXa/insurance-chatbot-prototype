@@ -5,14 +5,12 @@ import time
 import traceback
 from typing import Callable, List, TypeVar
 
+import dateutil
 from fbmq import Event, NotificationType, Page, QuickReply
 from flask import request
-
+from logzero import logger
 from clients.botapiclients import IBotAPIClient
 from model import Update, User
-
-logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
-log = logging.getLogger(__name__)
 
 ChatAction = TypeVar('ChatAction')
 
@@ -35,6 +33,7 @@ class FacebookClient(IBotAPIClient):
         ud.original_update = event
         ud.client_name = self.client_name
         ud.message_id = event.message_mid
+        logger.warning(event.timestamp)
         ud.datetime = datetime.datetime.fromtimestamp(event.timestamp)
 
         ud.user, created = User.get_or_create(facebook_id=event.sender_id)
