@@ -14,7 +14,7 @@ class Update(BaseModel):
     user = ForeignKeyField(User)  # type: User
     client_name = CharField()  # type: str
     message_text = TextField()  # type: str
-    message_id = IntegerField()  # type: int
+    message_id = CharField()  # type: str
     datetime = DateTimeField()  # type: datetime
 
     def __init__(self, *args, **kwargs):
