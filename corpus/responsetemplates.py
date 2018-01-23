@@ -1,8 +1,8 @@
 import random
-from pprint import pprint
 from typing import Dict
 
 from jinja2 import Environment, PackageLoader
+from logzero import logger
 
 from corpus import raw_templates
 from model import User
@@ -128,11 +128,15 @@ class NoViableTemplateFoundError(Exception):
 def load_templates(raw):
     result = {}
     for k, v in raw.items():
-        if isinstance(v, dict):
-            for metadata in v['choices']:
-                result.setdefault(k, []).append(ResponseTemplate.from_metadata(metadata))
-        else:
-            result[k] = ResponseTemplate.from_metadata(v)
+        try:
+            if isinstance(v, dict):
+                for metadata in v['choices']:
+                    result.setdefault(k, []).append(ResponseTemplate.from_metadata(metadata))
+            else:
+                result[k] = ResponseTemplate.from_metadata(v)
+        except Exception as e:
+            logger.warning(f"Error parsing the template of intent {k}: {v}")
+            logger.exception(e)
     return result
 
 
