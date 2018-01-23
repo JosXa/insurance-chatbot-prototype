@@ -33,8 +33,7 @@ class FacebookClient(IBotAPIClient):
         ud.original_update = event
         ud.client_name = self.client_name
         ud.message_id = event.message_mid
-        logger.warning(event.timestamp)
-        ud.datetime = datetime.datetime.fromtimestamp(event.timestamp)
+        ud.datetime = datetime.datetime.fromtimestamp(event.timestamp / 1000.0)
 
         ud.user, created = User.get_or_create(facebook_id=event.sender_id)
         if created:
