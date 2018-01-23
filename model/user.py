@@ -8,7 +8,7 @@ class User(BaseModel):
     id = PrimaryKeyField()
     insurance_id = IntegerField(null=True)
     telegram_id = IntegerField(null=True)
-    facebook_id = BigIntegerField(null=True)
+    facebook_id = CharField(null=True)
 
     formal_address = BooleanField(default=True)
 
