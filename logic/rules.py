@@ -10,7 +10,7 @@ def hello(composer, context):
     # TODO: If user has already interacted (after bot restart), go immediately to "current" question
     composer.say("hello")
     if not context.has_outgoing_intent("what i can do", age_limit=10):
-        composer.concat("what i can do", separator=Separator.PARAGRAPH)
+        composer.say("what i can do")
     return States.SMALLTALK
 
 
@@ -40,7 +40,7 @@ def check_answer(composer, context):
         composer.say("ok thank you")
         return ask_next_question(composer, context)
     else:
-        composer.say('sorry').concat("invalid answer", separator=Separator.BUT).give_hint(question)
+        composer.say('sorry', 'invalid answer').give_hint(question)
         return States.ASKING_QUESTION
 
 
@@ -57,7 +57,7 @@ def ask_next_question(composer, context):
     if context.current_questionnaire.is_first_question(context.current_question):
         # started a new questionnaire
         if context.has_answered_questions:
-            composer.concat("questionnaire finished")
+            composer.say("questionnaire finished")
 
     composer.then_ask(context.current_question)
     return States.ASKING_QUESTION
@@ -74,7 +74,7 @@ def repeat_question(composer, context):
 
 def skip_question(composer, context):
     if context.current_question.is_required:
-        composer.say("sorry").concat("cannot skip this question", separator=Separator.BUT)
+        composer.say("sorry", "but", "cannot skip this question")
         composer.ask("continue anyway", choices=("affirm", "negate"))
         return "ask_continue_despite_no_skipping"
     else:
@@ -82,7 +82,7 @@ def skip_question(composer, context):
 
 
 def excuse_did_not_understand(composer, context):
-    composer.say("sorry").concat("did not understand")
+    composer.say("sorry", "did not understand")
 
 
 def abort_claim(composer, context):

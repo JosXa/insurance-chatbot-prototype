@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 import logging
+import time
+import traceback
+from typing import Callable, List, TypeVar
 
-from fbmq import Event, NotificationType, Page
+from fbmq import Event, NotificationType, Page, QuickReply
 from flask import request
-from telegram.ext import Handler
-from typing import TypeVar
 
 from clients.botapiclients import IBotAPIClient
 from model import Update, User
@@ -22,7 +23,7 @@ class FacebookClient(IBotAPIClient):
         self._token = token
 
         self._page = None  # type: Page
-        self._error_handler = None  # type: Handler
+        self._error_handler = None  # type: Callable[Exception]
 
     @property
     def client_name(self):
@@ -56,6 +57,30 @@ class FacebookClient(IBotAPIClient):
         #     self.page.send(1441586482543309, "Up and running.")
         # except:
         #     print("Could not contact 1441586482543309.")
+
+    def perform_actions(self, actions: List[ChatAction]):
+        try:
+            for action in actions:
+                user_id = action.peer.facebook_id
+
+                if action.show_typing:
+                    self._page.typing_on(user_id)
+                if action.delay:
+                    time.sleep(action.delay.value)
+
+                quick_replies = None
+                if action.action_type == ChatAction.Type.ASKING_QUESTION:
+                    if action.choices:
+                        quick_replies = [QuickReply(title=x, payload=f"test_{x}") for x in action.choices]
+
+                self._page.send(user_id,
+                                action.render(),
+                                quick_replies=quick_replies)
+        except Exception as e:
+            if self._error_handler:
+                self._error_handler(e)
+            else:
+                traceback.print_exc()
 
     def _authentication(self):
         all_args = request.args
@@ -95,14 +120,7 @@ class FacebookClient(IBotAPIClient):
                         notification_type=NotificationType.REGULAR)
 
     def add_error_handler(self, callback):
-        # TODO
         self._error_handler = callback
-
-    def create_reply_keyboard(self, buttons, n_cols=None):
-        pass  # TODO
-
-    def perform_actions(self, action: ChatAction):
-        pass  # TODO
 
 
 """

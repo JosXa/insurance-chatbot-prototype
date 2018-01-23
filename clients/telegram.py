@@ -130,10 +130,10 @@ class TelegramClient(IBotAPIClient):
     def add_error_handler(self, callback: Callable):
         self.updater.dispatcher.add_error_handler(callback)
 
-    def create_reply_keyboard(self, buttons, n_cols=2):
-        button_objects = [KeyboardButton(b) for b in buttons]
-        # TODO: incorporate util.build_menu
-        reply_markup = ReplyKeyboardMarkup(button_objects,
-                                           one_time_keyboard=True,
-                                           resize_keyboard=True)
-        return reply_markup
+    # def create_reply_keyboard(self, buttons, n_cols=2):
+    #     button_objects = [KeyboardButton(b) for b in buttons]
+    #     # TODO: incorporate util.build_menu
+    #     reply_markup = ReplyKeyboardMarkup(button_objects,
+    #                                        one_time_keyboard=True,
+    #                                        resize_keyboard=True)
+    #     return reply_markup

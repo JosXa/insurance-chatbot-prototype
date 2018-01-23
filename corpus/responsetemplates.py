@@ -20,7 +20,7 @@ class TemplateRenderer(object):
     def __init__(self, user: User):
         self.user = user
 
-    def _render_template(self, template, parameters=None, recursive=True):
+    def render_template(self, template, parameters=None, recursive=True):
 
         standard_parameters = {
             'user': self.user,
@@ -50,7 +50,7 @@ class TemplateRenderer(object):
         response_template = template_selector.select(intent)
 
         try:
-            return self._render_template(response_template.text_template, parameters)
+            return self.render_template(response_template.text_template, parameters)
         except Exception as e:
             if safe:
                 return self.render_string(intent, parameters)
@@ -59,7 +59,7 @@ class TemplateRenderer(object):
 
     def render_string(self, template_str, parameters=None, recursive=True):
         template = env.from_string(template_str)
-        return self._render_template(template, parameters, recursive=recursive)
+        return self.render_template(template, parameters, recursive=recursive)
 
 
 class ResponseTemplate:
@@ -84,7 +84,7 @@ class ResponseTemplate:
                 obj.condition_template = env.from_string(metadata['condition'])
 
             obj.is_conjunction = metadata.get('conjunction', False) or metadata.get('is_conjunction', False)
-
+            return obj
         elif isinstance(metadata, str):
             return cls(metadata)
         elif isinstance(metadata, list):
@@ -147,4 +147,4 @@ if __name__ == '__main__':
     tmp = TemplateRenderer(user=User(formal_address=False))
 
     # pprint(all_response_templates)
-    print(tmp.load_and_render("what i can do"))
+    print(tmp.load_and_render("hello"))

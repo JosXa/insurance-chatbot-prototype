@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 
 from corpus.responsecomposer import ResponseComposer
-from corpus.templates import SelectiveTemplateLoader
+from corpus.responsetemplates import SelectiveTemplateLoader
 from logic.controller import Controller
 
 

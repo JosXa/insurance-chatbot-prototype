@@ -32,7 +32,4 @@ class IBotAPIClient(object, metaclass=ABCMeta):
     def unify_update(self, update): pass
 
     @abstractmethod
-    def create_reply_keyboard(self, buttons, n_cols=None): pass
-
-    @abstractmethod
     def perform_actions(self, action: ChatAction): pass
