@@ -3,16 +3,14 @@ import datetime
 import logging
 import time
 import traceback
-from typing import Callable, List, TypeVar
+from typing import Callable, List
 
 import dateutil
 from fbmq import Event, NotificationType, Page, QuickReply
 from flask import request
 from logzero import logger
-from clients.botapiclients import IBotAPIClient
+from clients.botapiclients import IBotAPIClient, ChatAction
 from model import Update, User
-
-ChatAction = TypeVar('ChatAction')
 
 
 class FacebookClient(IBotAPIClient):
@@ -33,7 +31,7 @@ class FacebookClient(IBotAPIClient):
         ud.original_update = event
         ud.client_name = self.client_name
         ud.message_id = event.message_mid
-        ud.datetime = datetime.datetime.fromtimestamp(event.timestamp / 1000.0)
+        ud.datetime = datetime.datetime.fromtimestamp(event.timestamp / 1000.0)  # TODO: utcfromtimestamp ?
 
         ud.user, created = User.get_or_create(facebook_id=event.sender_id)
         if created:
