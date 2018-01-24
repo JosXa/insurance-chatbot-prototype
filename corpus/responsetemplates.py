@@ -1,4 +1,5 @@
 import random
+from pprint import pprint
 from typing import Dict
 
 from jinja2 import Environment, PackageLoader
@@ -63,16 +64,26 @@ class TemplateRenderer(object):
 
 
 class ResponseTemplate:
+
+    PROPERTIES = ['prefix', 'suffix', 'conjunction']
+
     def __init__(self, text):
+        self._original_text = text
         self.text_template = env.from_string(text)
         self.is_conjunction = False
+        self.is_prefix = False
+        self.is_suffix = False
         self.condition_template = None
 
     def check_condition(self, selection_context):
         if not self.condition_template:
             return True
-        rendered = self.condition_template.render(**selection_context)
-        return bool(eval(str(rendered)))
+        try:
+            rendered = self.condition_template.render(**selection_context)
+            return bool(eval(str(rendered)))
+        except Exception as e:
+            logger.error(f"Error while rendering condition '{self._original_text}': {e.message}")
+            return False
 
     @classmethod
     def from_metadata(cls, metadata):
@@ -83,7 +94,9 @@ class ResponseTemplate:
             if condition:
                 obj.condition_template = env.from_string(metadata['condition'])
 
-            obj.is_conjunction = metadata.get('conjunction', False) or metadata.get('is_conjunction', False)
+            for prop in ResponseTemplate.PROPERTIES:
+                setattr(obj, 'is_' + prop, metadata.get(prop, False) or metadata.get('is_' + prop, False))
+
             return obj
         elif isinstance(metadata, str):
             return cls(metadata)
@@ -130,13 +143,22 @@ def load_templates(raw):
     for k, v in raw.items():
         try:
             if isinstance(v, dict):
-                for metadata in v['choices']:
-                    result.setdefault(k, []).append(ResponseTemplate.from_metadata(metadata))
+                if v.get('choices'):
+                    # Parse all choices
+                    for metadata in v['choices']:
+                        result.setdefault(k, []).append(ResponseTemplate.from_metadata(metadata))
+                else:
+                    # No choices, just an uppermost-level dict
+                    result[k] = ResponseTemplate.from_metadata(v)
             else:
                 result[k] = ResponseTemplate.from_metadata(v)
         except Exception as e:
             logger.warning(f"Error parsing the template of intent {k}: {v}")
             logger.exception(e)
+
+    # Sanity check
+    assert not any(k is None or v is None for k, v in result.items())
+
     return result
 
 

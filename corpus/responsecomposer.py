@@ -59,6 +59,7 @@ class ResponseComposer:
         return self._create_question(question, choices, parameters, as_new_message=True)
 
     def _add_to_previous_element(self, intent, text, separator):
+        # TODO: Pass the ResponseTemplate object in here and build a proper sentence
         # Append to previous message
         previous_action = self._sequence[-1]
         previous_action.intents.append(intent)
@@ -91,8 +92,7 @@ class ResponseComposer:
 
         intent = format_intent(intent)
 
-        if len(self._sequence) == 0:
-            delay = None
+        delay = None  # If empty sequence
         if len(self._sequence) == 1:
             delay = ChatAction.Delay.SHORT
         elif len(self._sequence) >= 3:

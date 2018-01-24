@@ -8,6 +8,7 @@ import migrate
 import settings
 from clients.facebook import FacebookClient
 from clients.nlpclients import DialogflowClient
+from clients.sms import SMSClient
 from clients.telegram import TelegramClient
 from logic import ConversationManager
 from model import User
@@ -60,6 +61,13 @@ def main():
     migrate.reset_answers()  # TODO
 
     app = Flask(__name__)
+
+    # sms_client = SMSClient(
+    #     settings.TWILIO_ACCESS_TOKEN,
+    #     settings.TWILIO_ACCOUNT_SID
+    # )
+    # sms_client.initialize()
+
     facebook_client = FacebookClient(
         app,
         settings.FACEBOOK_ACCESS_TOKEN
@@ -77,9 +85,6 @@ def main():
     # telegram_client.add_plaintext_handler(test_handler_tg)
     # facebook_client.add_plaintext_handler(test_handler_fb)
 
-    telegram_client.start_listening()
-    facebook_client.start_listening()
-
     telegram_client.add_error_handler(error_handler)
 
     dialogflow_client = DialogflowClient(settings.DIALOGFLOW_ACCESS_TOKEN)
@@ -89,6 +94,11 @@ def main():
         conversation_recorder = ConversationRecorder(User.get(telegram_id=62056065))
 
     ConversationManager([telegram_client, facebook_client], dialogflow_client, conversation_recorder)
+    # ConversationManager([sms_client, telegram_client, facebook_client], dialogflow_client, conversation_recorder)
+
+    # sms_client.start_listening()
+    telegram_client.start_listening()
+    facebook_client.start_listening()
 
     if settings.TEST_MODE:
         logger.info("Listening...")

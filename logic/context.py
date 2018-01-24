@@ -2,15 +2,14 @@ from collections import deque
 from datetime import datetime, timedelta
 from enum import Enum
 from pprint import pprint
-from typing import Callable, Deque, Dict, List, TypeVar, Union
+from typing import Callable, Deque, Dict, List, Union
 
 import settings
 from corpus import all_questionnaires
 from corpus.questions import Question, Questionnaire
-from logic.understanding import MessageUnderstanding
 from logic.chataction import ChatAction
+from logic.understanding import MessageUnderstanding
 from model import Update, User, UserAnswers
-
 
 
 class States(Enum):

@@ -18,6 +18,7 @@ class PlanningAgent(IPlanningAgent):
         user_utterance = context.last_user_utterance
 
         load_and_selection_context = dict(
+            user=context.user,
             questionnaire_completion=context.questionnaire_completion_ratio,
             user_recent=context.has_user_intent,
             bot_recent=context.has_outgoing_intent,

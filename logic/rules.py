@@ -1,8 +1,4 @@
-from pprint import pprint
-
-from corpus import get_question_by_id
-from logic.chataction import Separator
-from logic.context import States, Context
+from logic.context import Context, States
 from logic.controller import Controller, IntentHandler
 
 
@@ -26,11 +22,22 @@ def record_phone_damage(composer, context):
         context.add_answer_to_question('damage_type', str(dmg_type))
 
 
+def send_example(composer, context):
+    composer.say('example').concat(context.current_question.example)
+
+
 def clarify(composer, context: Context):
+    should_send_example = False
+    if context.last_user_utterance.intent == 'example':
+        should_send_example = True
+
     if context.has_outgoing_intent('give_hint', age_limit=2):
-        composer.say('example').concat(context.current_question.example)
+        should_send_example = True
     else:
         composer.give_hint(context.current_question)
+
+    if should_send_example:
+        send_example(composer, context)
 
 
 def check_answer(composer, context):

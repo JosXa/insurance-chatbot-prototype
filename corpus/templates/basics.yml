@@ -54,4 +54,6 @@ negate:
     - "Lieber nicht"
     - "Besser nicht"
 
-
+as_you_know:
+  text: "Wie du schon weißt, "
+  prefix: "yes"
