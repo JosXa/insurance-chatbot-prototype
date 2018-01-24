@@ -26,8 +26,8 @@ claim_damage:
     Smartphone zu beanstanden?"
 
 all_done:
-  "Ich habe alle Informationen von {{'Ihnen' if formal else 'dir'}}, die wir benötigen um Ihren Schadensfall
-  schnellstmöglich zu bearbeiten."
+  "Ich habe alle Informationen von {{'Ihnen' if formal else 'dir'}}, die wir benötigen um {{'Ihren' if formal else
+    'deinen'}} Schadensfall schnellstmöglich zu bearbeiten."
 
 again:
   choices:
