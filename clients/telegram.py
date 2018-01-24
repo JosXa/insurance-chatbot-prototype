@@ -120,20 +120,5 @@ class TelegramClient(IBotAPIClient):
                 lambda bot, update: callback(self, self.unify_update(update))
             ))
 
-    def _send_message(self, peer: User, text: str, markup=None):
-        """
-        Sends a markdown-formatted message to the `recipient`.
-        """
-        self.bot.send_message(peer.telegram_id, text, parse_mode=ParseMode.HTML,
-                              reply_markup=markup)
-
     def add_error_handler(self, callback: Callable):
         self.updater.dispatcher.add_error_handler(callback)
-
-    # def create_reply_keyboard(self, buttons, n_cols=2):
-    #     button_objects = [KeyboardButton(b) for b in buttons]
-    #     # TODO: incorporate util.build_menu
-    #     reply_markup = ReplyKeyboardMarkup(button_objects,
-    #                                        one_time_keyboard=True,
-    #                                        resize_keyboard=True)
-    #     return reply_markup

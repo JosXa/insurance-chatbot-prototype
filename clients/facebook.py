@@ -106,15 +106,6 @@ class FacebookClient(IBotAPIClient):
     def set_start_handler(self, callback):
         pass
 
-    def _send_message(self, recipient: User, text):
-        """
-        Sends a markdown-formatted message to the `recipient`.
-        """
-        self._page.send(recipient.facebook_id,
-                        text,
-                        callback=None,
-                        notification_type=NotificationType.REGULAR)
-
     def add_error_handler(self, callback):
         self._error_handler = callback
 
