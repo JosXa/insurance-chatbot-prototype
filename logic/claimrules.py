@@ -123,29 +123,23 @@ def abort_claim(composer, context):
     print("CLAIM ABORTED")  # TODO
 
 
-def change_formal_address(composer, context):
-    formal = None
-    address = None
+def change_formal_address(composer, context: Context):
     if context.last_user_utterance.parameters:
         address = context.last_user_utterance.parameters.get('formal_address')
-    if address:
-        if address == 'yes':
-            formal = True
-        elif address == 'false':
-            formal = False
-        else:
-            logger.warning(f'Invalid formal_address value: {address}')
-            return
+        if address:
+            if address == 'yes':
+                context.user.formal_address = True
+            elif address == 'false':
+                context.user.formal_address = False
+            else:
+                logger.warning(f'Invalid formal_address value: {address}')
+                return
     else:
-        # TODO: Not properly detected in DialogFlow, because there is no easy way to add this entity to every intent.
         if any(x in context.last_user_utterance.text.lower() for x in ('du', 'dein')):
-            formal = False
-        elif any(x in context.last_user_utterance.text for x in ('Ihr', 'Sie')):
-            formal = True
-
-    if formal is not None:
-        logger.debug(f"{context.user.name} is now addressed {'formally' if formal else 'informally'}.")
-        context.user.update(formal_address=formal).execute()
+            context.user.formal_address = False
+        elif any(x in context.last_user_utterance.text for x in ('Ihr', 'Sie', 'Ihnen')):
+            context.user.formal_address = True
+    context.user.save()
 
 
 # TODO: start handler
