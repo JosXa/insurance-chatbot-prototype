@@ -53,7 +53,7 @@ class ConversationManager:
         path = os.path.join(ROOT_DIR, 'assets', 'files')
         filepath = bot.download_voice(update.voice_id, path)
 
-        converted = self.voice.convert_audio(filepath, os.path.join(path, 'voice.flac'))
+        converted = self.voice.convert_audio_ffmpeg(filepath, os.path.join(path, 'voice.flac'))
 
         text = self.voice.recognize(converted)
         update.message_text = text

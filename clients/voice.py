@@ -1,34 +1,29 @@
-import io
 import os
 import subprocess
 
-import cloudconvert
 import ffmpy
 import speech_recognition as sr
-
-import settings
 
 
 class VoiceRecognitionClient:
     def __init__(self):
         self.recognizer = sr.Recognizer()
-        self.converter = cloudconvert.Api(settings.CLOUDCONVERT_ACCESS_TOKEN)
 
-    def convert_ogg_to_flac_cloudconvert(self, handle):
-        reader = io.BufferedReader(handle)
-        process = self.converter.convert({
-            'inputformat': 'ogg',
-            'outputformat': 'flac',
-            'input': 'upload',
-            'file': reader
-        })
-        process.wait()  # wait until conversion finished
-        filename = 'voice.flac'
-        process.download(filename)  # download output file
-        return filename
+    # def convert_ogg_to_flac_cloudconvert(self, handle):
+    #     reader = io.BufferedReader(handle)
+    #     process = self.converter.convert({
+    #         'inputformat': 'ogg',
+    #         'outputformat': 'flac',
+    #         'input': 'upload',
+    #         'file': reader
+    #     })
+    #     process.wait()  # wait until conversion finished
+    #     filename = 'voice.flac'
+    #     process.download(filename)  # download output file
+    #     return filename
 
     @staticmethod
-    def convert_audio(in_file, out_file):
+    def convert_audio_ffmpeg(in_file, out_file):
         if os.path.exists(out_file):
             os.remove(out_file)
         ff = ffmpy.FFmpeg(
