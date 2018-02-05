@@ -10,6 +10,7 @@ from clients.facebook import FacebookClient
 from clients.nlpclients import DialogflowClient
 from clients.sms import SMSClient
 from clients.telegram import TelegramClient
+from clients.voice import VoiceRecognitionClient
 from logic import ConversationManager
 from model import User
 from tests.recorder import ConversationRecorder
@@ -88,12 +89,13 @@ def main():
     telegram_client.add_error_handler(error_handler)
 
     dialogflow_client = DialogflowClient(settings.DIALOGFLOW_ACCESS_TOKEN)
+    voice_client = VoiceRecognitionClient()
 
     conversation_recorder = None
     if settings.ENABLE_CONVERSATION_RECORDING:
-        conversation_recorder = ConversationRecorder(User.get(telegram_id=62056065))
+        conversation_recorder = ConversationRecorder()
 
-    ConversationManager([telegram_client, facebook_client], dialogflow_client, conversation_recorder)
+    ConversationManager([telegram_client, facebook_client], dialogflow_client, conversation_recorder, voice_client)
     # ConversationManager([sms_client, telegram_client, facebook_client], dialogflow_client, conversation_recorder)
 
     # sms_client.start_listening()

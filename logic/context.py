@@ -30,12 +30,19 @@ class Context:
         # User and Bot utterances from newest to oldest
         self._utterances = deque([], maxlen=self.SIZE_LIMIT)  # type: Deque[MessageUnderstanding, ChatAction]
         self._state = States.INITIAL  # type: States
+        self._value_store = dict()
 
         self._current_question = None  # type: Question
         self._current_questionnaire = None  # type: Questionnaire
         self._answered_question_ids = set()
         self._all_done = False
         self._update_question_context()
+
+    def set_value(self, key, value):
+        self._value_store[key] = value
+
+    def get_value(self, key):
+        return self._value_store.get(key)
 
     def add_user_utterance(self, understanding: MessageUnderstanding):
         self._utterances.appendleft(understanding)

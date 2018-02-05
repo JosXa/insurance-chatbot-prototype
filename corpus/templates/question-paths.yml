@@ -15,6 +15,25 @@ continue_anyway:
 
 example:
   choices:
-    - "Beispiel: "
-    - "Zum Beispiel: "
-    - "Das könnte zum Beispiel sein: "
+    - "Beispiel:"
+    - "Zum Beispiel:"
+    - "Das könnte zum Beispiel sein:"
+    - "Ein Beispiel dafür wäre:"
+  suffix: yes
+
+is_that_correct:
+  choices:
+    - "Ist das richtig?"
+    - "Stimmt das?"
+    - "{{'Sind Sie' if formal else 'Bist du'}} damit einverstanden?"
+    - "Ist das korrekt?"
+    - text: "Ich hoffe das stimmt so."
+      condition: "{{overall_completion > 0.3}}"
+    - "Korrekt?"
+    - "Richtig?"
+    - "Sollen wir das so übernehmen?"
+    - text: "Passt das?"
+      condition: "{{user.informal == True}}"
+
+claim_aborted:
+  "In Ordnung. {{'Sagen Sie' if formal else 'Sag'}} dann Bescheid wenn {{'Sie mich wieder brauchen' if formal else 'du mich wieder brauchst'}} 😉."

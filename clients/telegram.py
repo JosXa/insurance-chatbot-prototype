@@ -1,8 +1,11 @@
 import time
 from threading import Thread
 from typing import Callable, List
+from io import BytesIO
 
-from flask import Flask, logging, request
+import os
+from flask import Flask, request
+from logzero import logger
 from telegram import *
 from telegram import ChatAction as TelegramChatAction, Update as TelegramUpdate
 from telegram.ext import CommandHandler, Filters, MessageHandler, Updater
@@ -12,8 +15,6 @@ from clients.botapiclients import IBotAPIClient
 from logic import ChatAction
 from model import User
 from model.update import Update
-
-log = logging.getLogger(__name__)
 
 
 class TelegramClient(IBotAPIClient):
@@ -38,17 +39,16 @@ class TelegramClient(IBotAPIClient):
             ud.user.save()
         ud.message_id = update.effective_message.message_id
         ud.message_text = update.effective_message.text
+        if update.effective_message.voice:
+            ud.voice_id = update.effective_message.voice.file_id
         ud.datetime = update.effective_message.date
-        ud.save()
         return ud
 
     def perform_actions(self, actions: List[ChatAction]):
 
         for action in actions:
-            chat_id = action.peer.telegram_id
-
             if action.show_typing:
-                self.bot.send_chat_action(chat_id, TelegramChatAction.TYPING)
+                self.bot.send_chat_action(action.peer.telegram_id, TelegramChatAction.TYPING)
             if action.delay:
                 time.sleep(action.delay.value)
 
@@ -106,13 +106,6 @@ class TelegramClient(IBotAPIClient):
         self.updater.dispatcher.stop()
         self.updater.stop()
 
-    def add_plaintext_handler(self, callback: Callable):
-        self.updater.dispatcher.add_handler(
-            MessageHandler(
-                Filters.text,
-                lambda bot, update: callback(self, self.unify_update(update))
-            ))
-
     def set_start_handler(self, callback: Callable):
         self.updater.dispatcher.add_handler(
             CommandHandler(
@@ -120,5 +113,37 @@ class TelegramClient(IBotAPIClient):
                 lambda bot, update: callback(self, self.unify_update(update))
             ))
 
+    def add_plaintext_handler(self, callback: Callable):
+        self.updater.dispatcher.add_handler(
+            MessageHandler(
+                Filters.text,
+                lambda bot, update: callback(self, self.unify_update(update))
+            ))
+
+    def add_voice_handler(self, callback):
+        self.updater.dispatcher.add_handler(
+            MessageHandler(
+                Filters.voice,
+                lambda bot, update: callback(self, self.unify_update(update))
+            )
+        )
+
+    def download_voice(self, voice_id, path):
+        filepath = os.path.join(path, 'voice.ogg')
+        voice = self.bot.get_file(voice_id)
+        voice.download(filepath)
+        return filepath
+
+    def _send_message(self, peer: User, text: str, markup=None):
+        """
+        Sends a markdown-formatted message to the `recipient`.
+        """
+        self.bot.send_message(peer.telegram_id, text, parse_mode=ParseMode.HTML,
+                              reply_markup=markup)
+
+    def show_typing(self, user):
+        self.bot.send_chat_action(user.telegram_id, TelegramChatAction.TYPING)
+
     def add_error_handler(self, callback: Callable):
+        self.updater.dispatcher.logger = logger
         self.updater.dispatcher.add_error_handler(callback)

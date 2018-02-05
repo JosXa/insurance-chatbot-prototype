@@ -3,3 +3,9 @@ invalid_answer:
     - "Damit kann ich nichts anfangen."
     - "Was soll das sein?"
     - "Mit dieser Eingabe kann ich nichts anfangen."
+    - "Leider sagt mir diese Eingabe nichts."
+
+try_again:
+  choices:
+    - "Bitte versuche es noch einmal 😊"
+    - "{{'Formulieren Sie' if formal else 'Formuliere'}} das doch noch einmal anders 🤔"

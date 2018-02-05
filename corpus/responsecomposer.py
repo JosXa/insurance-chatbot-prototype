@@ -2,9 +2,8 @@ import string
 from typing import List, Union
 
 from corpus import Question
-from corpus.responsetemplates import SelectiveTemplateLoader, TemplateRenderer, format_intent
+from corpus.responsetemplates import ResponseTemplate, SelectiveTemplateLoader, TemplateRenderer, format_intent
 from logic import ChatAction
-from logic.chataction import Separator
 from model import User
 
 
@@ -17,16 +16,22 @@ class ResponseComposer:
         self.renderer = TemplateRenderer(user=self.peer)
 
         self._sequence = []  # type: List[ChatAction]
+        self._inside_conjunction = False
 
     def collect_actions(self) -> List[ChatAction]:
         return self._sequence
 
     def give_hint(self, question: Question):
-
         surrounding = self.loader.select('hint_surrounding')
         text = self.renderer.render_template(surrounding.text_template, {'question': question}, recursive=True)
 
-        return self._create_action(text, 'give_hint')
+        return self._create_action('give_hint', text)
+
+    def give_example(self, question: Question):
+        prefix = self.renderer.load_and_render('example')
+        suffix = self.renderer.render_string(question.example)
+
+        return self._create_action('give_example', f"{prefix} {suffix}")
 
     def ask(self,
             question: Union[Question, str],
@@ -35,7 +40,7 @@ class ResponseComposer:
             ):
         return self._create_question(question, choices, parameters, as_new_message=False)
 
-    def say(self, *intents, render_parameters=None):
+    def say(self, *intents, parameters=None):
         """
         Say something in a new message
         """
@@ -44,9 +49,10 @@ class ResponseComposer:
             if not intent:
                 continue
 
-            text = self.renderer.load_and_render(intent=intent, template_selector=self.loader,
-                                                 parameters=render_parameters)
-            self._create_action(text, intent, as_new_message=first)
+            template = self.loader.select(intent)
+            text = self.renderer.render_template(template.text_template, parameters=parameters)
+
+            self._create_action(intent, text, template, as_new_message=first)
             first = False
 
         return self
@@ -58,37 +64,66 @@ class ResponseComposer:
                  ):
         return self._create_question(question, choices, parameters, as_new_message=True)
 
-    def _add_to_previous_element(self, intent, text, separator):
-        # TODO: Pass the ResponseTemplate object in here and build a proper sentence
+    def ask_to_confirm(self,
+                       question: Question,
+                       user_answer: str):
+        text = self.renderer.render_string(question.confirm, parameters={'answer': user_answer, 'question': question})
+        self._create_action('confirm_answer', text)
+        self.ask('is that correct', choices=['affirm_correct', 'negate_wrong'])
+        return self
+
+    def _append_to_previous(self, intent, text, template: ResponseTemplate = None, choices=None):
         # Append to previous message
+
         previous_action = self._sequence[-1]
         previous_action.intents.append(intent)
 
-        if separator is None:
-            separator = Separator.PUNCTUATION
+        if choices:
+            previous_action.choices = choices
 
-        if separator == Separator.BUT:
-            # Conjunction of sentence --> Lowercase
+        def finish_last_sentence(value: ChatAction):
+            last_part = value.text_parts[-1]
+            if last_part[-1] not in string.punctuation:
+                last_part[-1] = last_part[-1] + '.'
+
+        separator = '. '
+
+        if (template and template.is_conjunction) or self._inside_conjunction:
+            separator = ''
             text = text[0].lower() + text[1:]
+            self._inside_conjunction = False
 
-        if separator == Separator.PUNCTUATION:
-            previous_text_part = previous_action.text_parts[-1]
+        if template is not None:
+            if template.is_conjunction:
+                if previous_action.text_parts[-1][-1] in string.punctuation:
+                    raise ValueError("Trying to append a conjunction to a sentence with punctuation.")
+                # Append space if necessary
+                if text[-1] not in string.punctuation and text[-1] != ' ':
+                    text = text + ' '
+                self._inside_conjunction = True
+            elif template.is_prefix:
+                finish_last_sentence(previous_action)
+                # Uppercase
+                text = text[0].upper() + text[1:]
+                separator = ' '
+                self._inside_conjunction = False
+            elif template.is_suffix:
+                separator = ' '
+                self._inside_conjunction = True
 
-            # Append "." to last part if necessary
-            if previous_text_part.strip()[-1] not in string.punctuation:
-                previous_action.text_parts[-1] += '.'
-
-        previous_action.text_parts.append(separator.value)
+        previous_action.text_parts.append(separator)
         previous_action.text_parts.append(text)
 
     def _create_action(self,
-                       text,
                        intent,
+                       text,
+                       response_template: ResponseTemplate = None,
                        choices: List = None,
-                       separator: Separator = None,
                        type_: ChatAction.Type = ChatAction.Type.SAYING,
                        as_new_message=True,
                        ):
+        if choices and any(x.choices for x in self._sequence):
+            raise ValueError("Multiple messages with choices are not sensible.")
 
         intent = format_intent(intent)
 
@@ -101,7 +136,7 @@ class ResponseComposer:
             delay = ChatAction.Delay.MEDIUM
 
         if as_new_message or len(self._sequence) == 0:
-            # Create new messag100e
+            # Create new message
             self._sequence.append(
                 ChatAction(
                     type_,
@@ -111,8 +146,11 @@ class ResponseComposer:
                     choices=choices,
                     show_typing=True,
                     delay=delay))
+            self._inside_conjunction = False
         else:
-            self._add_to_previous_element(intent, text, separator)
+            if type_ == ChatAction.Type.ASKING_QUESTION:
+                self._sequence[-1].action_type = ChatAction.Type.ASKING_QUESTION
+            self._append_to_previous(intent, text, response_template, choices=choices)
         return self
 
     def _create_question(self,
@@ -124,7 +162,7 @@ class ResponseComposer:
 
         if choices and isinstance(question, Question):
             raise ValueError("Choices for Question objects must be defined in the questionnaire.yml and cannot be "
-                             "provded as arguments.")
+                             "provided as arguments.")
 
         default_question_params = dict(question=question)
         if parameters:
@@ -146,7 +184,7 @@ class ResponseComposer:
 
         question_id = question.id if isinstance(question, Question) else question
 
-        return self._create_action(text, question_id, choices, type_=ChatAction.Type.ASKING_QUESTION,
+        return self._create_action(question_id, text, choices=choices, type_=ChatAction.Type.ASKING_QUESTION,
                                    as_new_message=as_new_message)
 
     def __str__(self):

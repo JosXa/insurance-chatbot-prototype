@@ -7,16 +7,16 @@ from typing import List
 PATH = os.path.dirname(os.path.realpath(__file__))
 
 
-def similarity(user_input, real) -> float:
-    real = real.lower()
+def similarity(user_input, compare_to) -> float:
+    compare_to = compare_to.lower()
     user_input = user_input.lower()
 
     add = 0
-    if user_input in real:
+    if user_input in compare_to:
         add = 0.15
 
     return min(1,
-               SequenceMatcher(None, user_input, real).ratio() + add)
+               SequenceMatcher(None, user_input, compare_to).ratio() + add)
 
 
 def load_devices():

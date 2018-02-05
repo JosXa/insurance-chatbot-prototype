@@ -3,14 +3,16 @@ personal details:
   questions:
     policy_nr:
       title: "{{'Ihre' if formal else 'deine'}} Versicherungsschein-Nr."
-      confirm: "Die Nummer lautet {{answer}}. Ist das korrekt?"
+      confirm: "Die Nummer lautet {{answer}}"
       hint: "die Identifikationsnummer, die oben auf Ihrem Vertrag steht."
-      required: "yes"
+      example: "12345"
+      required: yes
     name:
       title: "{{'Ihren' if formal else 'deinen'}} vollständigen Namen"
-      confirm: "{{'Ihr' if formal else 'dein'}} Name lautet also {{answer}}?"
+      confirm: "{{'Ihr' if formal else 'dein'}} Name lautet also {{answer}}"
       hint: "{{'Ihren' if formal else 'deinen'}} Vor- und Nachnamen"
-      required: "yes"
+      example: "Max Mustermann"
+      required: yes
 
 phone_details:
   title: "Informationen zum beschädigten Gerät"
@@ -20,15 +22,15 @@ phone_details:
       match_regex: "[0-9]{15}([0-9]{15})*"
       hint: "die elektronische Gerätenummer - diese 15-stellige Nummer ist auf dem Typenschild des Gerätes oder über die Tastenkombination *#06# zu finden"
       example: "990000862471854"
-      required: "no"
+      required: no
     model_identifier:
       title: "die Modellbezeichnung des beschädigten Gerätes"
       hint: "die Typbezeichnung des Smartphones"
       example: "iPhone 6S oder Samsung Galaxy S7"
       required: "yes"
     damage_type:
-      title: "Informationen darüber, was genau an {{'Ihrem' if formal else 'deinem'}} {{model_identifier}} kaputt ist"
+      title: "Informationen darüber, um {{bold('was für einen Schaden')}} es sich bei {{'Ihrem' if formal else 'deinem'}} {{code(model_identifier)}} genau handelt."
       choices:
         - Displayschaden
         -
-      required: "no"
+      required: no

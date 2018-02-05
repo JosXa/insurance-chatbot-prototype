@@ -5,8 +5,8 @@ hello:
       condition: "{{user.name is not none}}"
     - text: "{{'Hi' if informal else 'Hallo'}} {{user.name}}, wie kann ich {{'dir' if informal else 'Ihnen'}} heute
     behilflich sein?"
-      condition: "{{bot_recent('hello') and user.name is not none}}"
+      condition: "{{bot_recent('hello') and user.name != None}}"
 
 what_i_can_do:
-  Ich kann {{'dir' if informal else 'Ihnen'}} helfen, einen Schaden an
-  {{'deinem' if informal else 'Ihrem'}} Smartphone zu beanstanden.
+  "Ich kann {{'dir' if informal else 'Ihnen'}} helfen, einen Schaden an
+  {{'deinem' if informal else 'Ihrem'}} Smartphone zu beanstanden."

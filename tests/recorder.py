@@ -19,24 +19,21 @@ if not os.path.exists(PATH):
 
 
 class ConversationRecorder(object):
-    def __init__(self, for_user: User):
-        self.user = for_user
-        self.conversation = []
+    def __init__(self):
+        self.conversations = {}
         self.date_started = datetime.datetime.now()
 
     def record_dialog(self, update: Update, actions: List[ChatAction]):
-        if update.user != self.user:
-            return
-
         entry = CommentedMap(
             user_says=update.message_text,
             intent=update.understanding.intent,
             parameters=update.understanding.parameters,
             responses=list(itertools.chain.from_iterable([a.intents for a in actions]))
         )
-        self.conversation.append(entry)
+        self.conversations.setdefault(update.user.id, []).append(entry)
+        self._save(update.user.id)
 
-    def save(self):
-        filename = f"{self.user.id}_{self.date_started.strftime('%Y%m%d-%H%M%S')}.yml"
+    def _save(self, user_id):
+        filename = f"{user_id}_{self.date_started.strftime('%Y%m%d-%H%M%S')}.yml"
         filepath = os.path.join(PATH, filename)
-        utils.save_dict_as_yaml(filepath, self.conversation)
+        utils.save_dict_as_yaml(filepath, self.conversations[user_id])

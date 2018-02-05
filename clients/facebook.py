@@ -14,6 +14,15 @@ from model import Update, User
 
 class FacebookClient(IBotAPIClient):
 
+    def show_typing(self, user):
+        pass
+
+    def add_voice_handler(self, callback):
+        pass
+
+    def download_voice(self, voice_id, filepath):
+        pass
+
     def __init__(self, app, token):
         self._app = app
         self._token = token

@@ -7,6 +7,8 @@ from model.basemodel import BaseModel
 
 
 class UserAnswers(BaseModel):
+    NO_ANSWER = 'No data'
+
     user = ForeignKeyField(User)
     question_id = CharField()
     answer = TextField()

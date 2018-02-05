@@ -8,6 +8,7 @@ sorry:
     - "Entschuldigung"
     - "Bitte {{'entschuldigen Sie' if formal else 'entschuldige'}}"
     - "Es tut mir leid"
+  prefix: yes
 
 did_not_understand:
   choices:

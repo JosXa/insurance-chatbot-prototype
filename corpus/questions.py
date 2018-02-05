@@ -11,10 +11,19 @@ QUESTIONNAIRE_FILE = os.path.join(PATH, 'questionnaires.yml')
 
 
 class Question:
-    def __init__(self, qid, title, is_required, choices: List = None, hint=None, example=None, match_regex=None):
+    def __init__(self,
+                 qid,
+                 title,
+                 is_required,
+                 confirm: str = None,
+                 choices: List = None,
+                 hint=None,
+                 example=None,
+                 match_regex=None):
         self.id = qid
         self.title = title
         self.is_required = is_required
+        self.confirm = confirm
         self.choices = choices
         self.match_regex = re.compile(match_regex) if match_regex else None
         self.hint = hint
@@ -26,6 +35,7 @@ class Question:
             qid=id,
             title=values['title'],
             is_required=values.get('required', False),
+            confirm=values.get('confirm'),
             hint=values.get('hint'),
             choices=values.get('choices'),
             example=values.get('example'),

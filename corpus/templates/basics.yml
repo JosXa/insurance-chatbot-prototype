@@ -20,10 +20,11 @@ ok_thank_you:
     - "Das passt."
     - "Perfekt, dankeschön."
     - "Gut, danke."
+    - "Super!"
 
 claim_damage:
   "Soll ich {{'Ihnen' if formal else 'dir'}} helfen, einen Schaden an {{'Ihrem' if formal else 'deinem'}}
-    Smartphone zu beanstanden?"
+    Smartphone zu melden?"
 
 all_done:
   "Ich habe alle Informationen von {{'Ihnen' if formal else 'dir'}}, die wir benötigen um {{'Ihren' if formal else
@@ -35,25 +36,55 @@ again:
 
 with_pleasure:
   choices:
-    - "Gerne"
     - "Natürlich"
-    - "Sehr gerne"
-    - "Natürlich, {{user.name}}"
+    - text: "Okay {{user.name}}"
+      condition: "{{user.name != None}}"
+    - text: "Natürlich, {{user.name}}"
+      condition: "{{user.name != None}}"
+    - text: "Gerne"
+      condition: "{{overall_completion > 0.6}}"
+    - text: "Sehr Gerne"
+      condition: "{{overall_completion > 0.6}}"
+    - text: "Klar"
+      condition: "{{overall_completion > 0.3}}"
 
-affirm:
+affirm_correct:
+  choices:
+    - "Richtig"
+    - "Stimmt"
+    - "Passt so"
+    - "In Ordnung"
+    - "Das stimmt"
+    - "Korrekt"
+
+negate_wrong:
+  choices:
+    - "Stimmt nicht"
+    - "Falsch"
+    - "Nein"
+    - "Nochmal"
+    - "Da ist ein Fehler"
+    - "Nochmal probieren"
+    - "Nochmal eingeben"
+    - "Das stimmt doch nicht"
+
+affirm_yes:
   choices:
     - "Ja"
     - "Ja, gerne"
+    - "Ja, bitte"
     - "Okay"
     - "OK"
 
-negate:
+negate_no:
   choices:
     - "Nein"
     - "Nein, bitte nicht"
     - "Lieber nicht"
     - "Besser nicht"
+    - "Lassen wir das"
 
 as_you_know:
-  text: "Wie du schon weißt, "
-  prefix: "yes"
+  text: "Wie {{'Sie' if formal else 'du'}} schon {{'wissen' if formal else 'weißt'}}, "
+  prefix: yes
+

@@ -42,6 +42,6 @@ class ChatAction:
         return self.__str__()
 
     def __str__(self):
-        return "".join(self.text_parts)
+        return "".join([x for x in self.text_parts if x])
 
 

@@ -17,6 +17,13 @@ from functools import wraps
 from time import time
 
 
+def mutually_exclusive(values):
+    try:
+        return sorted(list(values)).index(True) == len(values) - 1
+    except ValueError:
+        return True
+
+
 def build_menu(buttons,
                n_cols,
                header_buttons=None,

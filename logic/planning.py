@@ -1,5 +1,7 @@
 from abc import ABCMeta, abstractmethod
 
+from logzero import logger
+
 from corpus.responsecomposer import ResponseComposer
 from corpus.responsetemplates import SelectiveTemplateLoader
 from logic.controller import Controller
@@ -31,36 +33,14 @@ class PlanningAgent(IPlanningAgent):
             SelectiveTemplateLoader(load_and_selection_context),
         )
 
-        print(f"New incoming message '{user_utterance.text}' with INTENT['{user_utterance.intent}'], "
-              f"PARAMETERS['{user_utterance.parameters}']")
+        logger.debug(f'Incoming message: {user_utterance.intent} / {user_utterance.parameters}')
 
         # Rule-based planning algorithm
-        rule = self.controller.get_state_handler(
-            context.state,
-            user_utterance.intent,
-            user_utterance.parameters,
-        )
-        fallback_rule = self.controller.get_fallback_handler(user_utterance.intent, user_utterance.parameters)
-        stateless_rules = self.controller.get_stateless_handlers(user_utterance.intent, user_utterance.parameters)
+        next_state = self.controller.execute(context.state,
+                                             context.last_user_utterance.intent,
+                                             context.last_user_utterance.parameters,
+                                             composer, context)
+        if next_state:
+            context.state = next_state
 
-        if stateless_rules:
-            for r in stateless_rules:
-                r.handler(composer, context)
-        if rule:
-            new_state = rule.handler(composer, context)
-        elif fallback_rule:
-            new_state = fallback_rule.handler(composer, context)
-        else:
-            # should not happen
-            print(f"No matching rule found in state {context.state} with intent "
-                  f"{user_utterance.intent} and parameters {user_utterance.parameters}. Consider adding "
-                  f"a fallback to the controller.")
-            composer.say('sorry').concat('did not understand')
-            return composer
-        if new_state is not None:
-            # Keep the state if method returned None
-            context.state = new_state
-            print(f"New state: {new_state}")
-
-        print(f"Overall completion ratio: {context.overall_completion_ratio}")
         return composer

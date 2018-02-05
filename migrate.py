@@ -11,7 +11,7 @@ def reset_all():
     Update.create_table()
     User.drop_table(fail_silently=True, cascade=True)
     User.create_table()
-    User.insert(telegram_id=62056065, formal_address=False).execute()
+    # User.insert(telegram_id=62056065, formal_address=False).execute()
     Update.drop_table(fail_silently=True, cascade=True)
     Update.create_table()
     reset_answers()

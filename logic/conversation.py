@@ -1,11 +1,16 @@
 from typing import List, TypeVar
 
+import os
+
+from appglobals import ROOT_DIR
+from clients.voice import VoiceRecognitionClient
+from logic.claimrules import rule_controller
 from logic.context import UserContexts
 from logic.planning import PlanningAgent
-from logic.rules import rule_controller
 from logic.understanding import MessageUnderstanding
 from model import Update
 from tests.recorder import ConversationRecorder
+from logzero import logger
 
 NLPEngine = TypeVar('NLPEngine')
 IBotAPIClient = TypeVar('IBotAPIClient')
@@ -17,17 +22,20 @@ class ConversationManager:
     perform.
     """
 
-    def __init__(self, bot_clients: List[IBotAPIClient], nlp_client: NLPEngine, recorder: ConversationRecorder = None):
+    def __init__(self, bot_clients: List[IBotAPIClient], nlp_client: NLPEngine, recorder: ConversationRecorder =
+    None, voice_recognition: VoiceRecognitionClient = None):
         self.bots = bot_clients
         self.nlp = nlp_client
         self.controller = rule_controller
         self.recorder = recorder
+        self.voice = voice_recognition
 
         self.context_manager = UserContexts()
         self.planning_agent = PlanningAgent(self.controller)
 
         for bot in bot_clients:
-            bot.add_plaintext_handler(self.update_received)
+            bot.add_plaintext_handler(self.text_update_received)
+            bot.add_voice_handler(self.voice_received)
             bot.set_start_handler(self.start_callback)
 
     def __get_client_by_name(self, client_name: str) -> IBotAPIClient:
@@ -39,7 +47,21 @@ class ConversationManager:
             intent='start')
         self._process_update(bot, update)
 
-    def update_received(self, bot: IBotAPIClient, update: Update):
+    def voice_received(self, bot: IBotAPIClient, update: Update):
+        bot.show_typing(update.user)
+
+        path = os.path.join(ROOT_DIR, 'assets', 'files')
+        filepath = bot.download_voice(update.voice_id, path)
+
+        converted = self.voice.convert_audio(filepath, os.path.join(path, 'voice.flac'))
+
+        text = self.voice.recognize(converted)
+        update.message_text = text
+        logger.debug(f"Voice message received: {text}")
+
+        self.text_update_received(bot, update)
+
+    def text_update_received(self, bot: IBotAPIClient, update: Update):
         self.nlp.insert_understanding(update)
         self._process_update(bot, update)
 
@@ -51,7 +73,8 @@ class ConversationManager:
 
         if self.recorder:
             self.recorder.record_dialog(update, actions)
-            self.recorder.save()
 
         bot.perform_actions(actions)
         context.add_actions(actions)
+
+        update.save()

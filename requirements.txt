@@ -11,3 +11,5 @@ peewee_migrate==0.14.0
 ruamel.yaml
 python-dateutil
 twilio
+cloudconvert
+ffmpy

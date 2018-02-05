@@ -20,6 +20,7 @@ class Update(BaseModel):
     def __init__(self, *args, **kwargs):
         self.original_update = None  # type: [FacebookEvent,TelegramUpdate]
         self._understanding = None  # type: MessageUnderstanding
+        self.voice_id = None  # type: str
 
         super().__init__(*args, **kwargs)
 
