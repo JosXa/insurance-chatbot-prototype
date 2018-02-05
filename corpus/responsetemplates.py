@@ -45,7 +45,7 @@ class TemplateRenderer(object):
 
         if recursive:
             to_rerender = env.from_string(rendered)
-            rendered = to_rerender.render(**user_params)
+            rendered = to_rerender.render(**render_parameters)
         return rendered.strip()
 
     def load_and_render(self,
