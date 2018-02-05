@@ -1,0 +1,19 @@
+- user_says: hi
+  intent: hello
+  parameters:
+  responses:
+  - hello
+  - what_i_can_do
+- user_says: ok
+  intent: yes
+  parameters:
+    yes: ok
+  responses:
+  - claim_damage
+- user_says: joar
+  intent: yes
+  parameters:
+    yes: joar
+  responses:
+  - with_pleasure
+  - policy_nr

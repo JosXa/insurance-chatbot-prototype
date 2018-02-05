@@ -1,0 +1,6 @@
+- user_says: 'hallo guten Tag '
+  intent: hello
+  parameters:
+  responses:
+  - hello
+  - what_i_can_do

@@ -1,0 +1,6 @@
+- user_says: hi
+  intent: hello
+  parameters:
+  responses:
+  - hello
+  - what_i_can_do
