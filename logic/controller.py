@@ -3,7 +3,8 @@
 #     def __init__(self):
 #         pass
 from abc import ABCMeta, abstractmethod
-from typing import Callable, List
+from typing import Callable
+
 from logzero import logger
 
 
@@ -52,6 +53,7 @@ class IntentHandler(BaseHandler):
 
 
 class AffirmationHandler(BaseHandler):
+    INTENTS = ['yes', 'correct', 'smalltalk.dialog.correct']
 
     def __init__(self, handler):
         super(AffirmationHandler, self).__init__(handler)
@@ -59,16 +61,17 @@ class AffirmationHandler(BaseHandler):
     def matches(self, intent, parameters):
         if parameters:
             for k, v in parameters.items():
-                if k in ['yes', 'correct'] and v:
+                if k in self.INTENTS and v:
                     return True
 
-        if intent in ['yes', 'correct']:
+        if intent in self.INTENTS:
             return True
 
         return False
 
 
 class NegationHandler(BaseHandler):
+    INTENTS = ['no', 'wrong', 'smalltalk.dialog.wrong']
 
     def __init__(self, handler):
         super(NegationHandler, self).__init__(handler)
@@ -76,10 +79,10 @@ class NegationHandler(BaseHandler):
     def matches(self, intent, parameters):
         if parameters:
             for k, v in parameters.items():
-                if k in ['no', 'wrong'] and v:
+                if k in self.INTENTS and v:
                     return True
 
-        if intent in ['no', 'wrong']:
+        if intent in self.INTENTS:
             return True
 
         return False
