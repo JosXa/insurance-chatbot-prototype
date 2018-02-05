@@ -86,7 +86,8 @@ class NegationHandler(BaseHandler):
 
 
 class Controller(object):
-    def __init__(self, rules):
+    def __init__(self, rules, warn_bypassed=True):
+        self.warn_bypassed = warn_bypassed
         self.states = {}
         self.fallbacks = []
         self.stateless = []
@@ -95,7 +96,10 @@ class Controller(object):
     def add_rules_dict(self, rules_dict):
         states = rules_dict.get('states', {})
         fallbacks = rules_dict.get('fallbacks', [])
-        always = rules_dict.get('stateless', [])
+        stateless = rules_dict.get('stateless', [])
+
+        if any(isinstance(x, Controller) for x in stateless):
+            raise ValueError("Stateless handlers cannot be Controllers.")
 
         for state, handlers in states.items():
             for handler in handlers:
@@ -104,60 +108,42 @@ class Controller(object):
         for handler in fallbacks:
             self.fallbacks.append(handler)
 
-        for handler in always:
+        for handler in stateless:
             self.stateless.append(handler)
 
-    def get_state_handler(self, state, intent, parameters) -> IntentHandler:
-        state_handlers = self.states.get(state, [])
-
-        for handler in state_handlers:
-            if handler.matches(intent, parameters) or isinstance(handler, Controller):
-                return handler
-
-    def get_fallback_handler(self, intent, parameters) -> IntentHandler:
-        for handler in self.fallbacks:
-            if handler.matches(intent, parameters) or isinstance(handler, Controller):
-                return handler
-
-    def get_stateless_handlers(self, intent, parameters) -> List[IntentHandler]:
-        matching = list()
-        for handler in self.stateless:
-            if handler.matches(intent, parameters) or isinstance(handler, Controller):
-                matching.append(handler)
-        return matching
-
     def execute(self, state, intent, parameters, *callback_args):
-        rule = self.get_state_handler(state, intent, parameters)
-        fallback_rule = self.get_fallback_handler(intent, parameters)
-        stateless_rules = self.get_stateless_handlers(intent, parameters)
-
-        next_state = None
-        if stateless_rules:
-            for r in stateless_rules:
-                if isinstance(r, Controller):
-                    r.execute(state, intent, parameters, *callback_args)
-                else:
-                    r.handler(*callback_args)
-                    logger.debug(f"Stateless handler {r} triggered.")
-        if rule:
+        for rule in self.stateless:
+            # Non-breaking, execute all
+            if rule.matches(intent, parameters):
+                rule.handler(*callback_args)
+                logger.debug(f"Stateless handler {rule} triggered.")
+        for rule in self.states.get(state, []):
+            # break after first occurence
             if isinstance(rule, Controller):
                 next_state = rule.execute(state, intent, parameters, *callback_args)
-            else:
+                if next_state:
+                    return next_state
+            elif rule.matches(intent, parameters):
                 next_state = rule.handler(*callback_args)
-                logger.debug(f"{rule} triggered"
-                             f"{f' and switched to new state {next_state}' if next_state else ''}.")
-        elif fallback_rule:
-            if isinstance(fallback_rule, Controller):
-                next_state = fallback_rule.execute(state, intent, parameters, *callback_args)
-            else:
-                next_state = fallback_rule.handler(*callback_args)
-                logger.debug(f"Fallback handler {fallback_rule} triggered.")
-        else:
-            # should not happen
+                if next_state:
+                    logger.debug(f"{rule} triggered"
+                                 f"{f' and switched to new state {next_state}' if next_state else ''}.")
+                    return next_state
+        for rule in self.fallbacks:
+            if isinstance(rule, Controller):
+                next_state = rule.execute(state, intent, parameters, *callback_args)
+                if next_state:
+                    return next_state
+            elif rule.matches(intent, parameters):
+                next_state = rule.handler(*callback_args)
+                if next_state:
+                    logger.debug(f"Fallback handler {rule} triggered.")
+                    return next_state
+
+        if self.warn_bypassed:
             logger.warning(f"No matching rule found in state {state} with intent "
                            f"{intent} and parameters {parameters}. Consider adding "
                            f"a fallback to the controller.")
-        return next_state
 
 
 if __name__ == '__main__':

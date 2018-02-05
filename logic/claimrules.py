@@ -124,17 +124,28 @@ def abort_claim(composer, context):
 
 
 def change_formal_address(composer, context):
-    # TODO: broken
-    print(context.last_user_utterance.parameters)
-    address = context.last_user_utterance.parameters.get('formal_address')
-    if address == 'yes':
-        context.user.formal_address = True
-    elif address == 'false':
-        context.user.formal_address = False
+    formal = None
+    address = None
+    if context.last_user_utterance.parameters:
+        address = context.last_user_utterance.parameters.get('formal_address')
+    if address:
+        if address == 'yes':
+            formal = True
+        elif address == 'false':
+            formal = False
+        else:
+            logger.warning(f'Invalid formal_address value: {address}')
+            return
     else:
-        logger.debug(f'Invalid formal_address value: {address}')
-        return
-    context.user.save()
+        # TODO: Not properly detected in DialogFlow, because there is no easy way to add this entity to every intent.
+        if any(x in context.last_user_utterance.text.lower() for x in ('du', 'dein')):
+            formal = False
+        elif any(x in context.last_user_utterance.text for x in ('Ihr', 'Sie')):
+            formal = True
+
+    if formal is not None:
+        logger.debug(f"{context.user.name} is now addressed {'formally' if formal else 'informally'}.")
+        context.user.update(formal_address=formal).execute()
 
 
 # TODO: start handler
@@ -143,14 +154,14 @@ def change_formal_address(composer, context):
 CLAIM_RULES = {
     "stateless": [  # always applied
         IntentHandler(record_phone_damage, intents='phone_broken'),
-        IntentHandler(change_formal_address, parameters='formal_address'),
+        IntentHandler(change_formal_address),
     ],
     "states": {
         States.INITIAL: [
             IntentHandler(hello, intents=['hello', 'start']),
         ],
         States.SMALLTALK: [
-            smalltalk_controller,
+            IntentHandler(ask_to_start),
         ],
         'ask_to_start': [
             AffirmationHandler(begin_questionnaire),
@@ -171,6 +182,7 @@ CLAIM_RULES = {
             AffirmationHandler(store_answer),
             IntentHandler(repeat_question, intents='repeat'),
             NegationHandler(repeat_question),
+            IntentHandler(check_answer)
         ],
     },
     "fallbacks": [
