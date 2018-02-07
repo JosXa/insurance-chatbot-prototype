@@ -20,7 +20,9 @@ phone_details:
     imei:
       title: "die IMEI-Nummer des beschädigten Gerätes"
       match_regex: "[0-9]{15}([0-9]{15})*"
-      hint: "die elektronische Gerätenummer - diese 15-stellige Nummer ist auf dem Typenschild des Gerätes oder über die Tastenkombination *#06# zu finden"
+      hint: "{{it is}} die elektronische Gerätenummer - diese 15-stellige Nummer ist auf dem Typenschild des Gerätes
+      oder
+      über die Tastenkombination *#06# zu finden"
       example: "990000862471854"
       required: no
     model_identifier:

@@ -2,150 +2,160 @@ import random
 
 from logzero import logger
 
-from corpus.responsecomposer import ResponseComposer
+from corpus.sentencecomposer import SentenceComposer
 from logic.context import Context, States
 from logic.controller import AffirmationHandler, Controller, IntentHandler, NegationHandler
-from logic.smalltalk import smalltalk_controller
 from model import UserAnswers
+
+controller = Controller()
 
 
 def probability(value: float) -> bool:
     return random.random() < value
 
 
-def hello(composer, context):
+@controller.on_intent(States.INITIAL, intents=['hello', 'start'])
+def hello(c, ctx):
     # TODO: If user has already interacted (after bot restart), go immediately to "current" question
-    composer.say("hello")
-    if not context.has_outgoing_intent("what i can do", age_limit=10):
-        composer.say("what i can do")
+    c.say("hello")
+    if not ctx.has_outgoing_intent("what i can do", age_limit=10):
+        c.say("what i can do")
+        c.say("what you can say")
     return States.SMALLTALK
 
 
-def ask_to_start(composer, context):
-    composer.ask("claim damage", choices=['affirm_yes', 'negate_no'])
+def ask_to_start(c, ctx):
+    c.ask("claim damage", choices=['affirm_yes', 'negate_no'])
     return 'ask_to_start'
 
 
-def record_phone_damage(composer, context):
-    composer.say("sorry for that")
-    dmg_type = context.last_user_utterance.parameters.get('damage_type')
+def record_phone_damage(c, ctx):
+    c.say("sorry for that")
+    dmg_type = ctx.last_user_utterance.parameters.get('damage_type')
     if dmg_type:
-        context.add_answer_to_question('damage_type', str(dmg_type))
+        ctx.add_answer_to_question('damage_type', str(dmg_type))
 
 
-def begin_questionnaire(composer, context):
-    composer.say("with pleasure").then_ask(context.current_question)
+def begin_questionnaire(c, ctx):
+    c.say("with pleasure").then_ask(ctx.current_question)
     return States.ASKING_QUESTION
 
 
-def user_no_claim(composer, context):
+def user_no_claim(c, ctx):
     print("user has no claim to make")  # TODO
 
 
-def send_example(composer, context):
-    composer.give_example(context.current_question)
+def send_example(c, ctx):
+    c.give_example(ctx.current_question)
 
 
-def clarify(composer, context: Context):
+def clarify(c, ctx: Context):
     should_send_example = False
-    if context.last_user_utterance.intent == 'example':
+    if ctx.last_user_utterance.intent == 'example':
         should_send_example = True
 
-    if context.has_outgoing_intent('give_hint', age_limit=2):
+    if ctx.has_outgoing_intent('give_hint', age_limit=2):
         should_send_example = True
     else:
-        composer.give_hint(context.current_question)
+        c.give_hint(ctx.current_question)
 
     if should_send_example:
-        send_example(composer, context)
+        send_example(c, ctx)
 
 
-def check_answer(composer, context):
-    question = context.current_question
-    if question.is_valid(context.last_user_utterance.text):
+def check_answer(c, ctx):
+    question = ctx.current_question
+    if question.is_valid(ctx.last_user_utterance.text):
         if question.confirm:
-            return ask_to_confirm_answer(composer, context)
+            return ask_to_confirm_answer(c, ctx)
         else:
-            return store_answer(composer, context, user_answer=context.last_user_utterance.text)
+            return store_answer(c, ctx, user_answer=ctx.last_user_utterance.text)
     else:
-        composer.say('sorry', 'invalid answer').give_hint(question)
+        c.say('sorry', 'invalid answer').give_hint(question)
         return States.ASKING_QUESTION
 
 
-def store_answer(composer, context, user_answer=None):
+def store_answer(c, ctx, user_answer=None):
     # Assumes answer is checked for validity
     if not user_answer:
-        user_answer = context.get_value('user_answer')
-    context.add_answer_to_question(context.current_question, user_answer)
-    composer.say("ok thank you")
-    return ask_next_question(composer, context)
+        user_answer = ctx.get_value('user_answer')
+    ctx.add_answer_to_question(ctx.current_question, user_answer)
+    c.say("ok thank you")
+    return ask_next_question(c, ctx)
 
 
-def ask_to_confirm_answer(composer: ResponseComposer, context):
-    composer.ask_to_confirm(context.current_question, context.last_user_utterance.text)
-    context.set_value('user_answer', context.last_user_utterance)
+def ask_to_confirm_answer(c: SentenceComposer, ctx):
+    c.ask_to_confirm(ctx.current_question, ctx.last_user_utterance.text)
+    ctx.set_value('user_answer', ctx.last_user_utterance)
     return 'confirming_user_answer'
 
 
-def ask_next_question(composer, context):
-    if context.current_questionnaire.is_first_question(context.current_question):
+def ask_next_question(c, ctx):
+    if ctx.current_questionnaire.is_first_question(ctx.current_question):
         # started a new questionnaire
-        if context.has_answered_questions:
-            composer.say("questionnaire finished")
+        if ctx.has_answered_questions:
+            c.say("questionnaire finished")
 
-    composer.then_ask(context.current_question)
+    c.then_ask(ctx.current_question)
     return States.ASKING_QUESTION
 
 
-def repeat_question(composer, context):
-    composer.say("again").ask(context.current_question)
+def repeat_question(c, ctx):
+    c.say("again").ask(ctx.current_question)
     return States.ASKING_QUESTION
 
 
-def skip_question(composer, context):
-    if context.current_question.is_required:
-        composer.say("sorry", "but", "cannot skip this question")
-        composer.ask("continue anyway", choices=("affirm_yes", "negate_no"))
+def skip_question(c, ctx):
+    if ctx.current_question.is_required:
+        c.say("sorry", "but", "cannot skip this question")
+        c.ask("continue anyway", choices=("affirm_yes", "negate_no"))
         return "ask_continue_despite_no_skipping"
     else:
-        composer.say("skip this question", parameters={'question': context.current_question})
-        context.add_answer_to_question(context.current_question, UserAnswers.NO_ANSWER)
-        ask_next_question(composer, context)
+        c.say("skip this question", parameters={'question': ctx.current_question})
+        ctx.add_answer_to_question(ctx.current_question, UserAnswers.NO_ANSWER)
+        ask_next_question(c, ctx)
 
 
-def excuse_did_not_understand(composer, context):
-    composer.say("sorry", "but", "did not understand")
-    if probability(0.8) and context.questionnaire_completion_ratio > 0.3:
-        composer.say("try again")
+def excuse_did_not_understand(c, ctx):
+    c.say("sorry", "but", "did not understand")
+    if probability(0.8) and ctx.questionnaire_completion_ratio > 0.3:
+        c.say("reformulate")
 
 
-def abort_claim(composer, context):
+def abort_claim(c, ctx):
     print("CLAIM ABORTED")  # TODO
 
 
-def change_formal_address(composer, context: Context):
-    if context.last_user_utterance.parameters:
-        address = context.last_user_utterance.parameters.get('formal_address')
+def change_formal_address(c, ctx: Context):
+    if ctx.last_user_utterance.parameters:
+        address = ctx.last_user_utterance.parameters.get('formal_address')
         if address:
             if address == 'yes':
-                context.user.formal_address = True
+                ctx.user.formal_address = True
             elif address == 'false':
-                context.user.formal_address = False
+                ctx.user.formal_address = False
+                c.say("we say du")
             else:
                 logger.warning(f'Invalid formal_address value: {address}')
                 return
     else:
-        if any(x in context.last_user_utterance.text.lower() for x in ('du', 'dein')):
-            context.user.formal_address = False
-        elif any(x in context.last_user_utterance.text for x in ('Ihr', 'Sie', 'Ihnen')):
-            context.user.formal_address = True
-    context.user.save()
+        if any(x in ctx.last_user_utterance.text.lower() for x in ('du', 'dein')):
+            ctx.user.formal_address = False
+            c.say("we say du")
+        elif any(x in ctx.last_user_utterance.text for x in ('Ihr', 'Sie', 'Ihnen')):
+            ctx.user.formal_address = True
+    ctx.user.save()
 
 
-# TODO: start handler
-# TODO: yes = affirm;  no = negate   <-- rename in dialogflow
+def no_rule_found(c, ctx):
+    c.say("sorry", "what i understood", parameters={'understanding': ctx.last_user_utterance.intent})
+    c.say("ask something else")
 
-CLAIM_RULES = {
+    # TODO: start handler
+    # TODO: yes = affirm;  no = negate   <-- rename in dialogflow
+
+
+RULES = {
     "stateless": [  # always applied
         IntentHandler(record_phone_damage, intents='phone_broken'),
         IntentHandler(change_formal_address),
@@ -182,7 +192,8 @@ CLAIM_RULES = {
     "fallbacks": [
         IntentHandler(record_phone_damage, intents='phone_broken'),
         IntentHandler(excuse_did_not_understand, intents='fallback'),
+        IntentHandler(no_rule_found),
     ]
 }
 
-rule_controller = Controller(CLAIM_RULES)
+controller.add_rules_dict(RULES)

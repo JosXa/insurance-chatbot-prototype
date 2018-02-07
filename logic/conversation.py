@@ -1,19 +1,18 @@
-from typing import List, TypeVar
-
 import os
+from typing import List
+
+from logzero import logger
 
 from appglobals import ROOT_DIR
+from clients.botapiclients import IBotAPIClient
+from clients.nlpclients import NLPEngine
 from clients.voice import VoiceRecognitionClient
-from logic.claimrules import rule_controller
+from logic.claimrules import controller
 from logic.context import UserContexts
 from logic.planning import PlanningAgent
 from logic.understanding import MessageUnderstanding
 from model import Update
 from tests.recorder import ConversationRecorder
-from logzero import logger
-
-NLPEngine = TypeVar('NLPEngine')
-IBotAPIClient = TypeVar('IBotAPIClient')
 
 
 class ConversationManager:
@@ -26,7 +25,7 @@ class ConversationManager:
     None, voice_recognition: VoiceRecognitionClient = None):
         self.bots = bot_clients
         self.nlp = nlp_client
-        self.controller = rule_controller
+        self.controller = controller
         self.recorder = recorder
         self.voice = voice_recognition
 
@@ -74,7 +73,7 @@ class ConversationManager:
         if self.recorder:
             self.recorder.record_dialog(update, actions)
 
-        bot.perform_actions(actions)
+        bot.perform_action(actions)
         context.add_actions(actions)
 
         update.save()

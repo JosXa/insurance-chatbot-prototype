@@ -3,6 +3,7 @@
 #     def __init__(self):
 #         pass
 from abc import ABCMeta, abstractmethod
+from functools import partial, wraps
 from typing import Callable
 
 from logzero import logger
@@ -71,7 +72,7 @@ class AffirmationHandler(BaseHandler):
 
 
 class NegationHandler(BaseHandler):
-    INTENTS = ['no', 'wrong', 'smalltalk.dialog.wrong']
+    INTENTS = ['no', 'wrong', 'smalltalk.dialog.wrong', 'skip']
 
     def __init__(self, handler):
         super(NegationHandler, self).__init__(handler)
@@ -89,12 +90,13 @@ class NegationHandler(BaseHandler):
 
 
 class Controller(object):
-    def __init__(self, rules, warn_bypassed=True):
+    def __init__(self, rules=None, warn_bypassed=True):
         self.warn_bypassed = warn_bypassed
         self.states = {}
         self.fallbacks = []
         self.stateless = []
-        self.add_rules_dict(rules)
+        if rules:
+            self.add_rules_dict(rules)
 
     def add_rules_dict(self, rules_dict):
         states = rules_dict.get('states', {})
@@ -113,6 +115,20 @@ class Controller(object):
 
         for handler in stateless:
             self.stateless.append(handler)
+
+    def on_intent(self, state, intents=None, parameters=None):
+        def decorator(func):
+            def wrapped(*args, **kwargs):
+                handler = IntentHandler(func, intents, parameters)
+                if state == 'fallback':
+                    self.fallbacks.append(handler)
+                elif state == 'stateless':
+                    self.stateless.append(handler)
+                else:
+                    self.states.setdefault(state, []).append(handler)
+                return func(*args, **kwargs)
+            return wrapped
+        return decorator
 
     def execute(self, state, intent, parameters, *callback_args):
         for rule in self.stateless:

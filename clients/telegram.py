@@ -44,7 +44,7 @@ class TelegramClient(IBotAPIClient):
         ud.datetime = update.effective_message.date
         return ud
 
-    def perform_actions(self, actions: List[ChatAction]):
+    def perform_action(self, actions: List[ChatAction]):
 
         for action in actions:
             if action.show_typing:
@@ -63,7 +63,7 @@ class TelegramClient(IBotAPIClient):
                 else:
                     markup = ForceReply()
 
-            self._send_message(peer=action.peer, text=action.render(), markup=markup)
+            self.send_message(peer=action.peer, text=action.render(), markup=markup)
 
     @property
     def client_name(self):
@@ -134,7 +134,7 @@ class TelegramClient(IBotAPIClient):
         voice.download(filepath)
         return filepath
 
-    def _send_message(self, peer: User, text: str, markup=None):
+    def send_message(self, peer: User, text: str, markup=None):
         """
         Sends a markdown-formatted message to the `recipient`.
         """

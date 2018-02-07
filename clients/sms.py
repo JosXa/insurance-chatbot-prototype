@@ -49,7 +49,7 @@ class SMSClient(IBotAPIClient):
     def unify_update(self, update):
         pass
 
-    def perform_actions(self, actions: List[ChatAction]):
+    def perform_action(self, actions: List[ChatAction]):
         print('performing actions in sms client')
         message = self.client.messages.create(
             to="+491728656978",

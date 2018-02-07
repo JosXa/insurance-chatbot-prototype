@@ -28,12 +28,10 @@ class IntegrationTestBase(unittest.TestCase):
         phone = '+491728656978'
 
         self.client = TelegramClient('josxa', api_id, api_hash, update_workers=4)
-        self.client.connect()
-        if not self.client.is_user_authorized():
-            self.client.send_code_request(phone)
-            self.client.sign_in(phone, input("Enter code: "))
+        self.client.start(phone)
 
-        self._peer = self.client.get_input_entity("@InsuranceBABot")
+        # self._peer = self.client.get_input_entity("@InsuranceBABot")
+        self.peer = self.client.get_input_entity("@josxasandboxbot")
         self._last_response = None
         self.client.add_update_handler(self._update_handler)
 
@@ -43,15 +41,15 @@ class IntegrationTestBase(unittest.TestCase):
     def _update_handler(self, update):
 
         if isinstance(update, UpdateShortMessage):
-            print(f"New UpdateShortMessage from {update.user_id} (equals {self._peer.user_id}: "
-                  f"{update.user_id == self._peer.user_id})")
-            if update.user_id == self._peer.user_id:
+            # print(f"New UpdateShortMessage from {update.user_id} (equals {self.peer.user_id}: "
+            #       f"{update.user_id == self.peer.user_id})")
+            if update.user_id == self.peer.user_id:
                 self._last_response = Response(text=update.message)
 
     def send_message_get_response(self, text) -> Response:
         self._last_response = None
 
-        self.client.send_message(self._peer, text)
+        self.client.send_message(self.peer, text)
 
         timeout = 5  # seconds
         count = 0

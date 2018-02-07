@@ -63,7 +63,7 @@ class FacebookClient(IBotAPIClient):
         # except:
         #     print("Could not contact 1441586482543309.")
 
-    def perform_actions(self, actions: List[ChatAction]):
+    def perform_action(self, actions: List[ChatAction]):
         try:
             for action in actions:
                 user_id = action.peer.facebook_id

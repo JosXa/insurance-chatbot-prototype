@@ -7,7 +7,7 @@ from logic import ChatAction
 from model import User
 
 
-class ResponseComposer:
+class SentenceComposer:
     def __init__(self,
                  peer: User,
                  template_loader: SelectiveTemplateLoader):

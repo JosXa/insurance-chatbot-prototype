@@ -5,7 +5,25 @@ invalid_answer:
     - "Mit dieser Eingabe kann ich nichts anfangen."
     - "Leider sagt mir diese Eingabe nichts."
 
-try_again:
+reformulate:
   choices:
     - "Bitte versuche es noch einmal 😊"
     - "{{'Formulieren Sie' if formal else 'Formuliere'}} das doch noch einmal anders 🤔"
+
+what_i_understood:
+  choices:
+    - "Das hier habe ich verstanden: <code>{{understanding}}</code>. Das hat mir mein Schöpfer aber
+    noch nicht beigebracht 😐"
+    - "Irgendetwas in der Art <code>{{understanding}}</code>..? 😵"
+    - "Ich habe etwas wie <code>{{understanding}}</code> verstanden, aber leider in diesem Kontext nichts damit
+    anfangen können 😣"
+  prefix: yes
+
+ask_something_else:
+  choices:
+    - "{{'Fragen Sie' if formal else 'Frag'}} doch etwas anderes 😊"
+    - "{{'Lassen Sie' if formal else 'Lass uns'}} doch über etwas anderes reden 🤔"
+    - text: "Themawechsel?"
+      condition: "{{context.has_outgoing_intent('ask_something_else', 8)}}"
+    - text: "Oh, das kommt jetzt aber ziemlich oft vor 🤕 Sprechen wir über etwas anderes..."
+      condition: "{{num_actions('ask_something_else') > 3}}"

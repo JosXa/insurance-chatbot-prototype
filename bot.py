@@ -53,9 +53,9 @@ def test_handler_fb(client, event):
         client.page.send(sender_id, "Quick reply tapped")
 
     if message_text:
-        client._send_message(sender_id, message_text)
+        client.send_message(sender_id, message_text)
     elif message_attachments:
-        client._send_message(sender_id, "Message with attachment received")
+        client.send_message(sender_id, "Message with attachment received")
 
 
 def main():

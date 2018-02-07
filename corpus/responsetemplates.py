@@ -114,6 +114,8 @@ class ResponseTemplate:
                 raise ValueError("Template cannot be suffix and prefix at the same time.")
             if obj.is_conjunction and any((obj.is_suffix, obj.is_prefix)):
                 raise ValueError("A conjunction template cannot be suffix or prefix.")
+            if not obj.is_prefix and not obj.is_conjunction:
+                obj.is_suffix = True
 
             # Assert 'is_'-values are mutually exclusive
             if not mutually_exclusive([getattr(obj, 'is_' + prop) for prop in ResponseTemplate.PROPERTIES]):

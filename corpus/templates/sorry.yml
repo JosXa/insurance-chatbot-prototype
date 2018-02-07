@@ -8,6 +8,10 @@ sorry:
     - "Entschuldigung"
     - "Bitte {{'entschuldigen Sie' if formal else 'entschuldige'}}"
     - "Es tut mir leid"
+    - text: "Sorry"
+      condition: "{{informal}}"
+    - text: "Ah, Mist"
+      condition: "{{informal}}"
   prefix: yes
 
 did_not_understand:
@@ -15,3 +19,4 @@ did_not_understand:
     - "Ich habe {{'Sie' if formal else 'dich'}} nicht verstanden."
     - "Was {{'meinen Sie' if formal else 'meinst du'}} damit?"
     - "{{'Können Sie' if formal else 'kannst du'}} das noch einmal anders formulieren?"
+    - "Das habe ich jetzt nicht verstanden 😶"
