@@ -118,14 +118,15 @@ class Controller(object):
 
     def on_intent(self, state, intents=None, parameters=None):
         def decorator(func):
+            handler = IntentHandler(func, intents, parameters)
+            if state == 'fallback':
+                self.fallbacks.append(handler)
+            elif state == 'stateless':
+                self.stateless.append(handler)
+            else:
+                self.states.setdefault(state, []).append(handler)
+
             def wrapped(*args, **kwargs):
-                handler = IntentHandler(func, intents, parameters)
-                if state == 'fallback':
-                    self.fallbacks.append(handler)
-                elif state == 'stateless':
-                    self.stateless.append(handler)
-                else:
-                    self.states.setdefault(state, []).append(handler)
                 return func(*args, **kwargs)
             return wrapped
         return decorator

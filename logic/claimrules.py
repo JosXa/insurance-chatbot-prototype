@@ -1,4 +1,5 @@
 import random
+from pprint import pprint
 
 from logzero import logger
 
@@ -161,9 +162,9 @@ RULES = {
         IntentHandler(change_formal_address),
     ],
     "states": {
-        States.INITIAL: [
-            IntentHandler(hello, intents=['hello', 'start']),
-        ],
+        # States.INITIAL: [
+        # IntentHandler(hello, intents=['hello', 'start']),
+        # ],
         States.SMALLTALK: [
             IntentHandler(ask_to_start),
         ],
@@ -197,3 +198,4 @@ RULES = {
 }
 
 controller.add_rules_dict(RULES)
+pprint(controller.states)
