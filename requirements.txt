@@ -1,7 +1,7 @@
 Jinja2==2.9.6
 Telethon==0.17.2
 apiai==1.2.3
-fbmq==2.1.0
+fbmq==2.4.4
 python-telegram-bot==8.1.1
 python-decouple==3.1
 peewee==2.10.1
