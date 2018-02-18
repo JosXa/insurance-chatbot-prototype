@@ -11,7 +11,7 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 def db():
     global _db
     if not _db:
-        _db = connect(settings.DATABASE_URL)
+        _db = connect(settings.DATABASE_URL, autorollback=True)
     return _db
 
 
@@ -23,4 +23,3 @@ def disconnect():
 
 # globals
 db = db()
-
