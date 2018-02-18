@@ -1,0 +1,11 @@
+urge_to_start_level_1:
+  "{{'Wussten Sie' if formal else 'Wusstest du'}}, dass fast 44% der Smartphone-Schäden dadurch entstehen, dass das
+  Handy aus den Händen gleitet und auf den Boden fällt?"
+urge_to_start_level_2:
+  "lvl2"
+urge_to_start_level_3:
+  "lvl3"
+urge_to_start_level_4:
+  "lvl4"
+urge_to_start_level_5:
+  "lvl5"

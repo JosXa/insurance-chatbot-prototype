@@ -1,19 +1,21 @@
 import string
 from typing import List, Union
 
+from core import ChatAction
 from corpus import Question
 from corpus.responsetemplates import ResponseTemplate, SelectiveTemplateLoader, TemplateRenderer, format_intent
-from logic import ChatAction
 from model import User
 
 
 class SentenceComposer:
     def __init__(self,
                  peer: User,
-                 template_loader: SelectiveTemplateLoader):
+                 template_loader: SelectiveTemplateLoader,
+                 template_renderer: TemplateRenderer
+                 ):
         self.peer = peer
         self.loader = template_loader
-        self.renderer = TemplateRenderer(user=self.peer)
+        self.renderer = template_renderer
 
         self._sequence = []  # type: List[ChatAction]
         self._inside_conjunction = False
@@ -72,6 +74,22 @@ class SentenceComposer:
         self.ask('is that correct', choices=['affirm_correct', 'negate_wrong'])
         return self
 
+    def send_media(self, media_id, caption_intent=None, parameters=None):
+        media_id = format_intent(media_id)
+        text = None
+        if caption_intent:
+            template = self.loader.select(caption_intent)
+            text = self.renderer.render_template(template.text_template, parameters=parameters)
+
+        self._create_action(
+            caption_intent or media_id,
+            text,
+            media_id=media_id,
+            type_=ChatAction.Type.SENDING_MEDIA,
+            as_new_message=True
+        )
+        return self
+
     def _append_to_previous(self, intent, text, template: ResponseTemplate = None, choices=None):
         # Append to previous message
 
@@ -83,7 +101,8 @@ class SentenceComposer:
 
         def finish_last_sentence(value: ChatAction):
             last_part = value.text_parts[-1]
-            if last_part[-1] not in string.punctuation:
+            last_char = last_part[-1]
+            if last_char not in string.punctuation and last_char != ' ':
                 last_part[-1] = last_part[-1] + '.'
 
         separator = '. '
@@ -117,6 +136,7 @@ class SentenceComposer:
     def _create_action(self,
                        intent,
                        text,
+                       media_id: str = None,
                        response_template: ResponseTemplate = None,
                        choices: List = None,
                        type_: ChatAction.Type = ChatAction.Type.SAYING,
@@ -143,6 +163,7 @@ class SentenceComposer:
                     peer=self.peer,
                     text=text,
                     intents=[intent],
+                    media_id=media_id,
                     choices=choices,
                     show_typing=True,
                     delay=delay))

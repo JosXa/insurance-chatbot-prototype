@@ -1,6 +1,6 @@
 import unittest
 
-from logic.controller import IntentHandler
+from core.controller import IntentHandler
 
 
 class MyTestCase(unittest.TestCase):
@@ -32,16 +32,16 @@ class MyTestCase(unittest.TestCase):
         self.assertFalse(handler.matches('kek', {}))
 
         handler = IntentHandler(dummy, None, 'formal_address')
-        self.assertFalse(handler.matches('hello', None))
+        self.assertFalse(handler.matches('start', None))
 
         handler = IntentHandler(dummy, None, ['p1', 'p2'])
-        self.assertTrue(handler.matches('hello', {'p1': 'kek', 'p2': 'kektarine'}))
+        self.assertTrue(handler.matches('start', {'p1': 'kek', 'p2': 'kektarine'}))
         self.assertTrue(handler.matches(None, {'p1': 'kek', 'p2': 'kektarine'}))
-        self.assertTrue(handler.matches('hello', {'p1': 'kek', 'p2': 'kektarine', 'p3': 'test'}))
+        self.assertTrue(handler.matches('start', {'p1': 'kek', 'p2': 'kektarine', 'p3': 'test'}))
         self.assertFalse(handler.matches(None, {'p1': 'kek', 'p3': 'test'}))
-        self.assertFalse(handler.matches('hello', {'p1': 'kek', 'p3': 'test'}))
+        self.assertFalse(handler.matches('start', {'p1': 'kek', 'p3': 'test'}))
         self.assertFalse(handler.matches(None, {'p3': 'kek'}))
-        self.assertFalse(handler.matches('hello', {'p3': 'kek'}))
+        self.assertFalse(handler.matches('start', {'p3': 'kek'}))
 
         handler = IntentHandler(dummy, 't1', ['p1', 'p2'])
         self.assertTrue(handler.matches('t1', {'p1': 'kek', 'p2': 'kektarine'}))

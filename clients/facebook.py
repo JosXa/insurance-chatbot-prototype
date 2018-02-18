@@ -1,27 +1,23 @@
 # -*- coding: utf-8 -*-
 import datetime
 import time
-import traceback
+from pprint import pprint
 from typing import Callable, List
 
-from fbmq import Event, NotificationType, Page, QuickReply
-from flask import request
+import os
 
+from docutils.nodes import caption
+from fbmq import Event, Page, QuickReply, Attachment
+from flask import request, send_file
+
+import settings
 from clients.botapiclients import IBotAPIClient
-from logic import ChatAction
+from core import ChatAction
+from corpus.media import get_file_by_media_id
 from model import Update, User
 
 
 class FacebookClient(IBotAPIClient):
-
-    def show_typing(self, user):
-        pass
-
-    def add_voice_handler(self, callback):
-        pass
-
-    def download_voice(self, voice_id, filepath):
-        pass
 
     def __init__(self, app, token):
         self._app = app
@@ -34,20 +30,24 @@ class FacebookClient(IBotAPIClient):
     def client_name(self):
         return 'facebook'
 
-    def unify_update(self, event: Event):
+    def unify_update(self, event: Event, payload: str = None):
         ud = Update()
         ud.original_update = event
         ud.client_name = self.client_name
         ud.message_id = event.message_mid
         ud.datetime = datetime.datetime.fromtimestamp(event.timestamp / 1000.0)  # TODO: utcfromtimestamp ?
 
+        ud.payload = payload
+
         ud.user, created = User.get_or_create(facebook_id=event.sender_id)
         if created:
             ud.user.save()
 
+        if event.message_attachments:
+            pprint(event.message_attachments)
+
         if hasattr(event, 'message_text'):
             ud.message_text = event.message_text
-        ud.save()
         return ud
 
     def initialize(self):
@@ -58,36 +58,26 @@ class FacebookClient(IBotAPIClient):
         self._app.add_url_rule('/', 'index', self._authentication, methods=['GET'])
         self._app.add_url_rule('/', 'request', self._webhook, methods=['POST'])
 
-        # try:
-        #     self.page.send(1441586482543309, "Up and running.")
-        # except:
-        #     print("Could not contact 1441586482543309.")
-
     def perform_action(self, actions: List[ChatAction]):
-        try:
-            for action in actions:
-                user_id = action.peer.facebook_id
+        for action in actions:
+            user_id = action.peer.facebook_id
 
-                if action.show_typing:
-                    self._page.typing_on(user_id)
-                if action.delay:
-                    time.sleep(action.delay.value)
+            if action.show_typing:
+                self.show_typing(user_id)
+            if action.delay:
+                time.sleep(action.delay.value)
 
-                quick_replies = None
-                if action.action_type == ChatAction.Type.ASKING_QUESTION:
-                    if action.choices:
-                        quick_replies = [QuickReply(title=x, payload=f"test_{x}") for x in action.choices]
+            quick_replies = None
+            if action.action_type == ChatAction.Type.ASKING_QUESTION:
+                if action.choices:
+                    quick_replies = [QuickReply(title=x, payload=f"test_{x}") for x in action.choices]
+            elif action.action_type == ChatAction.Type.SENDING_MEDIA:
+                self.send_media(action.peer, action.media_id, action.render())
 
-                self._page.send(user_id,
-                                action.render(),
-                                quick_replies=quick_replies)
-        except Exception as e:
-            if self._error_handler:
-                self._error_handler(e)
-            else:
-                traceback.print_exc()
+            self._page.send(user_id, action.render(), quick_replies=quick_replies)
 
-    def _authentication(self):
+    @staticmethod
+    def _authentication():
         all_args = request.args
         if 'hub.challenge' in all_args:
             return all_args['hub.challenge']
@@ -96,7 +86,8 @@ class FacebookClient(IBotAPIClient):
         self._page.handle_webhook(request.get_data(as_text=True))
         return "ok"
 
-    def __shutdown_server(self):
+    @staticmethod
+    def __shutdown_server():
         func = request.environ.get('werkzeug.server.shutdown')
         if func is None:
             raise RuntimeError('Not running with the Werkzeug Server')
@@ -108,12 +99,41 @@ class FacebookClient(IBotAPIClient):
     def stop_listening(self):
         self.__shutdown_server()
 
-    def add_plaintext_handler(self, callback):
-        # XXX: An issue was written to fbmq on GitHub to expose the `page` attribute as a public member
-        self._page._webhook_handlers['message'] = lambda event: callback(self, self.unify_update(event))
-
     def set_start_handler(self, callback):
+        @self._page.callback(['START_BOT'])
+        def start_handler(payload, event):
+            callback(self, self.unify_update(event, payload))
+
+    def add_plaintext_handler(self, callback):
+        self._page.set_webhook_handler('message', lambda event: callback(self, self.unify_update(event)))
+
+    def add_voice_handler(self, callback):
         pass
+
+    def download_voice(self, voice_id, filepath):
+        pass
+
+    def send_media(self, peer, media_id, param):
+        filepath = get_file_by_media_id(media_id)
+        ext = os.path.splitext(filepath)[1]
+
+        # Host the file
+
+        if ext == '.mp4':
+            # GIF
+            pass
+        elif ext in ('.jpg', '.jpeg', '.png'):
+            image_url = settings.APP_URL + f'/media/image/{media_id}.{ext}'
+            return self._page.send(peer.facebook_id, Attachment.Image(image_url))
+        elif ext == '.webp':
+            pass  # sticker
+            # msg = self.bot.send_sticker(peer.telegram_id, file)
+            # if caption:
+            #     self.send_message(peer, caption)
+            # return msg
+
+    def show_typing(self, user_id):
+        self._page.typing_on(user_id)
 
     def add_error_handler(self, callback):
         self._error_handler = callback

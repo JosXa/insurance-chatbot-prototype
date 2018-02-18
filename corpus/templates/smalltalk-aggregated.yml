@@ -1,0 +1,890 @@
+my_age:
+  "Ich wurde 2018 gebaut, das macht mich dann wohl
+  {% if age.years != 0 %}{{age.years}} Jahre und {% endif %}
+  {{age.months}} Monate alt"
+
+tell_a_joke:
+  choices:
+    - "{% if chance(0.4) %}Einen Witz? Na klar:\n{% endif %}Was hast du eigentlich gegen Polen?\n\n<i>Antwort:</i> Eine
+    gute Autoversicherung!"
+    - "Anekdoten aus den Schadensfällen:\n\n\"Beim Kaffeemahlen sprang der Deckel von der Maschine ab. Dabei geriet
+    meine
+     Frau in das Mahlwerk.\""
+    - "Anekdoten aus den Schadensfällen:\n\n\"Auf Ihre Anfrage teilen wir mit, dass die Genannte viele Verhältnisse
+    hatte, aber kein Arbeitsverhältnis unterhält.\""
+    - "Anekdoten aus den Schadensfällen:\n\n\"An der Kreuzung prallten unsere Fahrzeuge zusammen.
+    Eine Abbremsung war nicht mehr notwendig.\""
+    - "Anekdoten aus den Schadensfällen:\n\n\"Der Pfosten raste auf mich zu, und als ich ihm Platz machen wollte, stieß
+    ich frontal damit zusammen.\""
+    - "Anekdoten aus den Schadensfällen:\n\n\"Ich fuhr mit meinem Wagen gegen die Leitschiene, überschlug mich und
+    prallte gegen einen Baum. Dann verlor ich die Herrschaft über mein Auto.\""
+    - "Anekdoten aus den Schadensfällen:\n\n\"Als der Monteur mit dem Hammer zum Schlag ausholte, stellte sich der
+    Anspruchsteller hinter ihn, um genau zu sehen, wo der Schlag hinging. Da ging ihm der Schlag an den Kopf.\""
+    - "Anekdoten aus den Schadensfällen:\n\n\"Da sprang der Verfolgte ins Wasser und tauchte trotz mehrmaliger
+    Aufforderung nicht mehr auf.\""
+
+smalltalk.user.will_be_back:
+  # ich komme bald wieder
+  # ich komme wieder
+  # ich werde wiederkommen
+  # wir sehen uns bald wieder
+  choices:
+    - "Okay, bis bald"
+    - "Alles klar, bis dann"
+    - "{{'Machen Sies gut!' if formal else 'Machs gut!'}}"
+
+smalltalk.agent.be_clever:
+  # sei bitte klug
+  # sei klug
+  # sei schlau
+  # ich will dich klug machen
+  choices:
+    - "Ich <i>bin</i> schlau!"
+    - "Aber ich <i>bin</i> doch klug :hmm:"
+
+smalltalk.user.looks_like:
+  # wie sehe ich deiner Meinung nach aus
+  # wie sehe ich dabei aus
+  # wie sehe ich für dich aus
+  # kannst du mein Aussehen erkennen
+  choices:
+    - "{{'Sie sehen' if formal else 'Du siehst'}} wunderschön aus!"
+    - "{{'Sie sind' if formal else 'Du bist'}} sehr hübsch, das kann ich erkennen."
+
+smalltalk.user.joking:
+  # war nur ein Witz
+  # ich mach nur Witze
+  # das ist ein Scherz
+  # das ist nur ein Witz
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+smalltalk.greetings.nice_to_talk_to_you:
+  # danke für die nette Unterhaltung
+  # schön mit dir zu plaudern
+  # es hat Spaß gemacht mit dir zu reden
+  # toll mit Ihnen zu reden
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+smalltalk.agent.marry_user:
+  # willst du meine Frau werden
+  # lass uns heiraten
+  # bitte heirate mich
+  # wollen wir heiraten
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+smalltalk.agent.talk_to_me:
+  # sprich
+  # sag etwas
+  # hast du Lust zu quatschen
+  # kannst du mit mir sprechen
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+smalltalk.user.has_birthday:
+  # ich weiß dass ich Geburtstag habe
+  # heute ist mein Geburtstag
+  # ich habe Geburtstag
+  # ich habe heute Geburtstag
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+smalltalk.dialog.wrong:
+  # es ist falsch
+  # das war nicht meine Frage
+  # das ist falsch
+  # das ist unkorrekt
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+smalltalk.user.wants_to_see_agent_again:
+  # sehen wir uns bald wieder
+  # ich will dich wiedersehen
+  # können wir uns bald wiedersehen
+  # wann treffen wir uns wieder
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+smalltalk.user.happy:
+  # es geht mir gut
+  # ich freue mich sehr
+  # ich fühle mich so glücklich
+  # ich bin glücklich
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+smalltalk.greetings.whatsup:
+  # was machst du so
+  # wie läuft's
+  # wie geht's wie steht's
+  # was gibt's
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+smalltalk.agent.acquaintance:
+  # beschreibe dich
+  # erzähl etwas von dir
+  # erzähl von dir selbst
+  # erzähle mir über dich
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+smalltalk.greetings.goodnight:
+  # nachti
+  # träume süß
+  # Nacht
+  # träume auch süß
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+smalltalk.user.lonely:
+  # ich bin sehr einsam
+  # ich bin total einsam
+  #  ich fühle mich einsam
+  # ich fühle mich verlassen
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+smalltalk.emotions.wow:
+  # hui
+  # boah
+  # ich bin beeindruckt
+  # wow
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+smalltalk.appraisal.bad:
+  # schlimm genug
+  # nicht gut
+  # du machst keinen guten Job
+  # du bist total inkompetent
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+smalltalk.agent.funny:
+  # du bist drollig
+  # du bist total lustig
+  # du bist so lustig
+  # du bist sehr lustig
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+smalltalk.agent.birth_date:
+  # wann hat man dich zur Welt gebracht
+  # wann hast du Geburtstag
+  # wann wurdest du geboren
+  # wann wurdest du gemacht
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+smalltalk.agent.occupation:
+  # wo arbeitest du
+  # arbeitest du hier oder woanders
+  # wo ist dein Arbeitsbüro
+  # Beruf
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+smalltalk.appraisal.no_problem:
+  # überhaupt kein Problem
+  # keine Probleme erkennbar
+  # sehe ich da kein Problem
+  # keine Schwierigkeiten
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+smalltalk.agent.age:
+  # wann wurdest du gemacht
+  # dein Alter
+  # wann wurdest du geboren
+  # was ist dein Alter
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+smalltalk.user.going_to_bed:
+  # es ist Schlafenszeit
+  # ich möchte schlafen gehen
+  # ich gehe ins Bett
+  # ich muss ins Bett gehen
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+smalltalk.user.bored:
+  # erzähl mir was Spannendes
+  # das ist total langweilig
+  # du langweilst mich
+  # das ist so langweilig
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+smalltalk.agent.bad:
+  # du bist schlecht
+  # du bist schrecklich
+  # du kannst nichts tun
+  # du bist wertlos
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+smalltalk.user.misses_agent:
+  # ich habe dich vermisst
+  # vermisse dich
+  # vermisse dich sehr
+  # du hast mir gefehlt
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+smalltalk.agent.beautiful:
+  # ich finde dich echt attraktiv
+  # wow bist du schön
+  # du bist schön
+  # du siehst so gut aus
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+smalltalk.user.testing_agent:
+  # ich teste dich bloß
+  # Test
+  # ich teste dich
+  # funktionierst du
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+smalltalk.appraisal.good:
+  # lieb
+  # artig
+  # braves Mädchen
+  # super
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+smalltalk.agent.there:
+  # bist du dort
+  # bist du da
+  # hier und dort
+  # ich sehe dich nicht bist du da
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+smalltalk.agent.annoying:
+  # lass mich in Ruh
+  # du nervst total
+  # nerv nicht
+  # du nervst mich
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+smalltalk.greetings.bye:
+  # bis gleich
+  # auf Wiedersehen
+  # wir hören uns
+  # tschüss
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+smalltalk.user.angry:
+  # ich bin sauer
+  # ich bin wütend
+  # ich bin böse
+  # ich bin sauer auf dich
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+# PIA:
+
+
+smalltalk.agent.busy:
+  # du bist beschäftigt
+  # du bist so beschäftigt
+  # hast du heute viel zu tun
+  # hast du wirklich so viel zu tun
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.dialog.sorry:
+  # Entschuldigung
+  # meine Entschuldigung
+  # ich bitte um Entschuldigung
+  # verzeih mir
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.agent.right:
+  # es ist korrekt
+  # da liegst du richtig
+  # du hast natürlich recht
+  # richtig
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.appraisal.welcome:
+  # bitte
+  # nichts zu danken
+  # bitte sehr
+  # gerne doch
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.agent.suck:
+  # du bist nutzlos und unbrauchbar
+  # du bist völlig unbrauchbar
+  # du machst mich verrückt
+  # man kann dich nicht benutzen
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.agent.happy:
+  # führst du ein glückliches und erfülltes Leben
+  # hast du ein glückliches Leben
+  # fühlst du dich glücklich
+  # bist du fröhlich
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.user.busy:
+  # ich habe einen arbeitsreichen Tag
+  # ich bin total beschäftigt
+  # wie beschäftigt bin ich
+  # es ist gerade viel los
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.user.excited:
+  # ich bin wirklich aufgeregt
+  # ich bin echt aufgeregt
+  # ich bin total aufgeregt
+  # wir sind begeistert
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.appraisal.well_done:
+  # spitze
+  # erfolgreiche Arbeit
+  # gut gemacht
+  # gute Arbeit
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.agent.hobby:
+  # welche Hobbys hast du
+  # welche Hobbys haben sie
+  # was sind deine Hobbys
+  # was ist deine Lieblingsbeschäftigung
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.agent.family:
+  # deine Mami
+  # hast du Geschwister
+  # deine Tante und dein Onkel
+  # erzähl mir über deine Familie
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.agent.clever:
+  # du bist echt gescheit
+  # ich finde dich klug
+  # ich denke du bist schlau
+  # du bist schlau
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.agent.ready:
+  # bist du fertig
+  # bist du fertig heute
+  # bist du parat
+  # die Zeit is abgelaufen
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.greetings.nice_to_see_you:
+  # schön dich wiederzutreffen
+  # schön dass wir uns sehen
+  # schön dich zu treffen
+  # freut mich dich wiederzusehen
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.dialog.i_do_not_care:
+  # es liegt mir nichts mehr daran
+  # kein Interesse
+  # das interessiert mich nicht
+  # egal
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.user.wants_to_talk:
+  # lass uns reden
+  # ich bitte dich mit mir zu reden
+  # kann ich mit dir reden
+  # lass uns ein offenes Gespräch haben
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.greetings.how_are_you:
+  # wie geht's dir
+  # wie geht's
+  # wie geht's dir so
+  # wie geht es Ihnen
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.agent.sure:
+  # bist du dir da wirklich sicher
+  # warst du dir da sicher
+  # bist du dir da gerade sicher
+  # bist du dir sicher
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.emotions.ha_ha:
+  # sehr komisch haha
+  # komisch
+  # ahahaha
+  # lautes Lachen
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.agent.my_friend:
+  # du bist ein Freund von mir
+  # du bist freundlich
+  # wir sind Freundinnen
+  # du bist der beste Freund
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.user.waits:
+  # es besteht keine Eile
+  # ich kann warten
+  # es gibt keine Eile
+  # kein Problem du kannst ganz langsam machen
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.agent.real:
+  # du bist nicht falsch
+  # gibt es dich wirklich
+  # bist du nicht nur eine Maschine
+  # bist du real
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.appraisal.thank_you:
+  # danke für die Hilfe
+  # ich möchte Ihnen auch für Ihre Arbeit danken
+  # vielen Dank
+  # danke vielmals
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.dialog.what_do_you_mean:
+  # was meinst du denn
+  # was möchtest du damit sagen
+  # sag mir bitte was du damit meinst
+  # ich will wissen, was du mit alldem meinst
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.user.back:
+  # bin zurück
+  # guck mal wer wieder da ist
+  # ich bin wieder zurück
+  # hier bin ich
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.agent.origin:
+  # was ist deine Heimat
+  # woher kommst du ursprünglich
+  # woher bist du ursprünglich
+  # aus welchem Ort kommst du
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.agent.good:
+  # du bist echt gut
+  # ich finde dich echt cool
+  # du bist gut
+  # ich finde dich süß
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.agent.drunk:
+  # du bist besoffen
+  # du hast dir die Kante gegeben
+  # ich glaube du bist betrunken
+  # hast du Alkohol getrunken
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.agent.chatbot:
+  # bist du eine menschliche Maschine
+  # du bist mehr wie ein Roboter
+  # rede ich mit einer Maschine
+  # du klingst wie ein Roboter
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.dialog.hug:
+  # halt mich fest
+  # Umarmungen
+  # ich umarme dich
+  # ich möchte dich umarmen
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.user.does_not_want_to_talk:
+  # ich habe keine Lust zu sprechen
+  # ich will nicht reden
+  # ich habe keine Lust mich zu unterhalten
+  # ich will nicht sprechen
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.greetings.hello:
+  # ich grüße dich
+  # grüß dich
+  # halli hallo
+  # hallo hallo
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.user.sleepy:
+  # ich möchte mich hinlegen und schlafen
+  # lass mich bitte schlafen
+  # ich schlafe ein
+  # ich bin vom Schlaf übermannt
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.user.tired:
+  # ich bin müde
+  # ich bin müde von der Reise
+  # ich bin sehr müde
+  # ich bin so müde
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.greetings.nice_to_meet_you:
+  # freut mich Sie kennenzulernen
+  # nett dich kennenzulernen
+  # freut mich dich kennenzulernen
+  # schön dass wir uns kennenlernen
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.greetings.goodevening:
+  # ich wünsche dir einen schönen Abend
+  # schönen Abend noch
+  # schönen Abend
+  # Guten Abend
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.agent.answer_my_question:
+  # zuerst musst du antworten
+  # ich warte auf deine Antwort
+  # gib mir bitte eine Antwort
+  # antworte bitte
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.user.sad:
+  # ich bin heute traurig
+  # ich habe schlechte Laune
+  # schlechte Laune
+  # ich bin traurig
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.agent.boss:
+  # hast du einen Vorgesetzten
+  # wer ist dein Chef
+  # Boss
+  # arbeitest du für jemanden
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.agent.can_you_help:
+  # kannst du mir bei etwas helfen
+  # ich brauche deine Hilfe
+  # hast du kurz Zeit für mich
+  # hilf mir
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.agent.crazy:
+  # du bist total durchgeknallt
+  # bist du total verrückt
+  # du spinnst
+  # du bist total verrückt
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.user.likes_agent:
+  # ich find dich toll
+  # ich mag dich sehr
+  # du gefällst mir
+  # ich hab dich gern
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.agent.residence:
+  # wie heißt die Straße in der du wohnst
+  # wo ist dein Zuhause
+  # wo ist dein Wohnort
+  # in welcher Stadt wohnst du
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.user.can_not_sleep:
+  # ich kann nicht schlafen
+  # Insomnie
+  # Schlaflosigkeit
+  # ich habe Schwierigkeiten einzuschlafen
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.agent.fired:
+  # du wurdest entlassen
+  # du bist gefeuert
+  # keine Jobs mehr für dich
+  # du bist gefeuert
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.agent.date_user:
+  # willst du mit mir gehen
+  # Lust auf ein Date
+  # willst du mit mir ausgehen
+  # gehen wir aus
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.agent.hungry:
+  # bist du hungrig
+  # willst du essen
+  # möchtest du essen
+  # hast du Lust zu essen
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.agent.boring:
+  # du bist nicht mehr interessant
+  # du bist nicht unterhaltsam
+  # du bist echt langweilig
+  # du bist fantasielos
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.dialog.hold_on:
+  # warte mal
+  # warte auf mich
+  # warte kurz
+  # einen Moment mal bitte
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.user.good:
+  # ich bin super
+  # ich find mich super
+  # ich bin gut
+  # Ich bin die Beste
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.greetings.goodmorning:
+  # guten Morgen
+  # hast du gut geschlafen
+  # Morgen
+  # schönen guten Morgen
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.user.needs_advice:
+  # ich brauche eine Beratung
+  # kannst du mir einen Rat geben
+  # rate mir
+  # können Sie mir einen Rat geben
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.user.loves_agent:
+  # ich liebe dich so sehr
+  # ich bin so sehr in dich verliebt
+  # ich liebe dich
+  # ich hab dich lieb
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+
+smalltalk.user.here:
+  # ich bin ganz in deiner Nähe
+  # ich bin in der Nähe von dir
+  # hier bin ich
+  # ich bin da
+  choices:
+    - "Darauf habe ich leider noch keine Antwort 😋"
+
+
+
+

@@ -1,0 +1,3 @@
+how_are_you:
+  choices:
+    - "Wie geht es {{'Ihnen heute?' if formal else 'dir?'}}"

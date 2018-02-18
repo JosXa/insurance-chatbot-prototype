@@ -9,7 +9,7 @@ from model.basemodel import BaseModel
 class UserAnswers(BaseModel):
     NO_ANSWER = 'No data'
 
-    user = ForeignKeyField(User)
+    user = ForeignKeyField(User, related_name='answers')
     question_id = CharField()
     answer = TextField()
 
@@ -18,3 +18,9 @@ class UserAnswers(BaseModel):
         return {ua.question_id for ua in UserAnswers.select(UserAnswers.question_id).where(
             UserAnswers.user == user,
         )}
+
+    def get_answer(self, question_id) -> str:
+        try:
+            return self.get(question_id=question_id).answer
+        except self.DoesNotExist:
+            return None

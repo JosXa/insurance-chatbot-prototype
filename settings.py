@@ -17,6 +17,8 @@ TWILIO_ACCESS_TOKEN = config('TWILIO_ACCESS_TOKEN')
 TWILIO_ACCOUNT_SID = config('TWILIO_ACCOUNT_SID')
 DATABASE_URL = config('DATABASE_URL')
 
+SUPPORT_CHANNEL_ID = -1001265422831
+
 # Insert google private key into configuration json and add it to environment vars
 # service_account_key = config('GOOGLE_SERVICE_ACCOUNT_KEY')
 # creds = json.load(open("/home/joscha/auth/service-account-file.json", "r"))

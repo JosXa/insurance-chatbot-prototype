@@ -17,5 +17,5 @@ class User(BaseModel):
         pass  # TODO
 
     @property
-    def name(self):
-        return "Max Mustermann"  # TODO
+    def name(self) -> str:
+        return self.answers.get_answer('name')

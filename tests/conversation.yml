@@ -1,8 +1,8 @@
 - user_says: hi
-  intent: hello
+  intent: start
   parameters: {}
   responses:
-  - hello
+  - start
   - what_i_can_do
 - user_says: waddup
   intent: fallback

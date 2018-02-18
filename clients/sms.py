@@ -5,7 +5,7 @@ from typing import List
 from twilio.rest import Client
 
 from clients.botapiclients import IBotAPIClient
-from logic import ChatAction
+from core import ChatAction
 from model import User
 
 

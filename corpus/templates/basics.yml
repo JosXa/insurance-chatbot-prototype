@@ -88,3 +88,23 @@ as_you_know:
   text: "Wie {{'Sie' if formal else 'du'}} schon {{'wissen' if formal else 'weißt'}}, "
   prefix: yes
 
+interesting:
+  choices:
+    - "Hmm... interessant!"
+    - "Cool, interessant!"
+    - "Oh wow, das ist spannend."
+
+pity_no_claim:
+  choices:
+    - "Schade, ich kann {{'Ihnen' if formal else 'dir'}} nur dabei helfen"
+    - "Das macht nichts, zu mehr bin ich aber nicht von Nutzen."
+
+its_okay:
+  choices:
+    - "Das ist in Ordnung"
+
+chat_on:
+  choices:
+    - "Wir können aber gerne weiterreden :)"
+    - "Lass uns doch trotzdem weitersprechen"
+    - "Sollen wir uns noch ein wenig unterhalten?"

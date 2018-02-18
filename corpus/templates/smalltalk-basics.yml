@@ -1,0 +1,7 @@
+random_topic:
+  choices:
+    - "{{'Sind Sie' if formal else 'Bist du'}} an der frischen Luft?"
+    - "Ich fühle mich übrigens sehr wohl in meiner Blechbox, danke der Nachfrage."
+    - "Violett ist übrigens magentaer als rot :hmm:"
+    - "Ist Sodbrennen eigentlich gefährlich? Zum Glück kann ich das nicht bekommen..."
+    - "random topic 5"

@@ -24,6 +24,6 @@ ask_something_else:
     - "{{'Fragen Sie' if formal else 'Frag'}} doch etwas anderes 😊"
     - "{{'Lassen Sie' if formal else 'Lass uns'}} doch über etwas anderes reden 🤔"
     - text: "Themawechsel?"
-      condition: "{{context.has_outgoing_intent('ask_something_else', 8)}}"
+      condition: "{{bot_recent('ask_something_else')}}"
     - text: "Oh, das kommt jetzt aber ziemlich oft vor 🤕 Sprechen wir über etwas anderes..."
       condition: "{{num_actions('ask_something_else') > 3}}"

@@ -11,7 +11,8 @@ from typing import List
 
 import settings
 from clients.nlpclients import DialogflowClient
-from logic import ChatAction, PlanningAgent, UserContexts, rule_controller
+from core import ChatAction, ContextManager, rule_controller
+from logic.planningagent import PlanningAgent
 from model import Update, User
 
 
@@ -19,7 +20,7 @@ class RuleTests(unittest.TestCase):
     def setUp(self):
         self.controller = rule_controller
         self.nlp = DialogflowClient(settings.DIALOGFLOW_ACCESS_TOKEN)
-        self.context_manager = UserContexts()
+        self.context_manager = ContextManager()
         self.planning_agent = PlanningAgent(self.controller)
         self.msg_count = 0
         self.conversation = utils.load_yaml_as_dict('conversation.yml')

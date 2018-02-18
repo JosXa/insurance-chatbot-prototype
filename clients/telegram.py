@@ -1,9 +1,8 @@
+import os
 import time
 from threading import Thread
 from typing import Callable, List
-from io import BytesIO
 
-import os
 from flask import Flask, request
 from logzero import logger
 from telegram import *
@@ -12,7 +11,8 @@ from telegram.ext import CommandHandler, Filters, MessageHandler, Updater
 
 import utils
 from clients.botapiclients import IBotAPIClient
-from logic import ChatAction
+from core import ChatAction
+from corpus.media import get_file_by_media_id
 from model import User
 from model.update import Update
 
@@ -29,10 +29,17 @@ class TelegramClient(IBotAPIClient):
         self._running = False
         self.__threads = list()
 
+    @property
+    def client_name(self):
+        return 'telegram'
+
     def unify_update(self, update: TelegramUpdate):
         ud = Update()
         ud.original_update = update
         ud.client_name = self.client_name
+
+        if update.callback_query:
+            ud.payload = update.callback_query.data
 
         ud.user, created = User.get_or_create(telegram_id=update.effective_user.id)
         if created:
@@ -45,7 +52,6 @@ class TelegramClient(IBotAPIClient):
         return ud
 
     def perform_action(self, actions: List[ChatAction]):
-
         for action in actions:
             if action.show_typing:
                 self.bot.send_chat_action(action.peer.telegram_id, TelegramChatAction.TYPING)
@@ -62,12 +68,10 @@ class TelegramClient(IBotAPIClient):
                                                  selective=True)
                 else:
                     markup = ForceReply()
+            elif action.action_type == ChatAction.Type.SENDING_MEDIA:
+                self.send_media(action.peer, action.media_id, action.render())
 
             self.send_message(peer=action.peer, text=action.render(), markup=markup)
-
-    @property
-    def client_name(self):
-        return 'telegram'
 
     def _init_thread(self, target, *args, **kwargs):
         thr = Thread(target=target, args=args, kwargs=kwargs)
@@ -140,6 +144,22 @@ class TelegramClient(IBotAPIClient):
         """
         self.bot.send_message(peer.telegram_id, text, parse_mode=ParseMode.HTML,
                               reply_markup=markup)
+
+    def send_media(self, peer: User, media_id: str, caption: str = None):
+        filepath = get_file_by_media_id(media_id)
+        ext = os.path.splitext(filepath)[1]
+
+        file = open(filepath, 'rb')
+        if ext == '.mp4':
+            # GIF
+            return self.bot.send_document(peer.telegram_id, file, caption=caption)
+        elif ext in ('.jpg', '.jpeg', '.png'):
+            return self.bot.send_photo(peer.telegram_id, file, caption=caption)
+        elif ext == '.webp':
+            msg = self.bot.send_sticker(peer.telegram_id, file)
+            if caption:
+                self.send_message(peer, caption)
+            return msg
 
     def show_typing(self, user):
         self.bot.send_chat_action(user.telegram_id, TelegramChatAction.TYPING)

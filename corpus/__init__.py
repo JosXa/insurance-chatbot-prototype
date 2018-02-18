@@ -18,7 +18,8 @@ _yml_files = [x for x in _files if os.path.splitext(x)[1] in ('.yml', '.yaml')]
 raw_templates = dict()
 for yml_file in _yml_files:
     loaded_yml = utils.load_yaml_as_dict(os.path.join(PATH, _TEMPLATES_DIR, yml_file))
-    raw_templates.update(loaded_yml)
+    if loaded_yml:
+        raw_templates.update(loaded_yml)
 
 
 def get_question_by_id(identifier: str) -> Question:

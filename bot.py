@@ -1,18 +1,17 @@
 from threading import Thread
 from typing import List
 
-from flask import Flask
+from flask import Flask, send_file
 from logzero import logger
 
 import migrate
 import settings
 from clients.facebook import FacebookClient
 from clients.nlpclients import DialogflowClient
-from clients.sms import SMSClient
 from clients.telegram import TelegramClient
 from clients.voice import VoiceRecognitionClient
-from logic import ConversationManager
-from model import User
+from core.dialogmanager import DialogManager
+from corpus.media import get_file_by_media_id
 from tests.recorder import ConversationRecorder
 
 threads = list()  # type: List[Thread]
@@ -63,6 +62,11 @@ def main():
 
     app = Flask(__name__)
 
+    @app.route('/media/<mimetype>/<media_id>.<ext>', methods=['GET'])
+    def media_endpoint(mimetype, media_id, ext):
+        filepath = get_file_by_media_id(media_id)
+        send_file(filepath, mimetype=f'{mimetype}/{ext}')
+
     # sms_client = SMSClient(
     #     settings.TWILIO_ACCESS_TOKEN,
     #     settings.TWILIO_ACCOUNT_SID
@@ -93,10 +97,10 @@ def main():
 
     conversation_recorder = None
     if settings.ENABLE_CONVERSATION_RECORDING:
-        conversation_recorder = ConversationRecorder()
+        conversation_recorder = ConversationRecorder(telegram_client.bot, settings.SUPPORT_CHANNEL_ID)
 
-    ConversationManager([telegram_client, facebook_client], dialogflow_client, conversation_recorder, voice_client)
-    # ConversationManager([sms_client, telegram_client, facebook_client], dialogflow_client, conversation_recorder)
+    DialogManager([telegram_client, facebook_client], dialogflow_client, conversation_recorder, voice_client)
+    # DialogManager([sms_client, telegram_client, facebook_client], dialogflow_client, conversation_recorder)
 
     # sms_client.start_listening()
     telegram_client.start_listening()

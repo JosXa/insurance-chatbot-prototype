@@ -5,7 +5,7 @@ from typing import List, TypeVar
 import apiai
 from dateutil.parser import parse
 
-from logic.understanding import MessageUnderstanding
+from core.understanding import MessageUnderstanding
 from model import User
 
 Update = TypeVar('Update')
@@ -23,16 +23,19 @@ class DialogflowClient(NLPEngine):
     def __init__(self, token):
         self.ai = apiai.ApiAI(token)
 
-    def insert_understanding(self, update) -> MessageUnderstanding:
+    def perform_nlu(self, text, user_id):
         request = self.ai.text_request()
 
         request.lang = 'de'
-        request.session_id = update.user.id
-        request.query = update.message_text
+        request.session_id = user_id
+        request.query = text
 
         response = json.loads(request.getresponse().read())
 
-        result_obj = response.get('result')
+        return response.get('result'), parse(response['timestamp'])
+
+    def insert_understanding(self, update) -> MessageUnderstanding:
+        result_obj, timestamp = self.perform_nlu(update.message_text, update.user.id)
 
         nlu = MessageUnderstanding(
             update.message_text,
@@ -40,7 +43,7 @@ class DialogflowClient(NLPEngine):
             result_obj['parameters'],
             result_obj.get('contexts'),
             score=result_obj['score'],
-            date=parse(response['timestamp'])
+            date=timestamp
         )
         update.understanding = nlu
         return nlu

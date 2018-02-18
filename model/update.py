@@ -16,6 +16,7 @@ class Update(BaseModel):
     message_text = TextField()  # type: str
     message_id = CharField()  # type: str
     datetime = DateTimeField()  # type: datetime
+    payload = CharField()  # type: str
 
     def __init__(self, *args, **kwargs):
         self.original_update = None  # type: [FacebookEvent,TelegramUpdate]
