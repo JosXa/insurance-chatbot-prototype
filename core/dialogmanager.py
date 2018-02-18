@@ -1,7 +1,6 @@
 import os
+import traceback
 from typing import List
-
-from logzero import logger
 
 from appglobals import ROOT_DIR
 from clients.botapiclients import IBotAPIClient
@@ -13,6 +12,7 @@ from logic.planning import PlanningAgent
 from logic.rules.routing import controller
 from model import Update
 from tests.recorder import ConversationRecorder
+from logzero import logger as log
 
 
 class DialogManager:
@@ -59,7 +59,7 @@ class DialogManager:
 
         text = self.voice.recognize(converted)
         update.message_text = text
-        logger.debug(f"Voice message received: {text}")
+        log.debug(f"Voice message received: {text}")
 
         self.text_update_received(bot, update)
 
@@ -76,7 +76,10 @@ class DialogManager:
         if self.recorder:
             self.recorder.record_dialog(update, actions)
 
-        bot.perform_action(actions)
+        try:
+            bot.perform_action(actions)
+        except Exception as e:
+            log.exception(e)
         context.add_actions(actions)
 
         update.save()
