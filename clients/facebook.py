@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 import datetime
+import os
 import time
 from pprint import pprint
 from typing import Callable, List
 
-import os
-
-from docutils.nodes import caption
-from fbmq import Event, Page, QuickReply, Attachment
-from flask import request, send_file
+from fbmq import Attachment, Event, Page, QuickReply
+from flask import request
 
 import settings
 from clients.botapiclients import IBotAPIClient
