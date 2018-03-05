@@ -70,7 +70,9 @@ class FacebookClient(IBotAPIClient):
                 if action.choices:
                     quick_replies = [QuickReply(title=x, payload=f"test_{x}") for x in action.choices]
             elif action.action_type == ChatAction.Type.SENDING_MEDIA:
-                return self.send_media(action.peer, action.media_id, action.render())
+                res = self.send_media(action.peer, action.media_id, action.render())
+                print(res)
+                return
 
             self._page.send(
                 recipient_id=user_id,
