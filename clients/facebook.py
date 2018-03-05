@@ -70,9 +70,12 @@ class FacebookClient(IBotAPIClient):
                 if action.choices:
                     quick_replies = [QuickReply(title=x, payload=f"test_{x}") for x in action.choices]
             elif action.action_type == ChatAction.Type.SENDING_MEDIA:
-                self.send_media(action.peer, action.media_id, action.render())
+                return self.send_media(action.peer, action.media_id, action.render())
 
-            self._page.send(user_id, action.render(), quick_replies=quick_replies)
+            self._page.send(
+                recipient_id=user_id,
+                message=action.render(),
+                quick_replies=quick_replies)
 
     @staticmethod
     def _authentication():
@@ -116,15 +119,14 @@ class FacebookClient(IBotAPIClient):
     def download_voice(self, voice_id, filepath):
         pass
 
-    def send_media(self, peer, media_id, param):
+    def send_media(self, peer, media_id, caption):
         filepath = get_file_by_media_id(media_id)
         ext = os.path.splitext(filepath)[1]
 
-        # Host the file
-
         if ext == '.mp4':
-            # GIF
-            pass
+            video_url = settings.APP_URL + f'/media/image/{media_id}.{ext}'
+            print(video_url)
+            return self._page.send(peer.facebook_id, Attachment.Video(video_url))
         elif ext in ('.jpg', '.jpeg', '.png'):
             image_url = settings.APP_URL + f'/media/image/{media_id}.{ext}'
             return self._page.send(peer.facebook_id, Attachment.Image(image_url))

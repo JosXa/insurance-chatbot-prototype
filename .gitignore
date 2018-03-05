@@ -108,3 +108,4 @@ venv.bak/
 /assets/files/voice.flac
 /assets/files/voice.ogg
 /tests/integration/josxa.session
+/nludata/

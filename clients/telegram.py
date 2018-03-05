@@ -72,10 +72,9 @@ class TelegramClient(IBotAPIClient):
                     else:
                         markup = ForceReply()
             elif action.action_type == ChatAction.Type.SENDING_MEDIA:
-                self.send_media(action.peer, action.media_id, action.render())
+                return self.send_media(action.peer, action.media_id, action.render())
 
             text = action.render()
-            print(text)
             self.send_message(peer=action.peer, text=text, markup=markup)
 
     def _init_thread(self, target, *args, **kwargs):
