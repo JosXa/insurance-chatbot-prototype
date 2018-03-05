@@ -4,7 +4,7 @@ from mwt import mwt
 
 from appglobals import ROOT_DIR
 
-path = os.path.join('assets', 'files')
+path = os.path.join(ROOT_DIR, 'assets', 'files')
 all_media = os.listdir(path)
 
 

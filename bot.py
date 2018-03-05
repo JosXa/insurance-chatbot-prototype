@@ -67,7 +67,7 @@ def main():
         print(mimetype, media_id, ext)
         filepath = get_file_by_media_id(media_id)
         print(filepath)
-        send_file(filepath, mimetype=f'{mimetype}/{ext}')
+        return send_file(filepath, mimetype=f'{mimetype}/{ext}')
 
     # sms_client = SMSClient(
     #     settings.TWILIO_ACCESS_TOKEN,
