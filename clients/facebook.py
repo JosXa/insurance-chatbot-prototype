@@ -4,6 +4,7 @@ import os
 import time
 from pprint import pprint
 from typing import Callable, List
+from logzero import logger as log
 
 from fbmq import Attachment, Event, Page, QuickReply
 from flask import request
@@ -84,6 +85,8 @@ class FacebookClient(IBotAPIClient):
         all_args = request.args
         if 'hub.challenge' in all_args:
             return all_args['hub.challenge']
+        log.info("Root request: " + all_args)
+        return ''
 
     def _webhook(self):
         self._page.handle_webhook(request.get_data(as_text=True))
