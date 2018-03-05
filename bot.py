@@ -64,7 +64,9 @@ def main():
 
     @app.route('/media/<mimetype>/<media_id>.<ext>', methods=['GET'])
     def media_endpoint(mimetype, media_id, ext):
+        print(mimetype, media_id, ext)
         filepath = get_file_by_media_id(media_id)
+        print(filepath)
         send_file(filepath, mimetype=f'{mimetype}/{ext}')
 
     # sms_client = SMSClient(
