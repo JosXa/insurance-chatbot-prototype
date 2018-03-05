@@ -1,5 +1,6 @@
 import json
 from abc import ABCMeta, abstractmethod
+from pprint import pprint
 from typing import List, TypeVar
 
 import apiai
@@ -32,6 +33,7 @@ class DialogflowClient(NLPEngine):
 
         response = json.loads(request.getresponse().read())
 
+        pprint(response)
         return response.get('result'), parse(response['timestamp'])
 
     def insert_understanding(self, update) -> MessageUnderstanding:
