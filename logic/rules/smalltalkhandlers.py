@@ -1,9 +1,7 @@
 from functools import wraps
 
-import settings
 from core import Context
 from core.controller import Controller
-from logzero import logger as log
 
 controller = Controller(warn_bypassed=False)
 
@@ -56,6 +54,10 @@ def answer_to_how_are_you(r, c):
 
 def congratulate_birthday(r, c):
     r.send_media('happy birthday')
+
+
+def bye(r, c):
+    r.send_media('tschuess')
 
 
 def generate_topic(comp, ctx):

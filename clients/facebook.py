@@ -119,7 +119,12 @@ class FacebookClient(IBotAPIClient):
         self._page.set_webhook_handler('message', filter)
 
     def add_voice_handler(self, callback):
-        pass
+        def filter(event: Event):
+            if not event.message_text:
+                return
+            return callback(self, self.unify_update(event))
+
+        self._page.set_webhook_handler('message', filter)
 
     def download_voice(self, voice_id, filepath):
         pass

@@ -33,7 +33,6 @@ class DialogflowClient(NLPEngine):
 
         response = json.loads(request.getresponse().read())
 
-        pprint(response)
         return response.get('result'), parse(response['timestamp'])
 
     def insert_understanding(self, update) -> MessageUnderstanding:

@@ -39,7 +39,6 @@ all_smalltalk_intents = [
     'smalltalk.appraisal.good',
     'smalltalk.agent.there',
     'smalltalk.agent.annoying',
-    'smalltalk.greetings.bye',
     'smalltalk.user.angry',
     'smalltalk.agent.busy',
     'smalltalk.dialog.sorry',
@@ -100,6 +99,7 @@ all_smalltalk_intents = [
 # Custom smalltalk handlers
 smalltalk_handlers = [
     IntentHandler(congratulate_birthday, intents='smalltalk.user.has_birthday'),
+    IntentHandler(bye, intents='smalltalk.greetings.bye'),
 ]
 # All unhandled smalltalk intents are responded to with a static message, as defined in smalltalk.yaml
 static_response_intents = [x for x

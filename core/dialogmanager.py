@@ -79,6 +79,7 @@ class DialogManager:
         try:
             bot.perform_action(actions)
         except Exception as e:
+            log.error("Error while processing update:")
             log.exception(e)
         context.add_actions(actions)
 
