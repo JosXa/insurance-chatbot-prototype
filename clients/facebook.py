@@ -59,26 +59,29 @@ class FacebookClient(IBotAPIClient):
 
     def perform_action(self, actions: List[ChatAction]):
         for action in actions:
-            user_id = action.peer.facebook_id
+            try:
+                user_id = action.peer.facebook_id
 
-            if action.show_typing:
-                self.show_typing(user_id)
-            if action.delay:
-                time.sleep(action.delay.value)
+                if action.show_typing:
+                    self.show_typing(user_id)
+                if action.delay:
+                    time.sleep(action.delay.value)
 
-            quick_replies = None
-            if action.action_type == ChatAction.Type.ASKING_QUESTION:
-                if action.choices:
-                    quick_replies = [QuickReply(title=x, payload=f"test_{x}") for x in action.choices]
-            elif action.action_type == ChatAction.Type.SENDING_MEDIA:
-                res = self.send_media(action.peer, action.media_id, action.render())
-                print(res)
-                return
+                quick_replies = None
+                if action.action_type == ChatAction.Type.ASKING_QUESTION:
+                    if action.choices:
+                        quick_replies = [QuickReply(title=x, payload=f"test_{x}") for x in action.choices]
+                elif action.action_type == ChatAction.Type.SENDING_MEDIA:
+                    res = self.send_media(action.peer, action.media_id, action.render())
+                    print(res)
+                    return
 
-            self._page.send(
-                recipient_id=user_id,
-                message=action.render(),
-                quick_replies=quick_replies)
+                self._page.send(
+                    recipient_id=user_id,
+                    message=action.render(),
+                    quick_replies=quick_replies)
+            finally:
+                self.end_typing(user_id)
 
     @staticmethod
     def _authentication():
@@ -149,6 +152,9 @@ class FacebookClient(IBotAPIClient):
 
     def show_typing(self, user_id):
         self._page.typing_on(user_id)
+
+    def end_typing(self, user_id):
+        self._page.typing_off(user_id)
 
     def add_error_handler(self, callback):
         self._error_handler = callback
