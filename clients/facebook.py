@@ -126,7 +126,7 @@ class FacebookClient(IBotAPIClient):
         ext = os.path.splitext(filepath)[1]
 
         if ext == '.mp4':
-            video_url = settings.APP_URL + f'media/image/{media_id}{ext}'
+            video_url = settings.APP_URL + f'media/video/{media_id}{ext}'
             print(video_url)
             return self._page.send(peer.facebook_id, Attachment.Video(video_url))
         elif ext in ('.jpg', '.jpeg', '.png'):
