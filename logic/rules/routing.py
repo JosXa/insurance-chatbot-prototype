@@ -1,3 +1,5 @@
+import traceback
+
 from core.controller import AffirmationHandler, IntentHandler, NegationHandler
 from logic.rules.claimhandlers import *
 from logic.rules.smalltalkhandlers import *
@@ -123,7 +125,7 @@ RULES = {
         'smalltalk': [
             IntentHandler(intro, intents='smalltalk.agent.can_you_help'),
             smalltalk_handlers,
-            IntentHandler(ask_to_start),
+            # IntentHandler(ask_to_start),
         ],
         'ask_to_start': [
             AffirmationHandler(begin_questionnaire),
@@ -152,7 +154,6 @@ RULES = {
             IntentHandler(answer_to_how_are_you, intents=['smalltalk.appraisal.good', 'smalltalk.user.can_not_sleep',
                                                           'smalltalk.appraisal.thank_you']),
             IntentHandler(answer_to_how_are_you, parameters='feeling'),
-            IntentHandler(ask_to_start, intents='phone_broken'),
             smalltalk_handlers
         ]
     },

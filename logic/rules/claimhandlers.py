@@ -29,15 +29,21 @@ def intro(r, c):
 
 
 def ask_to_start(r, c):
-    r.ask("claim damage", choices=['affirm_yes', 'negate_no'])
+    if c.get_value('user_no_claim', False):
+        return
+    else:
+        r.ask("claim damage", choices=['affirm_yes', 'negate_no'])
     return 'ask_to_start'
 
 
 def record_phone_damage(r, c: Context):
-    r.say("sorry for that")
     dmg_type = c.last_user_utterance.parameters.get('damage_type')
     if dmg_type:
+        dmg_type = dmg_type[0] if isinstance(dmg_type, list) else dmg_type
+        r.say("respond damage", "sorry for that", parameters=dict(damage_type=dmg_type))
         c.add_answer_to_question('damage_type', str(dmg_type))
+    else:
+        r.say("sorry for that")
     c.set_value('is_phone_broken', True)
 
 
@@ -108,6 +114,7 @@ def ask_next_question(r, c):
         # started a new questionnaire
         if c.has_answered_questions:
             r.say("questionnaire finished")
+        r.send_title(c.current_questionnaire)
 
     r.then_ask(c.current_question)
     return States.ASKING_QUESTION

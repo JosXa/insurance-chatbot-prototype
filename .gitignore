@@ -107,3 +107,4 @@ venv.bak/
 !/assets/files/voice.ogg
 /assets/files/voice.flac
 /assets/files/voice.ogg
+/tests/integration/josxa.session

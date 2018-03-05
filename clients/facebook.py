@@ -29,6 +29,7 @@ class FacebookClient(IBotAPIClient):
         return 'facebook'
 
     def unify_update(self, event: Event, payload: str = None):
+        pprint(event.__dict__)
         ud = Update()
         ud.original_update = event
         ud.client_name = self.client_name

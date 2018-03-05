@@ -1,11 +1,14 @@
 import string
+from pprint import pprint
 from typing import List, Union
+
+from logzero import logger as log
 
 from core import ChatAction
 from corpus import Question
+from corpus.questions import Questionnaire
 from corpus.responsetemplates import ResponseTemplate, SelectiveTemplateLoader, TemplateRenderer, format_intent
 from model import User
-from logzero import logger as log
 
 
 class SentenceComposer:
@@ -35,6 +38,9 @@ class SentenceComposer:
         suffix = self.renderer.render_string(question.example)
 
         return self._create_action('give_example', f"{prefix} {suffix}")
+
+    def send_title(self, questionnaire: Questionnaire):
+        return self._create_action(questionnaire.id, questionnaire.title)
 
     def ask(self,
             question: Union[Question, str],
@@ -71,7 +77,7 @@ class SentenceComposer:
                        question: Question,
                        user_answer: str):
         text = self.renderer.render_string(question.confirm, parameters={'answer': user_answer, 'question': question})
-        self._create_action('confirm_answer', text)
+        self._create_action('confirm_answer', text[0].upper() + text[1:])
         self.ask('is that correct', choices=['affirm_correct', 'negate_wrong'])
         return self
 
@@ -102,9 +108,13 @@ class SentenceComposer:
             # Be forgiving here
             current_action.choices = choices
 
+        def endswith_emoji(text):
+            # Check if the last four chars are likely to contain an emoji
+            return any(x for x in text[-4:] if ord(x) > 100000)
+
         def finish_last_sentence():
             last_char = previous_token[-1]
-            if last_char not in string.punctuation and last_char != ' ':
+            if last_char not in string.punctuation and last_char != ' ' and not endswith_emoji(previous_token):
                 current_action.text_parts[-1] += '.'
 
         def start_sentence_here():
