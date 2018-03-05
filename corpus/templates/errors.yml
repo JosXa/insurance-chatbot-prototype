@@ -12,10 +12,12 @@ reformulate:
 
 what_i_understood:
   choices:
-    - "Das hier habe ich verstanden: <code>{{understanding}}</code>. Das hat mir mein Schöpfer aber
+    - "Das hier habe ich verstanden: '{{understanding}}'. Das hat mir
+    mein Schöpfer aber
     noch nicht beigebracht 😐"
-    - "Irgendetwas in der Art <code>{{understanding}}</code>..? 😵"
-    - "Ich habe etwas wie <code>{{understanding}}</code> verstanden, aber leider in diesem Kontext nichts damit
+    - "Irgendetwas in der Art '{{understanding}}'..? 😵"
+    - "Ich habe etwas wie '{{understanding}}' verstanden, aber leider in
+     diesem Kontext nichts damit
     anfangen können 😣"
   prefix: yes
 

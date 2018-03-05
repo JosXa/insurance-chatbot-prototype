@@ -2,7 +2,7 @@ import logging
 import time
 import unittest
 
-from telethon import TelegramClient
+from telethon import TelegramClient, events
 from telethon.tl.types import UpdateShortMessage
 
 logging.basicConfig(level=logging.DEBUG)
@@ -30,26 +30,33 @@ class IntegrationTestBase(unittest.TestCase):
         self.client = TelegramClient('josxa', api_id, api_hash, update_workers=4)
         self.client.start(phone)
 
-        # self._peer = self.client.get_input_entity("@InsuranceBABot")
-        self.peer = self.client.get_input_entity("@josxasandboxbot")
+        self._live_mode = False
+
         self._last_response = None
-        self.client.add_update_handler(self._update_handler)
+        self.client.add_event_handler(self._event_handler, events.NewMessage(chats=('@InsuranceBaBot',
+                                                                                    '@josxasandboxbot')))
+
+    @property
+    def live_mode(self):
+        return self._live_mode
+
+    @live_mode.setter
+    def live_mode(self, value):
+        self._live_mode = value
+        self._peer = self.client.get_input_entity("@InsuranceBABot" if self._live_mode else "@josxasandboxbot")
 
     def tearDown(self):
         self.client.disconnect()
 
-    def _update_handler(self, update):
+    def _event_handler(self, event: events.NewMessage.Event):
 
-        if isinstance(update, UpdateShortMessage):
-            # print(f"New UpdateShortMessage from {update.user_id} (equals {self.peer.user_id}: "
-            #       f"{update.user_id == self.peer.user_id})")
-            if update.user_id == self.peer.user_id:
-                self._last_response = Response(text=update.message)
+        if event.sender.username == self._peer:
+            self._last_response = Response(text=event.text)
 
     def send_message_get_response(self, text) -> Response:
         self._last_response = None
 
-        self.client.send_message(self.peer, text)
+        self.client.send_message(self._peer, text)
 
         timeout = 5  # seconds
         count = 0

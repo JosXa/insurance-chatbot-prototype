@@ -1,13 +1,12 @@
 import random
 from abc import ABCMeta, abstractmethod
-from pprint import pprint
 from typing import Dict, List
 
 from jinja2 import Environment, PackageLoader
 from logzero import logger
 from telegram.utils.helpers import escape_markdown
 
-from corpus import raw_templates, emoji
+from corpus import emoji, raw_templates
 from model import User
 from utils import mutually_exclusive
 
@@ -15,13 +14,12 @@ env = Environment(
     loader=PackageLoader('corpus', 'templates'),
 )
 
-
-# FORMATTING_PARAMS = {
-#     'bold': lambda s: f"*{escape_markdown(s)}*",
-#     'italic': lambda s: f"_{escape_markdown(s)}_",
-#     'code': lambda s: f"`{escape_markdown(s)}`",
-#     'escape': lambda s: escape_markdown(s)
-# }
+FORMATTING_PARAMS = {
+    'bold': lambda s: f"*{escape_markdown(s)}*",
+    'italic': lambda s: f"_{escape_markdown(s)}_",
+    'code': lambda s: f"`{escape_markdown(s)}`",
+    'escape': lambda s: escape_markdown(s)
+}
 
 
 def format_intent(identifier):

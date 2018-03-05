@@ -1,10 +1,12 @@
 import random
+import re
 
 from logzero import logger
 
-from core import States, Context
-from logic.sentencecomposer import SentenceComposer
+from core import Context, States
+from logic.rules import answercheckers
 from model import UserAnswers
+from logzero import logger as log
 
 
 def chance(value: float) -> bool:
@@ -22,8 +24,8 @@ def start(r, c: Context):
 
 def intro(r, c):
     if not c.has_outgoing_intent("what i can do", age_limit=10):
-        c.say("what i can do")
-    c.say("what you can say")
+        r.say("what i can do")
+    r.say("what you can say")
 
 
 def ask_to_start(r, c):
@@ -36,6 +38,7 @@ def record_phone_damage(r, c: Context):
     dmg_type = c.last_user_utterance.parameters.get('damage_type')
     if dmg_type:
         c.add_answer_to_question('damage_type', str(dmg_type))
+    c.set_value('is_phone_broken', True)
 
 
 def begin_questionnaire(r, c):
@@ -69,6 +72,12 @@ def clarify(r, c: Context):
 
 def check_answer(r, c):
     question = c.current_question
+
+    # There are specific implementations of matchers that have a special functionality (e.g. getting phone model)
+    specific_answer_matcher = getattr(answercheckers, question.id, None)
+    if specific_answer_matcher:
+        return specific_answer_matcher(r, c)
+
     if question.is_valid(c.last_user_utterance.text):
         if question.confirm:
             return ask_to_confirm_answer(r, c)
@@ -130,29 +139,24 @@ def abort_claim(r, c):
     print("CLAIM ABORTED")  # TODO
 
 
+def user_astonished(r, c):
+    r.say("i think so too", "scope of bot")
+
+
 def change_formal_address(r, c: Context):
     def switch_to_du():
         c.user.formal_address = False
-        r.say("we say du")
+        # r.say("we say du")
+        c.user.save()
 
-    if c.last_user_utterance.parameters:
-        address = c.last_user_utterance.parameters.get('formal_address')
-        if address:
-            if address == 'yes':
-                c.user.formal_address = True
-            elif address == 'false':
-                if c.user.formal_address is True:
-                    switch_to_du()
-            else:
-                logger.warning(f'Invalid formal_address value: {address}')
-                return
-    else:
-        if any(x in c.last_user_utterance.text.lower() for x in (' du', 'du ', 'dein')):
-            if c.user.formal_address is True:
-                switch_to_du()
-        elif any(x in c.last_user_utterance.text for x in ('Ihr', 'Sie', 'Ihnen')):
-            c.user.formal_address = True
-    c.user.save()
+    ut = c.last_user_utterance
+
+    if re.search(r'\b(du|dein|dich|dir)\b', ut.text, re.IGNORECASE):
+        if c.user.formal_address is True:
+            switch_to_du()
+    elif re.search(r'\b([Ii]hr|Sie|Ihnen|Euer|haben [sS]ie|sind [Ss]ie)\b', ut.text):
+        c.user.formal_address = True
+        c.user.save()
 
 
 def no_rule_found(r, c):

@@ -26,7 +26,7 @@ class ConversationRecorder:
     # Time of inactivity, where the user does not say anything. When the duration has passed, publish the generated
     # conversation.yml to a support channel.
     # CLOSING_TIMEFRAME = datetime.timedelta(minutes=5)
-    CLOSING_TIMEFRAME = datetime.timedelta(seconds=5)
+    CLOSING_TIMEFRAME = datetime.timedelta(minutes=5)
 
     def __init__(self, telegram_bot, support_channel_id):
         self.bot = telegram_bot

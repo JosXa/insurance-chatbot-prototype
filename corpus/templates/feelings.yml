@@ -1,3 +1,8 @@
 how_are_you:
   choices:
     - "Wie geht es {{'Ihnen heute?' if formal else 'dir?'}}"
+
+glad_to_hear_that:
+  choices:
+    - "Freut mich, das zu hören 🙂"
+    - "Das freut mich zu hören."

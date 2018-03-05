@@ -40,23 +40,27 @@ def open_image(device_id):
     return open(path, 'rb')
 
 
-def device_by_name(identifier: str) -> List[str]:
+def devices_by_name(name: str) -> List[str]:
     matches = list()
     for d in DEVICES:
-        sim = similarity(identifier, d['maker'] + ' ' + d['name'])
+        if d == name:
+            return [d]
+        sim = similarity(name, d['maker'] + ' ' + d['name'])
         if sim > 0.3:
             matches.append((d, sim))
     return sorted(matches, key=lambda x: x[1], reverse=True)[:15]
 
+
 def format_device(device):
     return device['maker'] + ' ' + device['name']
+
 
 DEVICES = load_devices()
 
 if __name__ == '__main__':
     identifier = 'huawei'
     print()
-    result = device_by_name(identifier)
+    result = devices_by_name(identifier)
     pprint(result)
     print()
-    pprint([(format_device(x[0]), x[1]) for x in device_by_name(identifier)])
+    pprint([(format_device(x[0]), x[1]) for x in devices_by_name(identifier)])

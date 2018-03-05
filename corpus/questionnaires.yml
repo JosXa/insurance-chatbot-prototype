@@ -17,22 +17,29 @@ personal details:
 phone_details:
   title: "Informationen zum beschädigten Gerät"
   questions:
-    imei:
-      title: "die IMEI-Nummer des beschädigten Gerätes"
-      match_regex: "[0-9]{15}([0-9]{15})*"
-      hint: "{{it is}} die elektronische Gerätenummer - diese 15-stellige Nummer ist auf dem Typenschild des Gerätes
-      oder
-      über die Tastenkombination *#06# zu finden"
-      example: "990000862471854"
-      required: no
     model_identifier:
       title: "die Modellbezeichnung des beschädigten Gerätes"
       hint: "die Typbezeichnung des Smartphones"
       example: "iPhone 6S oder Samsung Galaxy S7"
-      required: "yes"
+      required: yes
+    imei:
+      title: "die IMEI Seriennummer des beschädigten Gerätes"
+      match_regex: "[0-9]{15}([0-9]{15})*"
+      hint: "die elektronische Gerätenummer - diese 15-stellige Nummer ist auf dem Typenschild des Gerätes oder
+      über die Tastenkombination *#06# zu finden"
+      example: "990000862471854"
+      required: no
+    phone_number:
+      title: "Rufnummer des versicherten Gerätes"
+      match_regex: r"[0-9\+\-\s]*"
+      hint: "die Telefonnummer, auf die {{'Ihr' if formal else 'dein'}} beschädigtes Gerät registriert ist."
+      example: "+49 1234 567 89"
+      required: yes
     damage_type:
-      title: "Informationen darüber, um {{bold('was für einen Schaden')}} es sich bei {{'Ihrem' if formal else 'deinem'}} {{code(model_identifier)}} genau handelt."
+      title: "Informationen darüber, um was für einen Schaden es sich bei {{'Ihrem' if formal else 'deinem'}}
+      {{get_answer('model_identifier')}} genau handelt."
       choices:
         - Displayschaden
         -
-      required: no
+      hint: "die Art des Schadens an {{'Ihrem' if formal else 'deinem'}} Handy."
+      required: yes

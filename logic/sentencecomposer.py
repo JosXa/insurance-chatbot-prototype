@@ -5,6 +5,7 @@ from core import ChatAction
 from corpus import Question
 from corpus.responsetemplates import ResponseTemplate, SelectiveTemplateLoader, TemplateRenderer, format_intent
 from model import User
+from logzero import logger as log
 
 
 class SentenceComposer:
@@ -18,7 +19,7 @@ class SentenceComposer:
         self.renderer = template_renderer
 
         self._sequence = []  # type: List[ChatAction]
-        self._inside_conjunction = False
+        self._inside_sentence = False
 
     def collect_actions(self) -> List[ChatAction]:
         return self._sequence
@@ -54,7 +55,7 @@ class SentenceComposer:
             template = self.loader.select(intent)
             text = self.renderer.render_template(template.text_template, parameters=parameters)
 
-            self._create_action(intent, text, template, as_new_message=first)
+            self._create_action(intent, text, response_template=template, as_new_message=first)
             first = False
 
         return self
@@ -92,46 +93,52 @@ class SentenceComposer:
 
     def _append_to_previous(self, intent, text, template: ResponseTemplate = None, choices=None):
         # Append to previous message
-
-        previous_action = self._sequence[-1]
-        previous_action.intents.append(intent)
+        current_action = self._sequence[-1]
+        current_action.intents.append(intent)
+        previous_token = current_action.text_parts[-1]
+        log.info(text)
 
         if choices:
-            previous_action.choices = choices
+            # Be forgiving here
+            current_action.choices = choices
 
-        def finish_last_sentence(value: ChatAction):
-            last_part = value.text_parts[-1]
-            last_char = last_part[-1]
+        def finish_last_sentence():
+            last_char = previous_token[-1]
             if last_char not in string.punctuation and last_char != ' ':
-                last_part[-1] = last_part[-1] + '.'
+                current_action.text_parts[-1] += '.'
 
-        separator = '. '
+        def start_sentence_here():
+            finish_last_sentence()
+            current_action.text_parts.append(' ')
+            current_action.text_parts.append(text[0].upper() + text[1:])
 
-        if (template and template.is_conjunction) or self._inside_conjunction:
-            separator = ''
-            text = text[0].lower() + text[1:]
-            self._inside_conjunction = False
+        def join_tokens(separator=''):
+            current_action.text_parts[-1].strip()
+            if current_action.text_parts[-1][-1] in string.punctuation:
+                raise ValueError("Trying to append a conjunction to a sentence with punctuation.")
+            current_action.text_parts.append(separator)
+            current_action.text_parts.append(text[0].lower() + text[1:])
 
         if template is not None:
             if template.is_conjunction:
-                if previous_action.text_parts[-1][-1] in string.punctuation:
-                    raise ValueError("Trying to append a conjunction to a sentence with punctuation.")
-                # Append space if necessary
-                if text[-1] not in string.punctuation and text[-1] != ' ':
-                    text = text + ' '
-                self._inside_conjunction = True
+                self._inside_sentence = True
+                join_tokens()
+                return
             elif template.is_prefix:
-                finish_last_sentence(previous_action)
-                # Uppercase
-                text = text[0].upper() + text[1:]
-                separator = ' '
-                self._inside_conjunction = False
+                self._inside_sentence = True
+                start_sentence_here()
+                return
             elif template.is_suffix:
-                separator = ' '
-                self._inside_conjunction = True
+                self._inside_sentence = False
+                join_tokens()
+                return
 
-        previous_action.text_parts.append(separator)
-        previous_action.text_parts.append(text)
+        # Anyting that is not conjunction, prefix or suffix:
+        if self._inside_sentence:
+            join_tokens(separator=' ')
+        else:
+            start_sentence_here()
+        self._inside_sentence = False
 
     def _create_action(self,
                        intent,
@@ -155,6 +162,8 @@ class SentenceComposer:
         elif len(self._sequence) > 0:
             delay = ChatAction.Delay.MEDIUM
 
+        print(delay)
+
         if as_new_message or len(self._sequence) == 0:
             # Create new message
             self._sequence.append(
@@ -167,7 +176,7 @@ class SentenceComposer:
                     choices=choices,
                     show_typing=True,
                     delay=delay))
-            self._inside_conjunction = False
+            self._inside_sentence = False
         else:
             if type_ == ChatAction.Type.ASKING_QUESTION:
                 self._sequence[-1].action_type = ChatAction.Type.ASKING_QUESTION

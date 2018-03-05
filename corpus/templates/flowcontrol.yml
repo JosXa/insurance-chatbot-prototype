@@ -1,0 +1,13 @@
+claim_damage:
+  "Soll ich {{'Ihnen' if formal else 'dir'}} helfen, {{'den' if get('is_phone_broken') else 'einen'}}
+  Schaden an {{'Ihrem' if formal else 'deinem'}} Smartphone zu melden?"
+
+all_done:
+  "Ich habe nun alle Informationen von {{'Ihnen' if formal else 'dir'}} erhalten, die wir benötigen um {{'Ihren' if
+  formal else 'deinen'}} Schadensfall schnellstmöglich zu bearbeiten."
+
+pity_no_claim:
+  choices:
+    - "Schade, ich kann {{'Ihnen' if formal else 'dir'}} nur dabei helfen"
+    - "Das macht nichts, zu mehr bin ich aber nicht von Nutzen."
+

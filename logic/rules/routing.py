@@ -1,5 +1,3 @@
-from pprint import pprint
-
 from core.controller import AffirmationHandler, IntentHandler, NegationHandler
 from logic.rules.claimhandlers import *
 from logic.rules.smalltalkhandlers import *
@@ -111,22 +109,19 @@ smalltalk_handlers.append(IntentHandler(
 ))
 # endregion
 
-### region  TASK-ORIENTED
-
-
-# endregion
-
 RULES = {
     "stateless": [  # always applied
         IntentHandler(record_phone_damage, intents='phone_broken'),
         IntentHandler(change_formal_address),
     ],
-    "states": {
+    "states": {  # triggered when context is in the key's state
         States.INITIAL: [
             IntentHandler(start, intents=['start', 'hello', 'smalltalk.greetings']),
+            IntentHandler(ask_to_start, intents='phone_broken'),
             smalltalk_handlers,
         ],
         'smalltalk': [
+            IntentHandler(intro, intents='smalltalk.agent.can_you_help'),
             smalltalk_handlers,
             IntentHandler(ask_to_start),
         ],
@@ -154,13 +149,16 @@ RULES = {
         ],
         ('asking', 'how_are_you'): [
             IntentHandler(ask_to_start, intents='phone_broken'),
-            IntentHandler(answer_to_how_are_you, intents=['smalltalk.appraisal.good', 'smalltalk.user.can_not_sleep']),
+            IntentHandler(answer_to_how_are_you, intents=['smalltalk.appraisal.good', 'smalltalk.user.can_not_sleep',
+                                                          'smalltalk.appraisal.thank_you']),
             IntentHandler(answer_to_how_are_you, parameters='feeling'),
+            IntentHandler(ask_to_start, intents='phone_broken'),
             smalltalk_handlers
         ]
     },
-    "fallbacks": [
-        IntentHandler(record_phone_damage, intents='phone_broken'),
+    "fallbacks": [  # triggered if not matching state handler is found
+        IntentHandler(intro, intents='what_can_you_do'),
+        IntentHandler(user_astonished, intents='astonishment'),
         IntentHandler(excuse_did_not_understand, intents='fallback'),
         IntentHandler(no_rule_found),
     ]

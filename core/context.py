@@ -4,14 +4,15 @@ from enum import Enum
 from pprint import pprint
 from typing import Callable, Deque, Dict, List, Union
 
+from logzero import logger
+
 import settings
-from corpus import all_questionnaires
-from corpus.questions import Question, Questionnaire
 from core.chataction import ChatAction
 from core.understanding import MessageUnderstanding
+from corpus import all_questionnaires
+from corpus.questions import Question, Questionnaire
 from corpus.responsetemplates import format_intent
 from model import Update, User, UserAnswers
-from logzero import logger
 
 
 class States(Enum):

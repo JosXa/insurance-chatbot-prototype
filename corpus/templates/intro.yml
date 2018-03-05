@@ -1,0 +1,16 @@
+what_i_can_do:
+  "Ich kann {{'dir' if informal else 'Ihnen'}} helfen, einen Schaden an
+  {{'deinem' if informal else 'Ihrem'}} Smartphone zu beanstanden, falls
+  {{'du' if informal else 'Sie'}} bei uns versichert {{'bist' if informal
+  else 'sind'}}"
+
+scope_of_bot:
+  choices:
+    - "Ich kann leider noch nicht so viel, aber Schadensfälle aufnehmen
+    funktioniert schon ganz gut."
+
+what_you_can_say:
+  "{{'Schreib' if informal else 'Schreiben Sie'}} mir z.B. \"Mein Handy hat
+  einen Displayschaden\" ({{'du kannst' if informal else 'Sie können'}}
+  auch eine Sprachnachricht aufnehmen), wenn {{'du' if informal else 'Sie'}}
+  einen Schaden melden {{'möchtest' if informal else 'möchten'}}."

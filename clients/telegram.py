@@ -52,7 +52,7 @@ class TelegramClient(IBotAPIClient):
         return ud
 
     def perform_action(self, actions: List[ChatAction]):
-        for action in actions:
+        for i, action in enumerate(actions):
             if action.show_typing:
                 self.bot.send_chat_action(action.peer.telegram_id, TelegramChatAction.TYPING)
             if action.delay:
@@ -67,11 +67,16 @@ class TelegramClient(IBotAPIClient):
                                                  one_time_keyboard=True,
                                                  selective=True)
                 else:
-                    markup = ForceReply()
+                    if i < len(actions):
+                        markup = ReplyKeyboardRemove()
+                    else:
+                        markup = ForceReply()
             elif action.action_type == ChatAction.Type.SENDING_MEDIA:
                 self.send_media(action.peer, action.media_id, action.render())
 
-            self.send_message(peer=action.peer, text=action.render(), markup=markup)
+            text = action.render()
+            print(text)
+            self.send_message(peer=action.peer, text=text, markup=markup)
 
     def _init_thread(self, target, *args, **kwargs):
         thr = Thread(target=target, args=args, kwargs=kwargs)

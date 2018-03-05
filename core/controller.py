@@ -3,11 +3,8 @@
 #     def __init__(self):
 #         pass
 from abc import ABCMeta, abstractmethod
-from functools import partial, wraps
-from pprint import pprint
 from typing import Callable
 
-import itertools
 from logzero import logger
 
 from core import States
@@ -25,11 +22,16 @@ class BaseHandler(metaclass=ABCMeta):
 
 
 class IntentHandler(BaseHandler):
-    def __init__(self,
-                 handler: Callable,
-                 intents=None,
-                 parameters=None,
-                 ):
+    """
+    Handler definition that triggers on specific intents and/or parameters of incoming messages.
+    """
+
+    def __init__(self, handler: Callable, intents=None, parameters=None):
+        """
+        :param handler: Callback function
+        :param intents: List of prefixes that the intent must start with
+        :param parameters: List of exact parameters that must be contained in the message
+        """
         if not callable(handler):
             raise ValueError("First argument `handler` must be callable.")
         self._intents = [intents] if isinstance(intents, str) else intents
@@ -69,7 +71,7 @@ class IntentHandler(BaseHandler):
 
 
 class AffirmationHandler(BaseHandler):
-    INTENTS = ['yes', 'correct', 'smalltalk.dialog.correct']
+    INTENTS = ['yes', 'correct', 'smalltalk.dialog.correct', 'smalltalk.agent.right']
 
     def __init__(self, handler):
         super(AffirmationHandler, self).__init__(handler)
@@ -87,7 +89,7 @@ class AffirmationHandler(BaseHandler):
 
 
 class NegationHandler(BaseHandler):
-    INTENTS = ['no', 'wrong', 'smalltalk.dialog.wrong', 'skip']
+    INTENTS = ['no', 'wrong', 'smalltalk.dialog.wrong', 'skip', 'smalltalk.agent.wrong']
 
     def __init__(self, handler):
         super(NegationHandler, self).__init__(handler)

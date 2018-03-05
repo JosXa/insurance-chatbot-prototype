@@ -24,6 +24,7 @@ class PlanningAgent(IPlanningAgent):
 
         shared_parameters = dict(
             user=context.user,
+            get_answer=lambda identifier: context.user.answers.get_answer(identifier),
             questionnaire_completion=context.questionnaire_completion_ratio,
             user_recent=context.has_user_intent,
             bot_recent=context.has_outgoing_intent,
@@ -32,6 +33,7 @@ class PlanningAgent(IPlanningAgent):
             overall_completion=context.overall_completion_ratio,
             num_actions=lambda intent: len(context.filter_outgoing_utterances(
                 lambda ca: intent in ca.intents, 12)),
+            get=lambda key: context.get_value(key, None),
             formal=context.user.formal_address,
             informal=not context.user.formal_address,
             chance=chance

@@ -22,21 +22,13 @@ ok_thank_you:
     - "Gut, danke."
     - "Super!"
 
-claim_damage:
-  "Soll ich {{'Ihnen' if formal else 'dir'}} helfen, einen Schaden an {{'Ihrem' if formal else 'deinem'}}
-    Smartphone zu melden?"
-
-all_done:
-  "Ich habe alle Informationen von {{'Ihnen' if formal else 'dir'}}, die wir benötigen um {{'Ihren' if formal else
-    'deinen'}} Schadensfall schnellstmöglich zu bearbeiten."
-
 again:
   choices:
     - "Noch einmal"
 
 with_pleasure:
   choices:
-    - "Natürlich"
+    - "Natürlich, gerne"
     - text: "Okay {{user.name}}"
       condition: "{{user.name != None}}"
     - text: "Natürlich, {{user.name}}"
@@ -94,10 +86,10 @@ interesting:
     - "Cool, interessant!"
     - "Oh wow, das ist spannend."
 
-pity_no_claim:
+i_think_so_too:
   choices:
-    - "Schade, ich kann {{'Ihnen' if formal else 'dir'}} nur dabei helfen"
-    - "Das macht nichts, zu mehr bin ich aber nicht von Nutzen."
+    - "Nicht wahr? 😄"
+    - "Ja, finde ich auch 😄"
 
 its_okay:
   choices:
