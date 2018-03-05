@@ -34,7 +34,7 @@ class FacebookClient(IBotAPIClient):
         ud.original_update = event
         ud.client_name = self.client_name
         ud.message_id = event.message_mid
-        ud.datetime = datetime.datetime.fromtimestamp(event.timestamp / 1000.0)  # TODO: utcfromtimestamp ?
+        ud.datetime = datetime.datetime.fromtimestamp(event.timestamp / 1000.0)
 
         ud.payload = payload
 
@@ -104,7 +104,12 @@ class FacebookClient(IBotAPIClient):
             callback(self, self.unify_update(event, payload))
 
     def add_plaintext_handler(self, callback):
-        self._page.set_webhook_handler('message', lambda event: callback(self, self.unify_update(event)))
+        def filter(event):
+            if not event.message_text:
+                return
+            return callback(self, self.unify_update(event))
+
+        self._page.set_webhook_handler('message', filter)
 
     def add_voice_handler(self, callback):
         pass
