@@ -123,7 +123,8 @@ class FacebookClient(IBotAPIClient):
 
     def add_voice_handler(self, callback):
         def filter(event: Event):
-            if not event.message_text:
+            pprint(event.message_attachments)
+            if not event.is_attachment_message:
                 return
             return callback(self, self.unify_update(event))
 
