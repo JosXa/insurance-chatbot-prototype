@@ -70,6 +70,7 @@ class FacebookClient(IBotAPIClient):
                 user_id = action.peer.facebook_id
 
                 if action.show_typing:
+                    log.debug("User id: " + user_id)
                     self.show_typing(user_id)
                 if action.delay:
                     time.sleep(action.delay.value)
