@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 import datetime
+import requests
 import os
 import time
 from pprint import pprint
 from typing import Callable, List
+
+import shutil
 from logzero import logger as log
 
 from fbmq import Attachment, Event, Page, QuickReply
@@ -43,7 +46,11 @@ class FacebookClient(IBotAPIClient):
             ud.user.save()
 
         if event.message_attachments:
-            pprint(event.message_attachments)
+            try:
+                voice = next(x for x in event.message_attachments if x.get('type') == 'audio')
+                ud.voice_id = voice['payload']['url']
+            except StopIteration:
+                pass
 
         if hasattr(event, 'message_text'):
             ud.message_text = event.message_text
@@ -124,14 +131,18 @@ class FacebookClient(IBotAPIClient):
     def add_voice_handler(self, callback):
         def filter(event: Event):
             pprint(event.message_attachments)
-            if not event.is_attachment_message:
+            if not any(x for x in event.message_attachments if x.get('type') == 'audio'):
                 return
             return callback(self, self.unify_update(event))
 
         self._page.set_webhook_handler('message', filter)
 
-    def download_voice(self, voice_id, filepath):
-        pass
+    def download_voice(self, voice_id, path):
+        filepath = os.path.join(path, 'voice.mp4')
+        r = requests.get(voice_id, stream=True)
+        with open(path, 'wb') as f:
+            shutil.copyfileobj(r.raw, f)
+        return filepath
 
     def send_media(self, peer, media_id, caption):
         filepath = get_file_by_media_id(media_id)
