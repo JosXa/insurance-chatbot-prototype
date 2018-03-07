@@ -45,7 +45,7 @@ def devices_by_name(name: str) -> List[str]:
     for d in DEVICES:
         formatted = format_device(d).lower()
         if name.lower() == formatted.lower():
-            return [d]
+            return [(d, 1.0)]
         sim = similarity(name, formatted)
         if sim > 0.3:
             matches.append((d, sim))
