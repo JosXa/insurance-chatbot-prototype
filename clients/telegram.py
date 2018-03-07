@@ -18,6 +18,7 @@ from model.update import Update
 
 
 class TelegramClient(IBotAPIClient):
+
     def __init__(self, app: Flask, webhook_url, token, test_mode=False):
         self._webhook_url = webhook_url
         self._app = app

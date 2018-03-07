@@ -7,7 +7,7 @@ ChatAction = TypeVar('ChatAction')
 class IBotAPIClient(object, metaclass=ABCMeta):
     @property
     @abstractmethod
-    def client_name(self): raise NotImplementedError()
+    def client_name(self): pass
 
     @abstractmethod
     def initialize(self): pass

@@ -83,12 +83,13 @@ class FacebookClient(IBotAPIClient):
                     log.debug("User id: " + user_id)
                     self.show_typing(user_id)
                 if action.delay:
-                    time.sleep(action.delay.value)
+                    # Facebook bots are very slow, shorten timeout
+                    time.sleep(action.delay.value * 0.3)
 
                 quick_replies = None
                 if action.action_type == ChatAction.Type.ASKING_QUESTION:
                     if action.choices:
-                        quick_replies = [QuickReply(title=x, payload=f"test_{x}") for x in action.choices]
+                        quick_replies = [QuickReply(title=x, payload=f"test_{x}") for x in action.choices[:10]]
                 elif action.action_type == ChatAction.Type.SENDING_MEDIA:
                     res = self.send_media(action.peer, action.media_id, action.render())
                     print(res)
