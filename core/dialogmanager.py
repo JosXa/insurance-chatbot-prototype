@@ -58,6 +58,10 @@ class DialogManager:
         converted = self.voice.convert_audio_ffmpeg(filepath, os.path.join(path, 'voice.flac'))
 
         text = self.voice.recognize(converted)
+        if text is None:
+            log.warning("Could not recognize user input.")
+            return
+
         update.message_text = text
         log.debug(f"Voice message received: {text}")
 
