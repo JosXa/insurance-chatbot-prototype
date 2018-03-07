@@ -147,7 +147,7 @@ class FacebookClient(IBotAPIClient):
     def download_voice(self, voice_id, path):
         filepath = os.path.join(path, 'voice.mp4')
         r = requests.get(voice_id, stream=True)
-        with open(path, 'wb') as f:
+        with open(filepath, 'wb') as f:
             shutil.copyfileobj(r.raw, f)
         return filepath
 
