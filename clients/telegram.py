@@ -54,7 +54,7 @@ class TelegramClient(IBotAPIClient):
     def perform_action(self, actions: List[ChatAction]):
         for i, action in enumerate(actions):
             if action.show_typing:
-                self.bot.send_chat_action(action.peer.telegram_id, TelegramChatAction.TYPING)
+                self.bot.send_chat_action(action.peer.telegram_id, TelegramChatAction.TYPING, timeout=20)
             if action.delay:
                 time.sleep(action.delay.value)
 
@@ -83,7 +83,7 @@ class TelegramClient(IBotAPIClient):
         self.__threads.append(thr)
 
     def initialize(self):
-        self.updater = Updater(token=self._token)
+        self.updater = Updater(token=self._token, request_kwargs={'read_timeout': 10, 'connect_timeout': 7})
         self.bot = self.updater.bot
 
     def _webhook_endpoint(self):
@@ -147,7 +147,7 @@ class TelegramClient(IBotAPIClient):
         Sends a markdown-formatted message to the `recipient`.
         """
         self.bot.send_message(peer.telegram_id, text, parse_mode=ParseMode.HTML,
-                              reply_markup=markup)
+                              reply_markup=markup, timeout=20)
 
     def send_media(self, peer: User, media_id: str, caption: str = None):
         filepath = get_file_by_media_id(media_id)
@@ -156,13 +156,13 @@ class TelegramClient(IBotAPIClient):
         file = open(filepath, 'rb')
         if ext == '.mp4':
             # GIF
-            return self.bot.send_document(peer.telegram_id, file, caption=caption)
+            return self.bot.send_document(peer.telegram_id, file, caption=caption, timeout=20)
         elif ext in ('.jpg', '.jpeg', '.png'):
-            return self.bot.send_photo(peer.telegram_id, file, caption=caption)
+            return self.bot.send_photo(peer.telegram_id, file, caption=caption, timeout=20)
         elif ext == '.webp':
-            msg = self.bot.send_sticker(peer.telegram_id, file)
+            msg = self.bot.send_sticker(peer.telegram_id, file, timeout=20)
             if caption:
-                self.send_message(peer, caption)
+                self.send_message(peer, caption, timeout=20)
             return msg
 
     def show_typing(self, user):
