@@ -43,9 +43,10 @@ def open_image(device_id):
 def devices_by_name(name: str) -> List[str]:
     matches = list()
     for d in DEVICES:
-        if d == name:
+        formatted = format_device(d)
+        if d == name or d == formatted:
             return [d]
-        sim = similarity(name, d['maker'] + ' ' + d['name'])
+        sim = similarity(name, formatted)
         if sim > 0.3:
             matches.append((d, sim))
     return sorted(matches, key=lambda x: x[1], reverse=True)[:15]

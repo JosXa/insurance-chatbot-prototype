@@ -152,7 +152,7 @@ RULES = {
         ('asking', 'how_are_you'): [
             IntentHandler(ask_to_start, intents='phone_broken'),
             IntentHandler(answer_to_how_are_you, intents=['smalltalk.appraisal.good', 'smalltalk.user.can_not_sleep',
-                                                          'smalltalk.appraisal.thank_you']),
+                                                          'smalltalk.appraisal.thank_you', 'smalltalk.user.good']),
             IntentHandler(answer_to_how_are_you, parameters='feeling'),
             smalltalk_handlers
         ]
