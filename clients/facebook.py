@@ -155,6 +155,8 @@ class FacebookClient(IBotAPIClient):
         filepath = get_file_by_media_id(media_id)
         ext = os.path.splitext(filepath)[1]
 
+        return  # TODO: broken
+
         if ext == '.mp4':
             video_url = settings.APP_URL + f'media/video/{media_id}{ext}'
             print(video_url)
