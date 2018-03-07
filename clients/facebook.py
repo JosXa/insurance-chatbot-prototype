@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 import datetime
-import requests
 import os
+import shutil
 import time
-from pprint import pprint
 from typing import Callable, List
 
-import shutil
-from logzero import logger as log
-
+import requests
 from fbmq import Attachment, Event, Page, QuickReply
 from flask import request
+from logzero import logger as log
 
 import settings
 from clients.botapiclients import IBotAPIClient
@@ -68,6 +66,13 @@ class FacebookClient(IBotAPIClient):
         self._app.add_url_rule('/', 'request', self._webhook, methods=['POST'])
 
         self._page.set_webhook_handler('message', self._message_handler)
+        self._page.set_webhook_handler('delivery', self._delivery_handler)
+
+    def _delivery_handler(self, event):
+        delivery = event.delivery
+        message_ids = delivery.get("mids")
+        watermark = delivery.get("watermark")
+        log.info(f"Message delivered: {message_ids} ({watermark})")
 
     def perform_action(self, actions: List[ChatAction]):
         for action in actions:
