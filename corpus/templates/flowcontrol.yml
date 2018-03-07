@@ -11,3 +11,15 @@ pity_no_claim:
     - "Schade, ich kann {{'Ihnen' if formal else 'dir'}} nur dabei helfen"
     - "Das macht nichts, zu mehr bin ich aber nicht von Nutzen."
 
+please_select_choice:
+  choices:
+    - "Welches genau? Bitte {{'wählen Sie' if formal else 'wähle'}} aus den
+    Optionen"
+    - "Das ist noch nicht ganz eindeutig. Bitte unten auswählen"
+    - "Das ist mir noch nicht ganz klar. Bitte aus den Buttons auswählen"
+
+no_phone_results:
+  choices:
+    - "Dieses Handymodell kenne ich nicht 😮."
+    - "Was ist denn das für ein Smartphone? 😮 Noch nie gehört..."
+    - "Das habe ich noch nie gehört 😮"

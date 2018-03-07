@@ -50,15 +50,16 @@ class TemplateRenderer(object):
         if template_selector is None:
             template_selector = SelectiveTemplateLoader(None)
 
-        response_template = template_selector.select(intent)
-
+        response_template = None
         try:
+            response_template = template_selector.select(intent)
+        except NoViableTemplateFoundError:
+            if not safe:
+                raise
+
+        if response_template:
             return self.render_template(response_template.text_template, parameters)
-        except Exception as e:
-            if safe:
-                return self.render_string(intent, parameters)
-            else:
-                raise e
+        return self.render_string(template_str=intent, parameters=parameters)
 
     def render_string(self, template_str, parameters=None, recursive=True):
         template = env.from_string(template_str)
