@@ -36,4 +36,7 @@ class VoiceRecognitionClient:
     def recognize(self, filepath):
         with sr.AudioFile(filepath) as source:
             audio = self.recognizer.record(source)  # read the entire audio file
-        return self.recognizer.recognize_google_cloud(audio, None, language='de_DE')
+        try:
+            return self.recognizer.recognize_google_cloud(audio, None, language='de_DE')
+        except sr.UnknownValueError:
+            return None
