@@ -16,7 +16,6 @@ all_smalltalk_intents = [
     'smalltalk.agent.marry_user',
     'smalltalk.agent.talk_to_me',
     'smalltalk.user.has_birthday',
-    'smalltalk.dialog.wrong',
     'smalltalk.user.wants_to_see_agent_again',
     'smalltalk.user.happy',
     'smalltalk.greetings.whatsup',
@@ -124,6 +123,7 @@ RULES = {
         ],
         'smalltalk': [
             IntentHandler(intro, intents='smalltalk.agent.can_you_help'),
+            IntentHandler(ask_to_start, intents='phone_broken'),
             smalltalk_handlers,
             # IntentHandler(ask_to_start),
         ],
@@ -137,7 +137,7 @@ RULES = {
             NegationHandler(abort_claim),
         ],
         States.ASKING_QUESTION: [
-            IntentHandler(clarify, intents='clarify'),
+            IntentHandler(clarify, intents=['clarify', 'smalltalk.dialog.what_do_you_mean']),
             IntentHandler(send_example, intents='example'),
             IntentHandler(skip_question, intents='skip'),
             NegationHandler(skip_question),
@@ -152,14 +152,15 @@ RULES = {
         ('asking', 'how_are_you'): [
             IntentHandler(ask_to_start, intents='phone_broken'),
             IntentHandler(answer_to_how_are_you, intents=['smalltalk.appraisal.good', 'smalltalk.user.can_not_sleep',
-                                                          'smalltalk.appraisal.thank_you', 'smalltalk.user.good']),
+                                                          'smalltalk.appraisal.thank_you', 'smalltalk.user.good',
+                                                          'smalltalk.user.happy']),
             IntentHandler(answer_to_how_are_you, parameters='feeling'),
             smalltalk_handlers
         ]
     },
     "fallbacks": [  # triggered if not matching state handler is found
         IntentHandler(intro, intents='what_can_you_do'),
-        IntentHandler(user_astonished, intents='astonishment'),
+        IntentHandler(user_astonished, intents=['astonishment', 'smalltalk.user.wow']),
         IntentHandler(excuse_did_not_understand, intents='fallback'),
         IntentHandler(no_rule_found),
     ]

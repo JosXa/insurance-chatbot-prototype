@@ -43,8 +43,8 @@ def open_image(device_id):
 def devices_by_name(name: str) -> List[str]:
     matches = list()
     for d in DEVICES:
-        formatted = format_device(d)
-        if d == name or d == formatted:
+        formatted = format_device(d).lower()
+        if name.lower() == formatted.lower():
             return [d]
         sim = similarity(name, formatted)
         if sim > 0.3:

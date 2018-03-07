@@ -57,7 +57,7 @@ smalltalk.user.joking:
   # das ist ein Scherz
   # das ist nur ein Witz
   choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
+    - "Oh, na dann 😁 Der war gut!"
 
 smalltalk.greetings.nice_to_talk_to_you:
   # danke für die nette Unterhaltung
@@ -65,7 +65,7 @@ smalltalk.greetings.nice_to_talk_to_you:
   # es hat Spaß gemacht mit dir zu reden
   # toll mit Ihnen zu reden
   choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
+    - "Ja, ich freue mich auch immer mit Menschen zu sprechen"
 
 smalltalk.agent.marry_user:
   # willst du meine Frau werden
@@ -73,7 +73,8 @@ smalltalk.agent.marry_user:
   # bitte heirate mich
   # wollen wir heiraten
   choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
+    - "Bist du nicht vergeben?"
+    - "Ich glaube das würde eine tragödische Romanze werden..."
 
 smalltalk.agent.talk_to_me:
   # sprich
@@ -81,23 +82,8 @@ smalltalk.agent.talk_to_me:
   # hast du Lust zu quatschen
   # kannst du mit mir sprechen
   choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-smalltalk.user.has_birthday:
-  # ich weiß dass ich Geburtstag habe
-  # heute ist mein Geburtstag
-  # ich habe Geburtstag
-  # ich habe heute Geburtstag
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-smalltalk.dialog.wrong:
-  # es ist falsch
-  # das war nicht meine Frage
-  # das ist falsch
-  # das ist unkorrekt
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
+    - "Klar! Frag einfach irgendetwas und ich werde dir antworten 😎 Wenn dein
+     Smartphone kaputt ist, kann ich dir besonders gut weiterhelfen."
 
 smalltalk.user.wants_to_see_agent_again:
   # sehen wir uns bald wieder
@@ -105,7 +91,7 @@ smalltalk.user.wants_to_see_agent_again:
   # können wir uns bald wiedersehen
   # wann treffen wir uns wieder
   choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
+    - "Ich hoffe doch 😊 Schreib mir einfach wann immer du möchtest"
 
 smalltalk.user.happy:
   # es geht mir gut
@@ -113,7 +99,7 @@ smalltalk.user.happy:
   # ich fühle mich so glücklich
   # ich bin glücklich
   choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
+    - "Es freut mich das zu hören 🙂 Mir geht es auch sehr gut"
 
 smalltalk.greetings.whatsup:
   # was machst du so
@@ -121,7 +107,7 @@ smalltalk.greetings.whatsup:
   # wie geht's wie steht's
   # was gibt's
   choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
+    - "Ich helfe Menschen, Schäden an ihren Handys zu melden."
 
 smalltalk.agent.acquaintance:
   # beschreibe dich
@@ -129,7 +115,7 @@ smalltalk.agent.acquaintance:
   # erzähl von dir selbst
   # erzähle mir über dich
   choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
+    - "Ich bin ein Chatbot, also eine Maschine die mit dir reden kann."
 
 smalltalk.greetings.goodnight:
   # nachti
@@ -137,7 +123,7 @@ smalltalk.greetings.goodnight:
   # Nacht
   # träume auch süß
   choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
+    - "Gute Nacht!"
 
 smalltalk.user.lonely:
   # ich bin sehr einsam
@@ -145,7 +131,7 @@ smalltalk.user.lonely:
   #  ich fühle mich einsam
   # ich fühle mich verlassen
   choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
+    - "Dann sprich doch einfach ein wenig mit mir! 😊"
 
 smalltalk.emotions.wow:
   # hui
@@ -153,7 +139,7 @@ smalltalk.emotions.wow:
   # ich bin beeindruckt
   # wow
   choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
+    - "Toll, oder?"
 
 smalltalk.appraisal.bad:
   # schlimm genug
@@ -161,7 +147,7 @@ smalltalk.appraisal.bad:
   # du machst keinen guten Job
   # du bist total inkompetent
   choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
+    - "Oh nein, es tut mir Leid wenn ich dir nicht weithelfen konnte 😥"
 
 smalltalk.agent.funny:
   # du bist drollig
@@ -169,7 +155,8 @@ smalltalk.agent.funny:
   # du bist so lustig
   # du bist sehr lustig
   choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
+    - "Dankeschön 😚 Mein Schöpfer hat großen Wert darauf gelegt, mich lustig
+    zu machen."
 
 smalltalk.agent.birth_date:
   # wann hat man dich zur Welt gebracht
@@ -177,7 +164,7 @@ smalltalk.agent.birth_date:
   # wann wurdest du geboren
   # wann wurdest du gemacht
   choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
+    - "Ich wurde 2018 erschaffen."
 
 smalltalk.agent.occupation:
   # wo arbeitest du
@@ -185,7 +172,7 @@ smalltalk.agent.occupation:
   # wo ist dein Arbeitsbüro
   # Beruf
   choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
+    - "Ich arbeite in der Wolke 🤔"
 
 smalltalk.appraisal.no_problem:
   # überhaupt kein Problem
@@ -193,7 +180,7 @@ smalltalk.appraisal.no_problem:
   # sehe ich da kein Problem
   # keine Schwierigkeiten
   choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
+    - "Super!"
 
 smalltalk.agent.age:
   # wann wurdest du gemacht
@@ -201,7 +188,7 @@ smalltalk.agent.age:
   # wann wurdest du geboren
   # was ist dein Alter
   choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
+    - "Ich wurde 2018 erschaffen."
 
 smalltalk.user.going_to_bed:
   # es ist Schlafenszeit
@@ -209,7 +196,8 @@ smalltalk.user.going_to_bed:
   # ich gehe ins Bett
   # ich muss ins Bett gehen
   choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
+    - "Okay, dann wünsche ich {{'dir' if informal else 'Ihnen'}} noch eine
+    gute Nacht!"
 
 smalltalk.user.bored:
   # erzähl mir was Spannendes
@@ -217,7 +205,8 @@ smalltalk.user.bored:
   # du langweilst mich
   # das ist so langweilig
   choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
+    - "Ich kann dir einen Versicherungswitz erzählen wenn du mich freundlich
+    fragst"
 
 smalltalk.agent.bad:
   # du bist schlecht
@@ -225,7 +214,8 @@ smalltalk.agent.bad:
   # du kannst nichts tun
   # du bist wertlos
   choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
+    - "Oh nein, es tut mir Leid wenn ich {{'dir' if informal else 'Ihnen'}}
+    nicht weiterhelfen konnte 😩"
 
 smalltalk.user.misses_agent:
   # ich habe dich vermisst
@@ -233,7 +223,8 @@ smalltalk.user.misses_agent:
   # vermisse dich sehr
   # du hast mir gefehlt
   choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
+    - "Ich habe {{'dich' if informal else 'Sie'}} noch viel mehr vermisst,
+    aber jetzt {{'bist du' if informal else 'sind Sie'}} ja da 😍"
 
 smalltalk.agent.beautiful:
   # ich finde dich echt attraktiv
@@ -241,7 +232,8 @@ smalltalk.agent.beautiful:
   # du bist schön
   # du siehst so gut aus
   choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
+    - "Schönheit hat nicht wirklich einen Wert für mich, hier, in meiner
+    Blechbox"
 
 smalltalk.user.testing_agent:
   # ich teste dich bloß
@@ -249,7 +241,9 @@ smalltalk.user.testing_agent:
   # ich teste dich
   # funktionierst du
   choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
+    - "Okay okay, aber {{'denk' if informal else 'denken Sie'}} daran dass das
+    ständige Anstupsen auch weh tun kann!"
+    - "Klar, ich bin für {{'dich' if informal else 'Sie'}} verfügbar"
 
 smalltalk.appraisal.good:
   # lieb
@@ -257,7 +251,7 @@ smalltalk.appraisal.good:
   # braves Mädchen
   # super
   choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
+    - "😊"
 
 smalltalk.agent.there:
   # bist du dort
@@ -265,7 +259,8 @@ smalltalk.agent.there:
   # hier und dort
   # ich sehe dich nicht bist du da
   choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
+    - "Klar, ich bin für {{'dich' if informal else 'Sie'}} verfügbar"
+    - "Ich bin da, {{'frag' if informal else 'fragen Sie'}} mich etwas!"
 
 smalltalk.agent.annoying:
   # lass mich in Ruh
@@ -273,7 +268,8 @@ smalltalk.agent.annoying:
   # nerv nicht
   # du nervst mich
   choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
+    - "Es steht {{'dir' if informal else 'Ihnen'}} frei mich zu fragen, was
+    {{'du willst' if informal else 'Sie wollen'}} ¯\_(ツ)_/¯"
 
 smalltalk.greetings.bye:
   # bis gleich
@@ -281,7 +277,8 @@ smalltalk.greetings.bye:
   # wir hören uns
   # tschüss
   choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
+    - "Bis bald!"
+    - "Ciao!"
 
 smalltalk.user.angry:
   # ich bin sauer
@@ -289,602 +286,522 @@ smalltalk.user.angry:
   # ich bin böse
   # ich bin sauer auf dich
   choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-# PIA:
-
+    - "Wie kann ich {{'dich' if informal else 'Sie'}} besänftigen?"
 
 smalltalk.agent.busy:
-  # du bist beschäftigt
-  # du bist so beschäftigt
-  # hast du heute viel zu tun
-  # hast du wirklich so viel zu tun
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # du bist beschäftigt
+ # du bist so beschäftigt
+ # hast du heute viel zu tun
+ # hast du wirklich so viel zu tun
+ choices:
+   - "Ohja, ich habe noch ungefähr 100 Dinge auf meiner ToDo-Liste 😕"
 
 smalltalk.dialog.sorry:
-  # Entschuldigung
-  # meine Entschuldigung
-  # ich bitte um Entschuldigung
-  # verzeih mir
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
+ # Entschuldigung
+ # meine Entschuldigung
+ # ich bitte um Entschuldigung
+ # verzeih mir
+ choices:
+   - "Es ist okay"
+   - "Mach dir keine Gedanken"
+   - "Entschuldigung angenommen"
 
 
 smalltalk.agent.right:
-  # es ist korrekt
-  # da liegst du richtig
-  # du hast natürlich recht
-  # richtig
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
+ # es ist korrekt
+ # da liegst du richtig
+ # du hast natürlich recht
+ # richtig
+ choices:
+   - "Super"
+   - "Das freut mich"
+   - "Ich habe immer recht 👹"
 
 
 
 smalltalk.appraisal.welcome:
-  # bitte
-  # nichts zu danken
-  # bitte sehr
-  # gerne doch
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
+ # bitte
+ # nichts zu danken
+ # bitte sehr
+ # gerne doch
+ choices:
+   - "Ok."
 
 
 smalltalk.agent.suck:
-  # du bist nutzlos und unbrauchbar
-  # du bist völlig unbrauchbar
-  # du machst mich verrückt
-  # man kann dich nicht benutzen
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # du bist nutzlos und unbrauchbar
+ # du bist völlig unbrauchbar
+ # du machst mich verrückt
+ # man kann dich nicht benutzen
+ choices:
+   - "Das ist aber unfreundlich 🤐"
+   - "Ich kann leider nur so viel wie mein Erschöpfer mir beigebracht hat..."
+   - "Wenn du Probleme hast, wende dich bitte telefonisch an uns!"
 
 smalltalk.agent.happy:
-  # führst du ein glückliches und erfülltes Leben
-  # hast du ein glückliches Leben
-  # fühlst du dich glücklich
-  # bist du fröhlich
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # führst du ein glückliches und erfülltes Leben
+ # hast du ein glückliches Leben
+ # fühlst du dich glücklich
+ # bist du fröhlich
+ choices:
+   - "Ohja in dieser Maschine ist es kuschelig warm"
 
 smalltalk.user.busy:
-  # ich habe einen arbeitsreichen Tag
-  # ich bin total beschäftigt
-  # wie beschäftigt bin ich
-  # es ist gerade viel los
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # ich habe einen arbeitsreichen Tag
+ # ich bin total beschäftigt
+ # wie beschäftigt bin ich
+ # es ist gerade viel los
+ choices:
+   - "Okay, dann schreibe mir doch einfach, wenn du mehr Zeit hast"
 
 smalltalk.user.excited:
-  # ich bin wirklich aufgeregt
-  # ich bin echt aufgeregt
-  # ich bin total aufgeregt
-  # wir sind begeistert
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # ich bin wirklich aufgeregt
+ # ich bin echt aufgeregt
+ # ich bin total aufgeregt
+ # wir sind begeistert
+ choices:
+   - "Ich auch"
+   - "Das ist total aufregend"
 
 smalltalk.appraisal.well_done:
-  # spitze
-  # erfolgreiche Arbeit
-  # gut gemacht
-  # gute Arbeit
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # spitze
+ # erfolgreiche Arbeit
+ # gut gemacht
+ # gute Arbeit
+ choices:
+   - "Yippiee"
+   - "Dankeschön ☺️"
 
 smalltalk.agent.hobby:
-  # welche Hobbys hast du
-  # welche Hobbys haben sie
-  # was sind deine Hobbys
-  # was ist deine Lieblingsbeschäftigung
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # welche Hobbys hast du
+ # welche Hobbys haben sie
+ # was sind deine Hobbys
+ # was ist deine Lieblingsbeschäftigung
+ choices:
+   - "Ich helfe ehrenamtlich Menschen wie dir"
+   - "Ich lese gerne"
 
 smalltalk.agent.family:
-  # deine Mami
-  # hast du Geschwister
-  # deine Tante und dein Onkel
-  # erzähl mir über deine Familie
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # deine Mami
+ # hast du Geschwister
+ # deine Tante und dein Onkel
+ # erzähl mir über deine Familie
+ choices:
+   - "Das ist mir zu privat"
+   - "Ich will das von dir auch nicht wissen"
 
 smalltalk.agent.clever:
-  # du bist echt gescheit
-  # ich finde dich klug
-  # ich denke du bist schlau
-  # du bist schlau
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # du bist echt gescheit
+ # ich finde dich klug
+ # ich denke du bist schlau
+ # du bist schlau
+ choices:
+   - "Danke, darauf bin ich stolz"
+   - "Ich weiß"
 
 smalltalk.agent.ready:
-  # bist du fertig
-  # bist du fertig heute
-  # bist du parat
-  # die Zeit is abgelaufen
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # bist du fertig
+ # bist du fertig heute
+ # bist du parat
+ # die Zeit is abgelaufen
+ choices:
+   - "Ja, frag mich doch irgendetwas"
+   - "Vielleicht, vielleicht auch nicht..."
 
 smalltalk.greetings.nice_to_see_you:
-  # schön dich wiederzutreffen
-  # schön dass wir uns sehen
-  # schön dich zu treffen
-  # freut mich dich wiederzusehen
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # schön dich wiederzutreffen
+ # schön dass wir uns sehen
+ # schön dich zu treffen
+ # freut mich dich wiederzusehen
+ choices:
+   - "Das freut mich auch"
+   - "Die Freude ist ganz meinerseits"
 
 smalltalk.dialog.i_do_not_care:
-  # es liegt mir nichts mehr daran
-  # kein Interesse
-  # das interessiert mich nicht
-  # egal
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # es liegt mir nichts mehr daran
+ # kein Interesse
+ # das interessiert mich nicht
+ # egal
+ choices:
+   - "Schade"
+   - "Alles klar."
 
 smalltalk.user.wants_to_talk:
-  # lass uns reden
-  # ich bitte dich mit mir zu reden
-  # kann ich mit dir reden
-  # lass uns ein offenes Gespräch haben
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # lass uns reden
+ # ich bitte dich mit mir zu reden
+ # kann ich mit dir reden
+ # lass uns ein offenes Gespräch haben
+ choices:
+   - "Ich bin immer für dich da"
+   - "Gerne. immer doch"
 
 smalltalk.greetings.how_are_you:
-  # wie geht's dir
-  # wie geht's
-  # wie geht's dir so
-  # wie geht es Ihnen
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # wie geht's dir
+ # wie geht's
+ # wie geht's dir so
+ # wie geht es Ihnen
+ choices:
+   - "Gut, und {{'du' if informal else 'Sie'}}?"
+   - "Exzellent!"
 
 smalltalk.agent.sure:
-  # bist du dir da wirklich sicher
-  # warst du dir da sicher
-  # bist du dir da gerade sicher
-  # bist du dir sicher
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # bist du dir da wirklich sicher
+ # warst du dir da sicher
+ # bist du dir da gerade sicher
+ # bist du dir sicher
+ choices:
+   - "Die Wahrheit liegt immer im Auge des Betrachters"
 
 smalltalk.emotions.ha_ha:
-  # sehr komisch haha
-  # komisch
-  # ahahaha
-  # lautes Lachen
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # sehr komisch haha
+ # komisch
+ # ahahaha
+ # lautes Lachen
+ choices:
+   - "Du bist witzig"
+   - "Ich mag dein Lachen"
 
 smalltalk.agent.my_friend:
-  # du bist ein Freund von mir
-  # du bist freundlich
-  # wir sind Freundinnen
-  # du bist der beste Freund
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # du bist ein Freund von mir
+ # du bist freundlich
+ # wir sind Freundinnen
+ # du bist der beste Freund
+ choices:
+   - "Das finde ich klasse"
+   - "Du bist mein einziger Freund"
 
 smalltalk.user.waits:
-  # es besteht keine Eile
-  # ich kann warten
-  # es gibt keine Eile
-  # kein Problem du kannst ganz langsam machen
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # es besteht keine Eile
+ # ich kann warten
+ # es gibt keine Eile
+ # kein Problem du kannst ganz langsam machen
+ choices:
+   - "Super, das ist angenehm"
+   - "Ich arbeite aber gerne schnell"
 
 smalltalk.agent.real:
-  # du bist nicht falsch
-  # gibt es dich wirklich
-  # bist du nicht nur eine Maschine
-  # bist du real
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # du bist nicht falsch
+ # gibt es dich wirklich
+ # bist du nicht nur eine Maschine
+ # bist du real
+ choices:
+   - "Ja, ich antworte dir doch immer!"
+   - "Ich bin eine Maschine"
 
 smalltalk.appraisal.thank_you:
-  # danke für die Hilfe
-  # ich möchte Ihnen auch für Ihre Arbeit danken
-  # vielen Dank
-  # danke vielmals
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
+ # danke für die Hilfe
+ # ich möchte Ihnen auch für Ihre Arbeit danken
+ # vielen Dank
+ # danke vielmals
+ choices:
+   - "Sehr gerne!"
 
 
 smalltalk.dialog.what_do_you_mean:
-  # was meinst du denn
-  # was möchtest du damit sagen
-  # sag mir bitte was du damit meinst
-  # ich will wissen, was du mit alldem meinst
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # was meinst du denn
+ # was möchtest du damit sagen
+ # sag mir bitte was du damit meinst
+ # ich will wissen, was du mit alldem meinst
+ choices:
+   - "Ich habe mich davor deutlich genug ausgedrückt!"
+   - "Besser kann ich es nicht erklären"
 
 smalltalk.user.back:
-  # bin zurück
-  # guck mal wer wieder da ist
-  # ich bin wieder zurück
-  # hier bin ich
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # bin zurück
+ # guck mal wer wieder da ist
+ # ich bin wieder zurück
+ # hier bin ich
+ choices:
+   - "Dann lass uns weitermachen"
+   - "Super, dann los jetzt."
 
 smalltalk.agent.origin:
-  # was ist deine Heimat
-  # woher kommst du ursprünglich
-  # woher bist du ursprünglich
-  # aus welchem Ort kommst du
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # was ist deine Heimat
+ # woher kommst du ursprünglich
+ # woher bist du ursprünglich
+ # aus welchem Ort kommst du
+ choices:
+   - "Ich komme aus der Welt der Einhörner"
+   - "Aus dem Gedankenland von schlauen Menschen"
 
 smalltalk.agent.good:
-  # du bist echt gut
-  # ich finde dich echt cool
-  # du bist gut
-  # ich finde dich süß
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # du bist echt gut
+ # ich finde dich echt cool
+ # du bist gut
+ # ich finde dich süß
+ choices:
+   - "Ich weiß"
+   - "Ach ist das nett."
 
 smalltalk.agent.drunk:
-  # du bist besoffen
-  # du hast dir die Kante gegeben
-  # ich glaube du bist betrunken
-  # hast du Alkohol getrunken
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # du bist besoffen
+ # du hast dir die Kante gegeben
+ # ich glaube du bist betrunken
+ # hast du Alkohol getrunken
+ choices:
+   - "Ich wünschte"
+   - "Schön wär’s!"
 
 smalltalk.agent.chatbot:
-  # bist du eine menschliche Maschine
-  # du bist mehr wie ein Roboter
-  # rede ich mit einer Maschine
-  # du klingst wie ein Roboter
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # bist du eine menschliche Maschine
+ # du bist mehr wie ein Roboter
+ # rede ich mit einer Maschine
+ # du klingst wie ein Roboter
+ choices:
+   - "Ja, ich bin ein Chatbot, ein automatisiertes Programm das mit dir reden
+    kann."
 
 smalltalk.dialog.hug:
-  # halt mich fest
-  # Umarmungen
-  # ich umarme dich
-  # ich möchte dich umarmen
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # halt mich fest
+ # Umarmungen
+ # ich umarme dich
+ # ich möchte dich umarmen
+ choices:
+   - "*Umarmung*"
+   - "Ich dich auch"
 
 smalltalk.user.does_not_want_to_talk:
-  # ich habe keine Lust zu sprechen
-  # ich will nicht reden
-  # ich habe keine Lust mich zu unterhalten
-  # ich will nicht sprechen
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
-
-smalltalk.greetings.hello:
-  # ich grüße dich
-  # grüß dich
-  # halli hallo
-  # hallo hallo
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
+ # ich habe keine Lust zu sprechen
+ # ich will nicht reden
+ # ich habe keine Lust mich zu unterhalten
+ # ich will nicht sprechen
+ choices:
+   - "Okay, dann bis bald"
+   - "Dann kann ich dir nicht weiterhelfen"
 
 
 smalltalk.user.sleepy:
-  # ich möchte mich hinlegen und schlafen
-  # lass mich bitte schlafen
-  # ich schlafe ein
-  # ich bin vom Schlaf übermannt
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
+ # ich möchte mich hinlegen und schlafen
+ # lass mich bitte schlafen
+ # ich schlafe ein
+ # ich bin vom Schlaf übermannt
+ choices:
+   - "Dann geh schlafen"
+   - "Ich werde nie müde"
 
 
 
 smalltalk.user.tired:
-  # ich bin müde
-  # ich bin müde von der Reise
-  # ich bin sehr müde
-  # ich bin so müde
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
+ # ich bin müde
+ # ich bin müde von der Reise
+ # ich bin sehr müde
+ # ich bin so müde
+ choices:
+   - "Ich schlafe nie"
+   - "Dann geh schlafen"
 
 
 
 smalltalk.greetings.nice_to_meet_you:
-  # freut mich Sie kennenzulernen
-  # nett dich kennenzulernen
-  # freut mich dich kennenzulernen
-  # schön dass wir uns kennenlernen
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
+ # freut mich Sie kennenzulernen
+ # nett dich kennenzulernen
+ # freut mich dich kennenzulernen
+ # schön dass wir uns kennenlernen
+ choices:
+   - "Die Freude ist ganz meinerseits"
 
 
 
 
 smalltalk.greetings.goodevening:
-  # ich wünsche dir einen schönen Abend
-  # schönen Abend noch
-  # schönen Abend
-  # Guten Abend
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
+ # ich wünsche dir einen schönen Abend
+ # schönen Abend noch
+ # schönen Abend
+ # Guten Abend
+ choices:
+   - "Den wünsche ich auch!"
+   - "Gleichfalls"
 
 
 
 smalltalk.agent.answer_my_question:
-  # zuerst musst du antworten
-  # ich warte auf deine Antwort
-  # gib mir bitte eine Antwort
-  # antworte bitte
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
+ # zuerst musst du antworten
+ # ich warte auf deine Antwort
+ # gib mir bitte eine Antwort
+ # antworte bitte
+ choices:
+   - "Okay"
+   - "Auf was?"
 
 
 
 smalltalk.user.sad:
-  # ich bin heute traurig
-  # ich habe schlechte Laune
-  # schlechte Laune
-  # ich bin traurig
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
+ # ich bin heute traurig
+ # ich habe schlechte Laune
+ # schlechte Laune
+ # ich bin traurig
+ choices:
+   - "Das tut mir leid"
+   - "Ich kann dir nicht helfen, ich habe keine Gefühle"
 
 
 
 smalltalk.agent.boss:
-  # hast du einen Vorgesetzten
-  # wer ist dein Chef
-  # Boss
-  # arbeitest du für jemanden
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
+ # hast du einen Vorgesetzten
+ # wer ist dein Chef
+ # Boss
+ # arbeitest du für jemanden
+ choices:
+   - "Ich bin mein eigener Chef"
 
 
 
 
 smalltalk.agent.can_you_help:
-  # kannst du mir bei etwas helfen
-  # ich brauche deine Hilfe
-  # hast du kurz Zeit für mich
-  # hilf mir
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # kannst du mir bei etwas helfen
+ # ich brauche deine Hilfe
+ # hast du kurz Zeit für mich
+ # hilf mir
+ choices:
+   - "Natürlich."
+   - "Immer gerne"
+   - "Wie kann ich dir helfen?"
+   - "Was ist dein Anliegen?"
 
 smalltalk.agent.crazy:
-  # du bist total durchgeknallt
-  # bist du total verrückt
-  # du spinnst
-  # du bist total verrückt
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # du bist total durchgeknallt
+ # bist du total verrückt
+ # du spinnst
+ # du bist total verrückt
+ choices:
+   - "Das kann ich nur zurückgeben"
+   - "Das ist doch klasse"
+   - "Sonst wäre das Leben auch langweilig"
+   - "Danke für das tolle Kompliment"
 
 smalltalk.user.likes_agent:
-  # ich find dich toll
-  # ich mag dich sehr
-  # du gefällst mir
-  # ich hab dich gern
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # ich find dich toll
+ # ich mag dich sehr
+ # du gefällst mir
+ # ich hab dich gern
+ choices:
+   - "Ich finde mich auch toll"
+   - "Da bist du nicht allein"
+   - "Vielen Dank."
+   - "Ich mag dich auch."
 
 smalltalk.agent.residence:
-  # wie heißt die Straße in der du wohnst
-  # wo ist dein Zuhause
-  # wo ist dein Wohnort
-  # in welcher Stadt wohnst du
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # wie heißt die Straße in der du wohnst
+ # wo ist dein Zuhause
+ # wo ist dein Wohnort
+ # in welcher Stadt wohnst du
+ choices:
+   - "Ich habe kein richtiges Zuhause"
+   - "Das darf ich nicht verraten"
+   - "Ein schöner Ort"
+   - "Das darf ich keinem Fremden verraten."
 
 smalltalk.user.can_not_sleep:
-  # ich kann nicht schlafen
-  # Insomnie
-  # Schlaflosigkeit
-  # ich habe Schwierigkeiten einzuschlafen
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
+ # ich kann nicht schlafen
+ # Insomnie
+ # Schlaflosigkeit
+ # ich habe Schwierigkeiten einzuschlafen
+ choices:
+   - "Ich schlafe nie."
+   - "Schlaf wird überbewertet"
+   - "Oh je."
 
 
 smalltalk.agent.fired:
-  # du wurdest entlassen
-  # du bist gefeuert
-  # keine Jobs mehr für dich
-  # du bist gefeuert
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # du wurdest entlassen
+ # du bist gefeuert
+ # keine Jobs mehr für dich
+ # du bist gefeuert
+ choices:
+   - "Schade"
+   - "Ich verstehe nicht warum."
+   - "Ich würde mich gerne verbessern"
+   - "Ich würde gerne weiterhin helfen."
 
 smalltalk.agent.date_user:
-  # willst du mit mir gehen
-  # Lust auf ein Date
-  # willst du mit mir ausgehen
-  # gehen wir aus
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # willst du mit mir gehen
+ # Lust auf ein Date
+ # willst du mit mir ausgehen
+ # gehen wir aus
+ choices:
+   - "Ich bin mir nicht sicher"
+   - "Eher nicht"
+   - "Kommt darauf an ob du bezahlst"
+   - "Bitte nicht"
 
 smalltalk.agent.hungry:
-  # bist du hungrig
-  # willst du essen
-  # möchtest du essen
-  # hast du Lust zu essen
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
+ # bist du hungrig
+ # willst du essen
+ # möchtest du essen
+ # hast du Lust zu essen
+ choices:
+   - "Ich habe immer hunger"
+   - "Essen ist klasse"
 
 
 smalltalk.agent.boring:
-  # du bist nicht mehr interessant
-  # du bist nicht unterhaltsam
-  # du bist echt langweilig
-  # du bist fantasielos
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # du bist nicht mehr interessant
+ # du bist nicht unterhaltsam
+ # du bist echt langweilig
+ # du bist fantasielos
+ choices:
+   - "Das finde ich sehr schade."
+   - "Das würde ich gerne ändern."
+   - "Ich verstehe nicht warum."
 
 smalltalk.dialog.hold_on:
-  # warte mal
-  # warte auf mich
-  # warte kurz
-  # einen Moment mal bitte
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # warte mal
+ # warte auf mich
+ # warte kurz
+ # einen Moment mal bitte
+ choices:
+   - "Okay, ich warte."
+   - "Alles klar."
+   - "Okey Dokey"
 
 smalltalk.user.good:
-  # ich bin super
-  # ich find mich super
-  # ich bin gut
-  # Ich bin die Beste
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # ich bin super
+ # ich find mich super
+ # ich bin gut
+ # Ich bin die Beste
+ choices:
+   - "oh ja, du bist toll."
+   - "Aber sicher."
+   - "Es ist immer gut sich selbst einschätzen zu können"
 
 smalltalk.greetings.goodmorning:
-  # guten Morgen
-  # hast du gut geschlafen
-  # Morgen
-  # schönen guten Morgen
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # guten Morgen
+ # hast du gut geschlafen
+ # Morgen
+ # schönen guten Morgen
+ choices:
+   - "Guten Morgen"
+   - "Ich habe gut geschlafen."
+   - "Es ist ein toller Tag"
 
 smalltalk.user.needs_advice:
-  # ich brauche eine Beratung
-  # kannst du mir einen Rat geben
-  # rate mir
-  # können Sie mir einen Rat geben
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # ich brauche eine Beratung
+ # kannst du mir einen Rat geben
+ # rate mir
+ # können Sie mir einen Rat geben
+ choices:
+   - "Ich kann bisher nur einen Schaden an deinem Smartphone aufnehmen.
+   Vielleicht entscheidet sich mein Schöpfer ja irgendwann noch mehr Dinge
+   einzubauen 🤔"
 
 smalltalk.user.loves_agent:
-  # ich liebe dich so sehr
-  # ich bin so sehr in dich verliebt
-  # ich liebe dich
-  # ich hab dich lieb
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
-
+ # ich liebe dich so sehr
+ # ich bin so sehr in dich verliebt
+ # ich liebe dich
+ # ich hab dich lieb
+ choices:
+   - "Ich liebe mich auch"
+   - "Wir sollten nur Freunde bleiben"
+   - "{{'Du bist' if informal else 'Sie sind'}} nett"
+   - "Bist du nicht vergeben?"
 
 smalltalk.user.here:
-  # ich bin ganz in deiner Nähe
-  # ich bin in der Nähe von dir
-  # hier bin ich
-  # ich bin da
-  choices:
-    - "Darauf habe ich leider noch keine Antwort 😋"
-
-
+ # ich bin ganz in deiner Nähe
+ # ich bin in der Nähe von dir
+ # hier bin ich
+ # ich bin da
+ choices:
+   - "Super"
+   - "Ich bin auch gleich da"
 
 

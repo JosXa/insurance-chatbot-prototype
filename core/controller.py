@@ -89,7 +89,7 @@ class AffirmationHandler(BaseHandler):
 
 
 class NegationHandler(BaseHandler):
-    INTENTS = ['no', 'wrong', 'smalltalk.dialog.wrong', 'skip', 'smalltalk.agent.wrong']
+    INTENTS = ['no', 'wrong', 'smalltalk.dialog.wrong', 'skip', 'smalltalk.agent.wrong', 'smalltalk.dialog.wrong']
 
     def __init__(self, handler):
         super(NegationHandler, self).__init__(handler)

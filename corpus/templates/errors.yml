@@ -12,13 +12,11 @@ reformulate:
 
 what_i_understood:
   choices:
-    - "Das hier habe ich verstanden: '{{understanding}}'. Das hat mir
-    mein Schöpfer aber
-    noch nicht beigebracht 😐"
+    - "Das hier habe ich verstanden: '{{understanding}}'. Mein Schöpfer hat
+    mir aber noch keine passende Antwort darauf gegeben 😐"
     - "Irgendetwas in der Art '{{understanding}}'..? 😵"
-    - "Ich habe etwas wie '{{understanding}}' verstanden, aber leider in
-     diesem Kontext nichts damit
-    anfangen können 😣"
+    - "Ich habe etwas wie '{{understanding}}' verstanden, kann in diesem
+    Kontext aber nichts damit anfangen 😣"
   prefix: yes
 
 ask_something_else:

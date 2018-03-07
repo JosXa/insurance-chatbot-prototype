@@ -39,7 +39,7 @@ def answer_to_how_are_you(r, c):
     intent = c.last_user_utterance.intent
     if intent == 'smalltalk.appraisal.thank_you':
         r.say('with pleasure')
-    elif any(intent.startswith(x) for x in ['smalltalk.appraisal', 'smalltalk.user.good']):
+    elif any(intent.startswith(x) for x in ['smalltalk.appraisal', 'smalltalk.user.good', 'smalltalk.user.happy']):
         r.say('glad to hear that', 'i feel good')
     else:
         feeling = c.last_user_utterance.parameters
