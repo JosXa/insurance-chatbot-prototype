@@ -26,7 +26,10 @@ class FacebookClient(IBotAPIClient):
         self._token = token
 
         self._page = None  # type: Page
+
         self._error_handler = None  # type: Callable[Exception]
+        self._plaintext_handlers = []  # type: List[Callable[Event]]
+        self._voice_handlers = []  # type: List[Callable[Event]]
 
     @property
     def client_name(self):
@@ -63,6 +66,8 @@ class FacebookClient(IBotAPIClient):
         # Add webhook handlers
         self._app.add_url_rule('/', 'index', self._authentication, methods=['GET'])
         self._app.add_url_rule('/', 'request', self._webhook, methods=['POST'])
+
+        self._page.set_webhook_handler('message', self._message_handler)
 
     def perform_action(self, actions: List[ChatAction]):
         for action in actions:
@@ -121,23 +126,23 @@ class FacebookClient(IBotAPIClient):
         def start_handler(payload, event):
             callback(self, self.unify_update(event, payload))
 
-    def add_plaintext_handler(self, callback):
-        def filter(event):
+    def _message_handler(self, event):
+        for callback in self._plaintext_handlers:
             if not event.message_text:
-                return
-            return callback(self, self.unify_update(event))
+                break
+            callback(self, self.unify_update(event))
+        for callback in self._voice_handlers:
+            if not event.is_attachment_message:
+                break
+            if not any(x for x in event.message_attachments if x.get('type') == 'audio'):
+                break
+            callback(self, self.unify_update(event))
 
-        self._page.set_webhook_handler('message', filter)
+    def add_plaintext_handler(self, callback):
+        self._plaintext_handlers.append(callback)
 
     def add_voice_handler(self, callback):
-        def filter(event: Event):
-            if not event.is_attachment_message:
-                return
-            if not any(x for x in event.message_attachments if x.get('type') == 'audio'):
-                return
-            return callback(self, self.unify_update(event))
-
-        self._page.set_webhook_handler('message', filter)
+        self._voice_handlers.append(callback)
 
     def download_voice(self, voice_id, path):
         filepath = os.path.join(path, 'voice.mp4')

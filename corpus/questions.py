@@ -45,7 +45,8 @@ class Question:
     def is_valid(self, value):
         result = True
         if self.match_regex:
-            result = bool(self.match_regex.match(value))
+            print(self.match_regex)
+            result = bool(self.match_regex.search(value))
         # more to come
         return result
 
