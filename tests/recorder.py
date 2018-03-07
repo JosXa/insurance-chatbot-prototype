@@ -52,7 +52,8 @@ class ConversationRecorder:
             self.support_channel_id,
             open(self._get_filepath(user_id), 'rb'),
             caption=self._get_filename(user_id),
-            disable_notification=True
+            disable_notification=True,
+            timeout=120
         )
         log.info(f"Published conversation recording for {user_id}.")
         del self.conversations[user_id]
