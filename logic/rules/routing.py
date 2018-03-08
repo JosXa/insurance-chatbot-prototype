@@ -7,6 +7,7 @@ from logic.rules.smalltalkhandlers import *
 controller = Controller()
 
 all_smalltalk_intents = [
+    'who_are_you',
     'tell_a_joke',
     'smalltalk.user.will_be_back',
     'smalltalk.agent.be_clever',

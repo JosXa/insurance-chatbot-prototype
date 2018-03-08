@@ -23,6 +23,10 @@ tell_a_joke:
     - "Anekdoten aus den Schadensfällen:\n\n\"Da sprang der Verfolgte ins Wasser und tauchte trotz mehrmaliger
     Aufforderung nicht mehr auf.\""
 
+who_are_you:
+  choices:
+    - "Ich bin ein Chatbot, also ein Programm das mit dir sprechen kann"
+
 smalltalk.user.will_be_back:
   # ich komme bald wieder
   # ich komme wieder
