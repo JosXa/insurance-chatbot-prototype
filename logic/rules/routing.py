@@ -120,12 +120,10 @@ RULES = {
         States.INITIAL: [
             IntentHandler(start, intents=['start', 'hello', 'smalltalk.greetings']),
             IntentHandler(ask_to_start, intents='phone_broken'),
-            smalltalk_handlers,
         ],
         'smalltalk': [
             IntentHandler(intro, intents='smalltalk.agent.can_you_help'),
             IntentHandler(ask_to_start, intents='phone_broken'),
-            smalltalk_handlers,
             # IntentHandler(ask_to_start),
         ],
         'ask_to_start': [
@@ -156,13 +154,13 @@ RULES = {
                                                           'smalltalk.appraisal.thank_you', 'smalltalk.user.good',
                                                           'smalltalk.user.happy']),
             IntentHandler(answer_to_how_are_you, parameters='feeling'),
-            smalltalk_handlers
         ]
     },
     "fallbacks": [  # triggered if not matching state handler is found
         IntentHandler(intro, intents='what_can_you_do'),
         IntentHandler(user_astonished, intents=['astonishment', 'smalltalk.user.wow']),
         IntentHandler(excuse_did_not_understand, intents='fallback'),
+        smalltalk_handlers,
         IntentHandler(no_rule_found),
     ]
 }
