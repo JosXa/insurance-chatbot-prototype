@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 from peewee import *
 
 from model.basemodel import BaseModel
@@ -19,3 +20,10 @@ class User(BaseModel):
     @property
     def name(self) -> str:
         return self.answers.get_answer('name')
+
+    @property
+    def media_folder(self):
+        path = os.path.join('files', str(self.id), 'media')
+        if not os.path.exists(path):
+            os.makedirs(path)
+        return path

@@ -13,10 +13,11 @@ MessageUnderstanding = TypeVar('MessageUnderstanding')
 class Update(BaseModel):
     user = ForeignKeyField(User)  # type: User
     client_name = CharField()  # type: str
-    message_text = TextField()  # type: str
+    message_text = TextField(null=True)  # type: str
     message_id = CharField()  # type: str
     datetime = DateTimeField()  # type: datetime
     payload = CharField(null=True)  # type: str
+    media_location = CharField(null=True)  # type: str
 
     def __init__(self, *args, **kwargs):
         self.original_update = None  # type: [FacebookEvent,TelegramUpdate]

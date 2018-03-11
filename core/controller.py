@@ -66,7 +66,7 @@ class IntentHandler(BaseHandler):
     def __repr__(self):
         return f"{self.__class__.__name__}(" \
                f"{self.handler.__name__}, " \
-               f"intents={self._intents}, " \
+               f"intents={str(self._intents)[:40]}, " \
                f"parameters={self._parameters})"
 
 
@@ -104,6 +104,15 @@ class NegationHandler(BaseHandler):
             return True
 
         return False
+
+
+class MediaHandler(BaseHandler):
+
+    def __init__(self, handler):
+        super(MediaHandler, self).__init__(handler)
+
+    def matches(self, intent, parameters):
+        return intent == 'media'
 
 
 class Controller(object):

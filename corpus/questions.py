@@ -19,7 +19,11 @@ class Question:
                  choices: List = None,
                  hint=None,
                  example=None,
-                 match_regex=None):
+                 match_regex=None,
+                 media=False):
+        if media and any((confirm, choices, match_regex)):
+            raise ValueError("If the `media` argument is True, then `confirm`, `choices` and `match_regex` are "
+                             "forbidden.")
         self.id = qid
         self.title = title
         self.is_required = is_required
@@ -28,6 +32,7 @@ class Question:
         self.match_regex = re.compile(match_regex) if match_regex else None
         self.hint = hint
         self.example = example
+        self.media = media
 
     @classmethod
     def from_dict(cls, id, values: dict):
@@ -39,7 +44,8 @@ class Question:
             hint=values.get('hint'),
             choices=values.get('choices'),
             example=values.get('example'),
-            match_regex=values.get('match_regex')
+            match_regex=values.get('match_regex'),
+            media=values.get('media')
         )
 
     def is_valid(self, value):

@@ -27,3 +27,8 @@ ask_something_else:
       condition: "{{bot_recent('ask_something_else')}}"
     - text: "Oh, das kommt jetzt aber ziemlich oft vor 🤕 Sprechen wir über etwas anderes..."
       condition: "{{num_actions('ask_something_else') > 3}}"
+
+please_send_media:
+  choices:
+    - "Bitte {{'Senden Sie' if formal else 'sende'}} ein Foto, Video oder
+    Dokument mit den geforderten Informationen"

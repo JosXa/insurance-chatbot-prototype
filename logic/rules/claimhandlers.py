@@ -1,12 +1,10 @@
 import random
 import re
 
-from logzero import logger
-
 from core import Context, States
+from core.dialogmanager import ForceReevaluation
 from logic.rules import answercheckers
 from model import UserAnswers
-from logzero import logger as log
 
 
 def chance(value: float) -> bool:
@@ -82,13 +80,39 @@ def check_answer(r, c):
     # There are specific implementations of matchers that have a special functionality (e.g. getting phone model)
     specific_answer_matcher = getattr(answercheckers, question.id, None)
     if specific_answer_matcher:
-        return specific_answer_matcher(r, c)
+        result = specific_answer_matcher(r, c)
+        if isinstance(result, (list, tuple)):  # Multiple results found
+            r.ask('please select choice', choices=result)
+        elif result is False:  # Invalid answer by user
+            r.say('sorry', 'invalid answer').give_hint(question)
+        elif result is None:
+            return  # Actions already handled in answer matcher
+        else:
+            if question.confirm:
+                return ask_to_confirm_answer(r, c, user_answer=result)
+            else:
+                return store_answer(r, c, user_answer=result)
+        return
 
-    if question.is_valid(c.last_user_utterance.text):
+    ut = c.last_user_utterance
+
+    if question.media:
+        if ut.media_location:
+            # No confirmation required
+            return store_answer(r, c, user_answer=ut.media_location)
+        else:
+            r.say('please send media')
+            return States.ASKING_QUESTION
+
+    if ut.media_location:
+        r.say('sorry', 'invalid answer').give_hint(question)
+        return States.ASKING_QUESTION
+
+    if question.is_valid(ut.text):
         if question.confirm:
             return ask_to_confirm_answer(r, c)
         else:
-            return store_answer(r, c, user_answer=c.last_user_utterance.text)
+            return store_answer(r, c, user_answer=ut.text)
     else:
         r.say('sorry', 'invalid answer').give_hint(question)
         return States.ASKING_QUESTION
@@ -103,9 +127,11 @@ def store_answer(r, c, user_answer=None):
     return ask_next_question(r, c)
 
 
-def ask_to_confirm_answer(r, c):
-    r.ask_to_confirm(c.current_question, c.last_user_utterance.text)
-    c.set_value('user_answer', c.last_user_utterance)
+def ask_to_confirm_answer(r, c, user_answer=None):
+    if user_answer is None:
+        user_answer = c.last_user_utterance.text
+    r.ask_to_confirm(c.current_question, user_answer)
+    c.set_value('user_answer', user_answer)
     return 'user_confirming_answer'
 
 
@@ -151,19 +177,22 @@ def user_astonished(r, c):
 
 
 def change_formal_address(r, c: Context):
-    def switch_to_du():
-        c.user.formal_address = False
-        # r.say("we say du")
-        c.user.save()
-
     ut = c.last_user_utterance
+    if not ut.text:
+        return
 
+    # If the formal address changes, we need to force a reevaluation of the response templates parameters,
+    # so that the changes go into effect
     if re.search(r'\b(du|dein|dich|dir)\b', ut.text, re.IGNORECASE):
         if c.user.formal_address is True:
-            switch_to_du()
+            c.user.formal_address = False
+            c.user.save()
+            raise ForceReevaluation
     elif re.search(r'\b([Ii]hr|Sie|Ihnen|Euer|haben [sS]ie|sind [Ss]ie)\b', ut.text):
-        c.user.formal_address = True
-        c.user.save()
+        if c.user.formal_address is False:
+            c.user.formal_address = True
+            c.user.save()
+            raise ForceReevaluation
 
 
 def no_rule_found(r, c):

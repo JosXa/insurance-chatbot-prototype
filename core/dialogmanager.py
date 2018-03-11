@@ -1,18 +1,18 @@
 import os
-import traceback
 from typing import List
+
+from logzero import logger as log
 
 from appglobals import ROOT_DIR
 from clients.botapiclients import IBotAPIClient
 from clients.nlpclients import NLPEngine
 from clients.voice import VoiceRecognitionClient
 from core.context import ContextManager
+from core.planningagent import IPlanningAgent
 from core.understanding import MessageUnderstanding
-from logic.planning import PlanningAgent
-from logic.rules.routing import controller
+from logic import const
 from model import Update
 from tests.recorder import ConversationRecorder
-from logzero import logger as log
 
 
 class DialogManager:
@@ -24,20 +24,22 @@ class DialogManager:
     def __init__(self,
                  bot_clients: List[IBotAPIClient],
                  nlp_client: NLPEngine,
+                 planning_agent: IPlanningAgent,
                  recorder: ConversationRecorder = None,
-                 voice_recognition_client: VoiceRecognitionClient = None):
+                 voice_recognition_client: VoiceRecognitionClient = None,
+                 ):
         self.bots = bot_clients
         self.nlp = nlp_client
-        self.controller = controller
         self.recorder = recorder
         self.voice = voice_recognition_client
+        self.planning_agent = planning_agent
 
         self.context_manager = ContextManager()
-        self.planning_agent = PlanningAgent(self.controller)
 
         for bot in bot_clients:
             bot.add_plaintext_handler(self.text_update_received)
             bot.add_voice_handler(self.voice_received)
+            bot.add_media_handler(self.media_received)
             bot.set_start_handler(self.start_callback)
 
     def __get_client_by_name(self, client_name: str) -> IBotAPIClient:
@@ -67,13 +69,22 @@ class DialogManager:
 
         self.text_update_received(bot, update)
 
+    def media_received(self, bot: IBotAPIClient, update: Update):
+        update.understanding = MessageUnderstanding(None, const.MEDIA_INTENT, media_location=update.media_location)
+        self._process_update(bot, update)
+
     def text_update_received(self, bot: IBotAPIClient, update: Update):
         self.nlp.insert_understanding(update)
         self._process_update(bot, update)
 
     def _process_update(self, bot, update):
         context = self.context_manager.add_incoming_update(update)
-        next_response = self.planning_agent.build_next_actions(context)
+
+        try:
+            next_response = self.planning_agent.build_next_actions(context)
+        except ForceReevaluation:
+            # Some handlers require to reevaluate the template parameters
+            next_response = self.planning_agent.build_next_actions(context)
 
         actions = next_response.collect_actions()
 
@@ -88,3 +99,7 @@ class DialogManager:
         context.add_actions(actions)
 
         update.save()
+
+
+class ForceReevaluation(Exception):
+    pass

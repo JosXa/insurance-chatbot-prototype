@@ -25,6 +25,9 @@ class IBotAPIClient(object, metaclass=ABCMeta):
     def add_voice_handler(self, callback): pass
 
     @abstractmethod
+    def add_media_handler(self, callback): pass
+
+    @abstractmethod
     def set_start_handler(self, callback): pass
 
     @abstractmethod

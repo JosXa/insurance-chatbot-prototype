@@ -28,6 +28,7 @@ class FacebookClient(IBotAPIClient):
         self._error_handler = None  # type: Callable[Exception]
         self._plaintext_handlers = []  # type: List[Callable[Event]]
         self._voice_handlers = []  # type: List[Callable[Event]]
+        self._media_handlers = []  # type: List[Callable[Event]]
 
     @property
     def client_name(self):
@@ -149,6 +150,9 @@ class FacebookClient(IBotAPIClient):
 
     def add_voice_handler(self, callback):
         self._voice_handlers.append(callback)
+
+    def add_media_handler(self, callback):
+        self._media_handlers.append(callback)
 
     def download_voice(self, voice_id, path):
         filepath = os.path.join(path, 'voice.mp4')

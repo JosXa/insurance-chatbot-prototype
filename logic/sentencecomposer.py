@@ -172,8 +172,6 @@ class SentenceComposer:
         elif len(self._sequence) > 0:
             delay = ChatAction.Delay.MEDIUM
 
-        print(delay)
-
         if as_new_message or len(self._sequence) == 0:
             # Create new message
             self._sequence.append(

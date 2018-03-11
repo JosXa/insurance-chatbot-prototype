@@ -1,5 +1,6 @@
 import os
 import time
+from pprint import pprint
 from threading import Thread
 from typing import Callable, List
 
@@ -45,6 +46,22 @@ class TelegramClient(IBotAPIClient):
         ud.user, created = User.get_or_create(telegram_id=update.effective_user.id)
         if created:
             ud.user.save()
+
+        media_id = None
+        if update.effective_message.photo:
+            media_id = update.effective_message.photo[-1].file_id
+        elif update.effective_message.video:
+            media_id = update.effective_message.video.file_id
+        elif update.effective_message.document:
+            media_id = update.effective_message.document.file_id
+
+        if media_id:
+            file = self.bot.get_file(media_id)
+            filename = os.path.split(file.file_path)[-1]
+            ud.media_location = self.bot.get_file(media_id).download(
+                custom_path=os.path.join(ud.user.media_folder, filename))
+            print(ud.media_location)
+
         ud.message_id = update.effective_message.message_id
         ud.message_text = update.effective_message.text
         if update.effective_message.voice:
@@ -133,6 +150,14 @@ class TelegramClient(IBotAPIClient):
         self.updater.dispatcher.add_handler(
             MessageHandler(
                 Filters.voice,
+                lambda bot, update: callback(self, self.unify_update(update))
+            )
+        )
+
+    def add_media_handler(self, callback):
+        self.updater.dispatcher.add_handler(
+            MessageHandler(
+                (Filters.document | Filters.photo | Filters.video),
                 lambda bot, update: callback(self, self.unify_update(update))
             )
         )

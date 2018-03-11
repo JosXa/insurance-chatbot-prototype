@@ -1,3 +1,4 @@
+import os
 from threading import Thread
 from typing import List
 
@@ -12,11 +13,16 @@ from clients.telegram import TelegramClient
 from clients.voice import VoiceRecognitionClient
 from core.dialogmanager import DialogManager
 from corpus.media import get_file_by_media_id
+from logic.planning import PlanningAgent
+from logic.rules.routing import controller
 from tests.recorder import ConversationRecorder
 
 threads = list()  # type: List[Thread]
 
 USER_SEQ = dict()
+
+if not os.path.exists('files'):
+    os.makedirs('files')
 
 
 def error_handler(bot, update, error):
@@ -67,10 +73,16 @@ def main():
     if settings.ENABLE_CONVERSATION_RECORDING:
         conversation_recorder = ConversationRecorder(telegram_client.bot, settings.SUPPORT_CHANNEL_ID)
 
-    DialogManager([telegram_client, facebook_client], dialogflow_client, conversation_recorder, voice_client)
-    # DialogManager([sms_client, telegram_client, facebook_client], dialogflow_client, conversation_recorder)
+    planning_agent = PlanningAgent(controller=controller)
 
-    # sms_client.start_listening()
+    DialogManager(
+        bot_clients=[telegram_client, facebook_client],
+        nlp_client=dialogflow_client,
+        planning_agent=planning_agent,
+        recorder=conversation_recorder,
+        voice_recognition_client=voice_client
+    )
+
     telegram_client.start_listening()
     facebook_client.start_listening()
 

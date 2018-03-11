@@ -10,6 +10,7 @@ from core.controller import Controller
 from core.planningagent import IPlanningAgent
 from corpus.responsetemplates import SelectiveTemplateLoader, TemplateRenderer, TemplateSelector, ResponseTemplate
 from logic.sentencecomposer import SentenceComposer
+from model import UserAnswers
 
 
 class PlanningAgent(IPlanningAgent):
@@ -24,7 +25,7 @@ class PlanningAgent(IPlanningAgent):
 
         shared_parameters = dict(
             user=context.user,
-            get_answer=lambda identifier: context.user.answers.get_answer(identifier),
+            get_answer=lambda identifier: UserAnswers.get_answer(context.user, identifier),
             questionnaire_completion=context.questionnaire_completion_ratio,
             user_recent=context.has_user_intent,
             bot_recent=context.has_outgoing_intent,

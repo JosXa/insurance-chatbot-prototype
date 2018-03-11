@@ -1,6 +1,6 @@
 import traceback
 
-from core.controller import AffirmationHandler, IntentHandler, NegationHandler
+from core.controller import AffirmationHandler, IntentHandler, NegationHandler, MediaHandler
 from logic.rules.claimhandlers import *
 from logic.rules.smalltalkhandlers import *
 
@@ -95,7 +95,17 @@ all_smalltalk_intents = [
     'smalltalk.user.loves_agent',
     'smalltalk.user.here']
 
-### region  EMOTION-ORIENTED
+
+def force_return(func, return_value):
+    def handler(r, c):
+        func(r, c)
+        return return_value
+
+    return handler
+
+
+# region  emotion-oriented
+
 # Custom smalltalk handlers
 smalltalk_handlers = [
     IntentHandler(congratulate_birthday, intents='smalltalk.user.has_birthday'),
@@ -111,6 +121,9 @@ smalltalk_handlers.append(IntentHandler(
 ))
 # endregion
 
+# region  dialog-oriented
+intro_intents = ['smalltalk.agent.can_you_help', 'clarify']
+
 RULES = {
     "stateless": [  # always applied
         IntentHandler(record_phone_damage, intents='phone_broken'),
@@ -119,10 +132,11 @@ RULES = {
     "states": {  # triggered when context is in the key's state
         States.INITIAL: [
             IntentHandler(start, intents=['start', 'hello', 'smalltalk.greetings']),
-            IntentHandler(ask_to_start, intents='phone_broken'),
+            IntentHandler(force_return(intro, 'smalltalk'), intents=intro_intents),
+            IntentHandler(ask_to_start, intents=['phone_broken']),
         ],
         'smalltalk': [
-            IntentHandler(intro, intents='smalltalk.agent.can_you_help'),
+            IntentHandler(intro, intents=intro_intents),
             IntentHandler(ask_to_start, intents='phone_broken'),
             # IntentHandler(ask_to_start),
         ],
@@ -149,6 +163,7 @@ RULES = {
             IntentHandler(check_answer)
         ],
         ('asking', 'how_are_you'): [
+            IntentHandler(start, intents=['start', 'hello', 'smalltalk.greetings']),
             IntentHandler(ask_to_start, intents='phone_broken'),
             IntentHandler(answer_to_how_are_you, intents=['smalltalk.appraisal.good', 'smalltalk.user.can_not_sleep',
                                                           'smalltalk.appraisal.thank_you', 'smalltalk.user.good',

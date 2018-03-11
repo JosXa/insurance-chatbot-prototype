@@ -161,6 +161,7 @@ class Context:
 
     @property
     def last_user_utterance(self):
+        # TODO: this should be made a cached property
         try:
             return next(x for x in self._utterances if isinstance(x, MessageUnderstanding))
         except StopIteration:
