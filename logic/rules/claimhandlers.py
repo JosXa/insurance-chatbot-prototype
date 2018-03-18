@@ -4,6 +4,7 @@ import re
 from core import Context, States
 from core.dialogmanager import ForceReevaluation
 from logic.rules import answercheckers
+from logic.rules.smalltalkhandlers import ask_random_question
 from model import UserAnswers
 
 
@@ -13,11 +14,14 @@ def chance(value: float) -> bool:
 
 def start(r, c: Context):
     # TODO: If user has already interacted (after bot restart), go immediately to "current" question
+    if c.last_user_utterance.intent == 'smalltalk.greetings.whatsup':
+        r.say("smalltalk.greetings.whatsup")
+        return
     r.say("hello")
     if not c.has_outgoing_intent('how are you', 10):
         r.ask("how are you")
         return 'asking', 'how_are_you', 1
-    return 'smalltalk'
+    return States.SMALLTALK
 
 
 def intro(r, c):
@@ -46,6 +50,7 @@ def record_phone_damage(r, c: Context):
 
 
 def begin_questionnaire(r, c):
+    c.set_value("questionnaire_started", True)
     r.say("with pleasure").then_ask(c.current_question)
     return States.ASKING_QUESTION
 
@@ -53,7 +58,7 @@ def begin_questionnaire(r, c):
 def user_no_claim(r, c: Context):
     c.set_value('user_no_claim', True)
     r.say('pity_no_claim', 'chat on')
-    return 'smalltalk'
+    return States.SMALLTALK
 
 
 def send_example(r, c):
@@ -79,8 +84,8 @@ def check_answer(r, c):
 
     # There are specific implementations of matchers that have a special functionality (e.g. getting phone model)
     specific_answer_matcher = getattr(answercheckers, question.id, None)
-    if specific_answer_matcher:
-        result = specific_answer_matcher(r, c)
+    if callable(specific_answer_matcher):
+        result = specific_answer_matcher(r, c, question)
         if isinstance(result, (list, tuple)):  # Multiple results found
             r.ask('please select choice', choices=result)
         elif result is False:  # Invalid answer by user
@@ -136,6 +141,8 @@ def ask_to_confirm_answer(r, c, user_answer=None):
 
 
 def ask_next_question(r, c):
+    if c.claim_finished:
+        return claim_finished(r, c)
     if c.current_questionnaire.is_first_question(c.current_question):
         # started a new questionnaire
         if c.has_answered_questions:
@@ -172,6 +179,12 @@ def abort_claim(r, c):
     print("CLAIM ABORTED")  # TODO
 
 
+def claim_finished(r, c):
+    c.set_value('questionnaire_started', False)
+    c.say('all done')
+    return States.SMALLTALK
+
+
 def user_astonished(r, c):
     r.say("i think so too", "scope of bot")
 
@@ -198,4 +211,6 @@ def change_formal_address(r, c: Context):
 def no_rule_found(r, c):
     r.say("sorry", "what i understood", parameters={'understanding': c.last_user_utterance.intent})
     if chance(0.5):
+        return ask_random_question(r, c)
+    else:
         r.say("ask something else")

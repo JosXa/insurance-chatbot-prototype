@@ -3,7 +3,7 @@ from threading import Thread
 from typing import List
 
 from flask import Flask, send_file
-from logzero import logger
+from logzero import logger as log
 
 import migrate
 import settings
@@ -11,10 +11,11 @@ from clients.facebook import FacebookClient
 from clients.nlpclients import DialogflowClient
 from clients.telegram import TelegramClient
 from clients.voice import VoiceRecognitionClient
+from core.context import ContextManager
 from core.dialogmanager import DialogManager
 from corpus.media import get_file_by_media_id
 from logic.planning import PlanningAgent
-from logic.rules.routing import controller
+from logic.rules.routing import States, controller
 from tests.recorder import ConversationRecorder
 
 threads = list()  # type: List[Thread]
@@ -26,7 +27,7 @@ if not os.path.exists('files'):
 
 
 def error_handler(bot, update, error):
-    logger.exception(error)
+    log.exception(error)
 
 
 def main():
@@ -34,6 +35,11 @@ def main():
 
     app = Flask(__name__)
 
+    @app.route('/ping', methods=['GET'])
+    def ping():
+        return "Pong"
+
+    # Register a media endpoint for clients that cannot upload images, videos etc. but instead only work with URLs
     @app.route('/media/<mimetype>/<media_id>.<ext>', methods=['GET'])
     def media_endpoint(mimetype, media_id, ext):
         print(mimetype, media_id, ext)
@@ -57,13 +63,9 @@ def main():
         app,
         settings.APP_URL,
         settings.TELEGRAM_ACCESS_TOKEN,
-        test_mode=settings.TEST_MODE
+        test_mode=settings.DEBUG_MODE
     )
     telegram_client.initialize()
-
-    # telegram_client.add_plaintext_handler(test_handler_tg)
-    # facebook_client.add_plaintext_handler(test_handler_fb)
-
     telegram_client.add_error_handler(error_handler)
 
     dialogflow_client = DialogflowClient(settings.DIALOGFLOW_ACCESS_TOKEN)
@@ -76,6 +78,7 @@ def main():
     planning_agent = PlanningAgent(controller=controller)
 
     DialogManager(
+        context_manager=ContextManager(initial_state=States.SMALLTALK),
         bot_clients=[telegram_client, facebook_client],
         nlp_client=dialogflow_client,
         planning_agent=planning_agent,
@@ -86,10 +89,22 @@ def main():
     telegram_client.start_listening()
     facebook_client.start_listening()
 
-    if settings.TEST_MODE:
-        logger.info("Listening...")
+    if settings.DEBUG_MODE:
+        host = 'localhost'
+        log.info(f"Listening in debug mode on {host}:{settings.PORT}...")
+        Thread(
+            target=app.run,
+            name='Debug App',
+            kwargs=dict(
+                host=host,
+                port=settings.PORT,
+                debug=True,
+                use_reloader=False
+            )
+        ).start()
         telegram_client.updater.idle()
     else:
+        log.info("Listening...")
         app.run(host='0.0.0.0', port=settings.PORT)
 
 

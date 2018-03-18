@@ -507,7 +507,7 @@ smalltalk.dialog.what_do_you_mean:
  # sag mir bitte was du damit meinst
  # ich will wissen, was du mit alldem meinst
  choices:
-   - "Ich habe mich davor deutlich genug ausgedrückt!"
+   - "Ich glaube ich kann das nicht besser erklären"
    - "Besser kann ich es nicht erklären"
 
 smalltalk.user.back:
@@ -552,7 +552,7 @@ smalltalk.agent.chatbot:
  # rede ich mit einer Maschine
  # du klingst wie ein Roboter
  choices:
-   - "Ja, ich bin ein Chatbot, ein automatisiertes Programm das mit dir reden
+   - "Ich bin ein Chatbot, ein automatisiertes Programm das mit dir reden
     kann."
 
 smalltalk.dialog.hug:

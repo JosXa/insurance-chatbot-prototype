@@ -18,8 +18,28 @@ class User(BaseModel):
         pass  # TODO
 
     @property
-    def name(self) -> str:
-        return self.answers.get_answer('name')
+    def name(self) -> str:  # Displayname
+        return self.first_name
+
+    @property
+    def first_name(self) -> str:
+        from model import UserAnswers
+        return UserAnswers.get_answer(self, 'first_name')
+
+    @property
+    def last_name(self) -> str:
+        from model import UserAnswers
+        return UserAnswers.get_answer(self, 'last_name')
+
+    @first_name.setter
+    def first_name(self, value):
+        from model import UserAnswers
+        UserAnswers.add_answer(user=self, question_id='first_name', answer=value)
+
+    @last_name.setter
+    def last_name(self, value):
+        from model import UserAnswers
+        UserAnswers.add_answer(user=self, question_id='last_name', answer=value)
 
     @property
     def media_folder(self):

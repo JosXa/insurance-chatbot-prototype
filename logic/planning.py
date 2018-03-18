@@ -3,7 +3,7 @@ from pprint import pprint
 from typing import List
 
 from collections import Counter
-from logzero import logger
+from logzero import logger as log
 
 from core import Context
 from core.controller import Controller
@@ -47,8 +47,8 @@ class PlanningAgent(IPlanningAgent):
             TemplateRenderer(shared_parameters)
         )
 
-        logger.debug(f'Incoming message: {user_utterance.intent} / {user_utterance.parameters} '
-                     f'|| Current state: {context.state}')
+        log.debug(f'Incoming message: {user_utterance.intent} / {user_utterance.parameters} '
+                  f'|| Current state: {context.state}')
 
         # Rule-based planning algorithm
         next_state = self.controller.execute(context.state,
@@ -58,6 +58,8 @@ class PlanningAgent(IPlanningAgent):
         if next_state:
             context.state = next_state
 
+        text = ', then '.join(f'"{x.render()}"' for x in composer.collect_actions())
+        log.debug(f'Sending {text}')
         return composer
 
 

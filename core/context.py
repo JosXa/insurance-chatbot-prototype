@@ -17,7 +17,7 @@ from model import Update, User, UserAnswers
 
 class States(Enum):
     # Special
-    INITIAL = 0
+    SMALLTALK = 0
     FALLBACK = 1
     STATELESS = 2
 
@@ -31,12 +31,12 @@ class Context:
     """
     SIZE_LIMIT = 50
 
-    def __init__(self, user: User):
+    def __init__(self, user: User, initial_state):
         self.user = user
 
         # User and Bot utterances from newest to oldest
         self._utterances = deque([], maxlen=self.SIZE_LIMIT)  # type: Deque[MessageUnderstanding, ChatAction]
-        self._state = States.INITIAL  # type: States
+        self._state = initial_state  # type: States
         self._state_lifetime = None
         self._value_store = dict()
 
@@ -60,12 +60,16 @@ class Context:
     def add_user_utterance(self, understanding: MessageUnderstanding):
         self._utterances.appendleft(understanding)
         if self._state_lifetime:
-            logger.debug(f"Decrementing lifetime to {self._state_lifetime - 1}")
+            logger.debug(f"Decrementing lifetime of {self._state} to {self._state_lifetime - 1}")
             self._state_lifetime -= 1
 
     def add_actions(self, actions: List[ChatAction]):
         for action in actions:
             self._utterances.appendleft(action)
+
+    @property
+    def claim_finished(self):
+        return self._all_done
 
     def _filter_utterances(self, utterance_type, filter_func, age_limit, only_latest):
         if isinstance(age_limit, timedelta):
@@ -133,10 +137,11 @@ class Context:
         return self._filter_utterances(ChatAction, filter_func, age_limit, only_latest)
 
     def add_answer_to_question(self, question, answer):
-        UserAnswers.insert(user=self.user,
-                           question_id=question.id if isinstance(question, Question) else question,
-                           answer=answer
-                           ).execute()
+        UserAnswers.add_answer(
+            user=self.user,
+            question_id=question.id if isinstance(question, Question) else question,
+            answer=answer,
+        )
         self._answered_question_ids.add(question.id if isinstance(question, Question) else question)
         self._update_question_context()
 
@@ -148,7 +153,6 @@ class Context:
             self._current_question = self.current_questionnaire.next_question(self._answered_question_ids)
             self._all_done = False
         except StopIteration:
-            print("ALL DONE!!!")
             self._all_done = True
 
     @property
@@ -183,7 +187,7 @@ class Context:
     @property
     def state(self):
         if self._state_lifetime and self._state_lifetime < 0:
-            return None
+            self._state = None
         return self._state
 
     @state.setter
@@ -203,8 +207,9 @@ class Context:
 
 
 class ContextManager:
-    def __init__(self):
+    def __init__(self, initial_state):
         self.contexts = {}  # type: Dict[User, Context]
+        self.initial_state = initial_state
 
     def add_outgoing_action(self, action: ChatAction) -> Context:
         ctx = self.get_user_context(action.peer)
@@ -225,5 +230,5 @@ class ContextManager:
 
     def get_user_context(self, user: User):
         if user not in self.contexts.keys():
-            self.contexts[user] = Context(user)
+            self.contexts[user] = Context(user, self.initial_state)
         return self.contexts[user]

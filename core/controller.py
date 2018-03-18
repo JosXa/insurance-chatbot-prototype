@@ -11,14 +11,14 @@ from core import States
 
 
 class BaseHandler(metaclass=ABCMeta):
-    def __init__(self, handler: Callable):
-        self.handler = handler
+    def __init__(self, callback: Callable):
+        self.callback = callback
 
     @abstractmethod
     def matches(self, intent, parameters): pass
 
     def __str__(self):
-        return self.handler.__name__
+        return self.callback.__name__
 
 
 class IntentHandler(BaseHandler):
@@ -26,17 +26,17 @@ class IntentHandler(BaseHandler):
     Handler definition that triggers on specific intents and/or parameters of incoming messages.
     """
 
-    def __init__(self, handler: Callable, intents=None, parameters=None):
+    def __init__(self, callback: Callable, intents=None, parameters=None):
         """
-        :param handler: Callback function
+        :param callback: Callback function
         :param intents: List of prefixes that the intent must start with
         :param parameters: List of exact parameters that must be contained in the message
         """
-        if not callable(handler):
-            raise ValueError("First argument `handler` must be callable.")
+        if not callable(callback):
+            raise ValueError("First argument `callback` must be callable.")
         self._intents = [intents] if isinstance(intents, str) else intents
         self._parameters = [parameters] if isinstance(parameters, str) else parameters
-        super(IntentHandler, self).__init__(handler)
+        super(IntentHandler, self).__init__(callback)
 
     def contains_intent(self, intent):
         return intent in self._intents
@@ -61,20 +61,21 @@ class IntentHandler(BaseHandler):
         return True
 
     def __str__(self):
-        return f"{self._intents} / {self._parameters} --> {self.handler.__name__}"
-
-    def __repr__(self):
         return f"{self.__class__.__name__}(" \
-               f"{self.handler.__name__}, " \
+               f"{self.callback.__name__}, " \
                f"intents={str(self._intents)[:40]}, " \
                f"parameters={self._parameters})"
 
+    def __repr__(self):
+        return f"{self._intents} / {self._parameters} --> {self.callback.__name__}"
+
 
 class AffirmationHandler(BaseHandler):
-    INTENTS = ['yes', 'correct', 'smalltalk.dialog.correct', 'smalltalk.agent.right']
+    INTENTS = ['yes', 'correct', 'smalltalk.dialog.correct',
+               'smalltalk.agent.right']
 
-    def __init__(self, handler):
-        super(AffirmationHandler, self).__init__(handler)
+    def __init__(self, callback):
+        super(AffirmationHandler, self).__init__(callback)
 
     def matches(self, intent, parameters):
         if parameters:
@@ -89,10 +90,11 @@ class AffirmationHandler(BaseHandler):
 
 
 class NegationHandler(BaseHandler):
-    INTENTS = ['no', 'wrong', 'smalltalk.dialog.wrong', 'skip', 'smalltalk.agent.wrong', 'smalltalk.dialog.wrong']
+    INTENTS = ['no', 'wrong', 'smalltalk.dialog.wrong', 'skip',
+               'smalltalk.agent.wrong', 'smalltalk.dialog.wrong']
 
-    def __init__(self, handler):
-        super(NegationHandler, self).__init__(handler)
+    def __init__(self, callback):
+        super(NegationHandler, self).__init__(callback)
 
     def matches(self, intent, parameters):
         if parameters:
@@ -108,8 +110,8 @@ class NegationHandler(BaseHandler):
 
 class MediaHandler(BaseHandler):
 
-    def __init__(self, handler):
-        super(MediaHandler, self).__init__(handler)
+    def __init__(self, callback):
+        super(MediaHandler, self).__init__(callback)
 
     def matches(self, intent, parameters):
         return intent == 'media'
@@ -160,19 +162,19 @@ class Controller(object):
         for rule in self.stateless:
             # Non-breaking, execute all
             if rule.matches(intent, parameters):
-                rule.handler(*callback_args)
+                rule.callback(*callback_args)
                 logger.debug(f"Stateless handler {rule} triggered.")
         for rule in self.states.get(state, []):
             # break after first occurence
             if rule.matches(intent, parameters):
-                next_state = rule.handler(*callback_args)
+                next_state = rule.callback(*callback_args)
                 logger.debug(f"{rule} triggered"
                              f"{f' and switched to new state {next_state}' if next_state else ''}.")
                 return next_state
         for rule in self.fallbacks:
             # break after first occurence
             if rule.matches(intent, parameters):
-                next_state = rule.handler(*callback_args)
+                next_state = rule.callback(*callback_args)
                 logger.debug(f"Fallback handler {rule} triggered.")
                 return next_state
 
@@ -188,11 +190,3 @@ class Controller(object):
                 yield from Controller._flatten(i)
             else:
                 yield i
-
-
-if __name__ == '__main__':
-    c = Controller()
-    c._add_rule(('asking', 'claim_damage'), IntentHandler('ayy', None, 'yes'))
-
-    print(c.get_state_handler(('asking', 'claim_damage'), None, 'yes'))
-    print(c.get_state_handler(('asking', 'claim_damage'), None, 'no'))

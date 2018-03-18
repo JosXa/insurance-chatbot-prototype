@@ -1,9 +1,15 @@
+import random
 from functools import wraps
 
 from core import Context
 from core.controller import Controller
 
 controller = Controller(warn_bypassed=False)
+
+RANDOM_QUESTIONS = {
+    "should i tell a joke": ("asking", "should_i_tell_a_joke", 1),  # lifetime of 1 utterance
+    "how can i help": None
+}
 
 
 def urge_to_start(func):
@@ -34,6 +40,25 @@ def static_smalltalk_response(cp, ctx):
     cp.say(intent)
 
 
+def fallback_smalltalk(cp, ctx):
+    return ask_random_question(cp, ctx)
+
+
+def ask_random_question(cp, ctx):
+    asked_questions = ctx.setdefault('random_questions', set())
+
+    try:
+        # Get next unasked question
+        question = next(q for q in RANDOM_QUESTIONS.items() if q[0] not in asked_questions)
+    except StopIteration:
+        question = random.choice(RANDOM_QUESTIONS)
+
+    intent, return_value = question
+    cp.then_ask(intent)
+    asked_questions.add(intent)
+    return return_value
+
+
 @urge_to_start
 def answer_to_how_are_you(r, c):
     intent = c.last_user_utterance.intent
@@ -56,11 +81,19 @@ def congratulate_birthday(r, c):
     r.send_media('happy birthday')
 
 
+def too_bad(r, c):
+    r.say('too_bad', 'how_else_can_i_help')
+
+
+def tell_a_joke(r, c):
+    r.say('tell_a_joke')
+
+
 def bye(r, c):
     r.send_media('tschuess')
 
 
 def generate_topic(comp, ctx):
     smalltalk_counter = ctx.get_value('smalltalk_counter', 0)
-    if smalltalk_counter <= 9:
+    if smalltalk_counter <= 7:
         comp.say(f"urge to start level {smalltalk_counter - 3}")

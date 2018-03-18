@@ -22,19 +22,19 @@ class DialogManager:
     """
 
     def __init__(self,
+                 context_manager: ContextManager,
                  bot_clients: List[IBotAPIClient],
                  nlp_client: NLPEngine,
                  planning_agent: IPlanningAgent,
                  recorder: ConversationRecorder = None,
                  voice_recognition_client: VoiceRecognitionClient = None,
                  ):
+        self.context_manager = context_manager
         self.bots = bot_clients
         self.nlp = nlp_client
         self.recorder = recorder
         self.voice = voice_recognition_client
         self.planning_agent = planning_agent
-
-        self.context_manager = ContextManager()
 
         for bot in bot_clients:
             bot.add_plaintext_handler(self.text_update_received)

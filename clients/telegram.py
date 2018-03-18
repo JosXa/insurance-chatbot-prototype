@@ -5,7 +5,7 @@ from threading import Thread
 from typing import Callable, List
 
 from flask import Flask, request
-from logzero import logger
+from logzero import logger as log
 from telegram import *
 from telegram import ChatAction as TelegramChatAction, Update as TelegramUpdate
 from telegram.ext import CommandHandler, Filters, MessageHandler, Updater
@@ -188,12 +188,12 @@ class TelegramClient(IBotAPIClient):
         elif ext == '.webp':
             msg = self.bot.send_sticker(peer.telegram_id, file, timeout=20)
             if caption:
-                self.send_message(peer, caption, timeout=20)
+                self.send_message(peer=peer, text=caption)
             return msg
 
     def show_typing(self, user):
         self.bot.send_chat_action(user.telegram_id, TelegramChatAction.TYPING)
 
     def add_error_handler(self, callback: Callable):
-        self.updater.dispatcher.logger = logger
+        self.updater.dispatcher.logger = log
         self.updater.dispatcher.add_error_handler(callback)

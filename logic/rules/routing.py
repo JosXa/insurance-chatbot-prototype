@@ -1,6 +1,4 @@
-import traceback
-
-from core.controller import AffirmationHandler, IntentHandler, NegationHandler, MediaHandler
+from core.controller import AffirmationHandler, IntentHandler, NegationHandler
 from logic.rules.claimhandlers import *
 from logic.rules.smalltalkhandlers import *
 
@@ -104,6 +102,16 @@ def force_return(func, return_value):
     return handler
 
 
+def evaluate_next_state(func):
+    def handler(r, c):
+        func(r, c)
+        if c.get_value('questionnaire_started'):
+            return ask_next_question(r, c)
+        return States.SMALLTALK
+
+    return handler
+
+
 # region  emotion-oriented
 
 # Custom smalltalk handlers
@@ -119,6 +127,11 @@ smalltalk_handlers.append(IntentHandler(
     static_smalltalk_response,
     intents=static_response_intents
 ))
+
+# Set up all smalltalk handlers to ask the current question if the questionnaire was already started
+for h in smalltalk_handlers:
+    h.callback = evaluate_next_state(h.callback)
+
 # endregion
 
 # region  dialog-oriented
@@ -130,15 +143,11 @@ RULES = {
         IntentHandler(change_formal_address),
     ],
     "states": {  # triggered when context is in the key's state
-        States.INITIAL: [
+        States.SMALLTALK: [
             IntentHandler(start, intents=['start', 'hello', 'smalltalk.greetings']),
-            IntentHandler(force_return(intro, 'smalltalk'), intents=intro_intents),
-            IntentHandler(ask_to_start, intents=['phone_broken']),
-        ],
-        'smalltalk': [
             IntentHandler(intro, intents=intro_intents),
-            IntentHandler(ask_to_start, intents='phone_broken'),
-            # IntentHandler(ask_to_start),
+            IntentHandler(force_return(intro, States.SMALLTALK), intents=intro_intents),
+            IntentHandler(ask_to_start, intents=['phone_broken']),
         ],
         'ask_to_start': [
             AffirmationHandler(begin_questionnaire),
@@ -169,7 +178,11 @@ RULES = {
                                                           'smalltalk.appraisal.thank_you', 'smalltalk.user.good',
                                                           'smalltalk.user.happy']),
             IntentHandler(answer_to_how_are_you, parameters='feeling'),
-        ]
+        ],
+        ('asking', 'should_i_tell_a_joke'): [
+            AffirmationHandler(tell_a_joke),
+            NegationHandler(too_bad)
+        ],
     },
     "fallbacks": [  # triggered if not matching state handler is found
         IntentHandler(intro, intents='what_can_you_do'),

@@ -1,8 +1,5 @@
 import string
-from pprint import pprint
 from typing import List, Union
-
-from logzero import logger as log
 
 from core import ChatAction
 from corpus import Question
@@ -12,11 +9,11 @@ from model import User
 
 
 class SentenceComposer:
-    def __init__(self,
-                 peer: User,
-                 template_loader: SelectiveTemplateLoader,
-                 template_renderer: TemplateRenderer
-                 ):
+    def __init__(
+            self,
+            peer: User,
+            template_loader: SelectiveTemplateLoader,
+            template_renderer: TemplateRenderer):
         self.peer = peer
         self.loader = template_loader
         self.renderer = template_renderer
@@ -102,7 +99,6 @@ class SentenceComposer:
         current_action = self._sequence[-1]
         current_action.intents.append(intent)
         previous_token = current_action.text_parts[-1]
-        log.info(text)
 
         if choices:
             # Be forgiving here

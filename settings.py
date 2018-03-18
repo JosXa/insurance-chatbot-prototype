@@ -6,9 +6,8 @@ from decouple import config
 
 PORT = config('PORT', cast=int, default=5000)
 APP_URL = 'https://bachelor-thesis.herokuapp.com/'
-TEST_MODE = config('DEBUG', cast=bool, default=False)
+DEBUG_MODE = config('DEBUG', cast=bool, default=True)
 
-# CLOUDCONVERT_ACCESS_TOKEN = config('CLOUDCONVERT_ACCESS_TOKEN')
 DIALOGFLOW_ACCESS_TOKEN = config('DIALOGFLOW_ACCESS_TOKEN')
 GOOGLE_VOICE_TOKEN = config('DATABASE_URL')
 FACEBOOK_ACCESS_TOKEN = config('FACEBOOK_ACCESS_TOKEN')
@@ -29,6 +28,6 @@ SUPPORT_CHANNEL_ID = -1001265422831
 # json.dump(creds, open(filename, 'w'), ensure_ascii=False)
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = 'service-account-file.json'
 
-ENABLE_CONVERSATION_RECORDING = TEST_MODE
+ENABLE_CONVERSATION_RECORDING = DEBUG_MODE
 
 CONTEXT_LOOKUP_RECENCY = 15

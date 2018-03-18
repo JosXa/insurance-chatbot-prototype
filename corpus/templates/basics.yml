@@ -15,12 +15,16 @@ well_done:
 ok_thank_you:
   choices:
     - "Okay, dankeschön."
-    - "Okay, vielen Dank."
     - "Alles klar, ist notiert."
+    - "Okay, vielen Dank{{' ' + user.name if user.name else ''}}."
     - "Das passt."
-    - "Perfekt, dankeschön."
-    - "Gut, danke."
+    - "Perfekt, dankeschön{{' ' + user.name if user.name else ''}}."
+    - "Gut, danke{{' ' + user.name if user.name else ''}}."
     - "Super!"
+
+ok_thank_you_ground_name:
+  "Okay, vielen Dank {{user.first_name}}."
+
 
 again:
   choices:

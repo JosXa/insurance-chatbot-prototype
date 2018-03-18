@@ -8,7 +8,8 @@ question_surrounding:
       condition: "{{overall_completion >= 0.2}}"
     - text: "Wir brauchen auch {{question.title}}"
       condition: "{{questionnaire_completion >= 0.6}}"
-    - text: "Es wäre schön, wenn {{'Sie' if formal else 'du'}} mir {{question.title}} nennen {{'könnten' if formal else 'könntest'}}."
+    - text: "Es wäre schön, wenn {{'Sie' if formal else 'du'}} mir {{question.title}} {{'senden'
+     if question.media else 'nennen'}} {{'könnten' if formal else 'könntest'}}."
       condition: "{{overall_completion >= 0.1}}"
     - text: "Um {{'Ihre' if formal else 'deine'}} Angaben zu vervollständigen, benötigen wir noch {{question.title}}"
       condition: "{{questionnaire_completion >= 0.9}}"

@@ -2,10 +2,9 @@ urge_to_start_level_1:
   "{{'Wussten Sie' if formal else 'Wusstest du'}}, dass fast 44% der Smartphone-Schäden dadurch entstehen, dass das
   Handy aus den Händen gleitet und auf den Boden fällt?"
 urge_to_start_level_2:
-  "lvl2"
+  "Wenn {{'Sie' if formal else 'du'}} einen Schaden an {{'Ihrem' if formal else 'deinem'}}
+  Smartphone melden {{'möchten, Sagen Sie' if formal else 'möchtest, sag'}}, mir einfach was
+  kaputt ist."
 urge_to_start_level_3:
-  "lvl3"
-urge_to_start_level_4:
-  "lvl4"
-urge_to_start_level_5:
-  "lvl5"
+  "Ich bin eigentlich nur hilfreich, wenn ein Schaden an {{'Ihrem' if formal else 'deinem'}}
+  Telefon entstanden ist."

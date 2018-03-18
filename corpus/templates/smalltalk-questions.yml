@@ -1,0 +1,5 @@
+should_i_tell_a_joke:
+  "Soll ich {{'Ihnen' if formal else 'dir'}} einen Witz erzählen?"
+
+how_can_i_help:
+  "Soll ich {{'Ihnen' if formal else 'dir'}} einen Witz erzählen?"

@@ -1,18 +1,20 @@
 personal details:
-  title: "Wir beginnen mit einigen Details zu {{'Ihrer' if formal else
-  'deiner'}} Person"
+  title: "Wir beginnen mit einigen Fragen zu {{'Ihrem' if formal else
+  'deinem'}} Vertrag."
   questions:
     policy_nr:
       title: "{{'Ihre' if formal else 'deine'}} Versicherungsschein-Nr."
+      match_regex: "[0-9\\wöäÜÖÄÜ\\-\\/]{5,18}"
       confirm: "Die Nummer lautet {{answer}}"
-      hint: "die Identifikationsnummer, die oben auf Ihrem Vertrag steht."
+      hint: "die Identifikationsnummer, die oben auf {{'Ihrem' if formal else 'deinem'}} Vertrag
+      steht."
       example: "12345"
       required: yes
     name:
-      title: "{{'Ihren' if formal else 'deinen'}} vollständigen Namen"
+      title: "{{'Ihren' if formal else 'deinen'}} Vor- und Nachnamen"
       confirm: "{{'Ihr' if formal else 'dein'}} Name lautet also {{answer}}"
       hint: "{{'Ihren' if formal else 'deinen'}} Vor- und Nachnamen"
-      example: "Max Mustermann"
+      example: "Max Mustermann, oder besser: Mustermann, Max"
       required: yes
 
 phone_details:

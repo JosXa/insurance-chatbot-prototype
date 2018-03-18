@@ -5,3 +5,16 @@ random_topic:
     - "Violett ist übrigens magentaer als rot :hmm:"
     - "Ist Sodbrennen eigentlich gefährlich? Zum Glück kann ich das nicht bekommen..."
     - "random topic 5"
+
+too_bad:
+  choices:
+    - "Okay, schade"
+    - "Macht nichts, nächstes Mal 😊"
+    - "Okay, macht nichts. Beim nächsten Mal dann"
+
+how_else_can_i_help:
+  choices:
+    - "Wie kann ich {{'Ihnen' if formal else 'dir'}} sonst noch helfen?"
+    - "Sonst noch etwas?"
+    - "Gibt es sonst noch etwas?"
+    - "Womit kann ich sonst noch helfen?"
