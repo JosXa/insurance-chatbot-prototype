@@ -20,8 +20,8 @@ class ChatAction:
 
     class Delay(Enum):
         SHORT = 1.2
-        MEDIUM = 1.6
-        LONG = 2.0
+        MEDIUM = 1.5
+        LONG = 1.8
 
     def __init__(self,
                  action_type: Type,
