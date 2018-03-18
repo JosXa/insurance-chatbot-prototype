@@ -6,7 +6,7 @@ from decouple import config
 
 PORT = config('PORT', cast=int, default=5000)
 APP_URL = 'https://bachelor-thesis.herokuapp.com/'
-DEBUG_MODE = config('DEBUG', cast=bool, default=True)
+DEBUG_MODE = config('DEBUG', cast=bool, default=False)
 
 DIALOGFLOW_ACCESS_TOKEN = config('DIALOGFLOW_ACCESS_TOKEN')
 GOOGLE_VOICE_TOKEN = config('DATABASE_URL')
