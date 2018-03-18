@@ -489,8 +489,7 @@ smalltalk.agent.real:
  # bist du nicht nur eine Maschine
  # bist du real
  choices:
-   - "Ja, ich antworte dir doch immer!"
-   - "Ich bin eine Maschine"
+   - "Ich bin eine Maschine, und ich antworte dir rund um die Uhr!"
 
 smalltalk.appraisal.thank_you:
  # danke für die Hilfe
