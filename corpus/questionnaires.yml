@@ -21,7 +21,7 @@ phone_details:
   title: "Als nächstes benötigen wir Informationen zum beschädigten Gerät"
   questions:
     model_identifier:
-      title: "die Modellbezeichnung des beschädigten Gerätes"
+      title: "die Modellbezeichnung"
       hint: "die Typbezeichnung des Smartphones"
       example: "iPhone 6S oder Samsung Galaxy S7"
       required: yes
@@ -33,6 +33,7 @@ phone_details:
       example: "990000862471854"
       required: no
     imei_photo:
+      condition: "{{has_answered('imei')}}"
       title: "ein Foto der Rechnung oder des Lieferscheins des beschädigten
       Mobiltelefons/Tablets, aus der die IMEI-Nummer hervorgeht"
       hint: "ein Scan, Foto oder sonstiger Beweis, dass {{'Sie' if formal
@@ -42,7 +43,7 @@ phone_details:
       required: no
     phone_number:
       title: "die Rufnummer des versicherten Gerätes, sofern vorhanden"
-      match_regex: "[0-9+\\-\\s]*"
+      match_regex: "[0-9+\\-\\s]{7,19}"
       hint: "die Telefonnummer, auf die {{'Ihr' if formal else 'dein'}} beschädigtes Gerät registriert ist."
       example: "+49 1234 567 89"
       required: no
@@ -62,13 +63,18 @@ damage_description:
       required: yes
     date_and_time:
       title: "das Datum und die Uhrzeit des Vorfalls"
-      confirm: "Es ist also am {{answer.day}}. {{month(answer.month)}} {{answer.year + ' ' if not
-      is_this_year(answer.year)}}um {{answer.hour}}:{{answer.minute}} passiert?"
+      confirm: "Es ist also am {{answer.day}}. {{month(answer.month)}}
+      {{answer.year|string() + ' ' if not is_this_year(answer.year) else ''}}um
+      {{answer.hour}}{{':' + answer.minute|string() if answer.minute != 0 else
+      ''}} Uhr passiert?"
       hint: "Datum und Uhrzeit, am besten in deutschem Format. {{'Gib' if
       informal else 'Geben Sie'}} diese einfach nach bestem Wissen an"
       example: "10.3.2018 15:30"
       required: yes
     cause_of_damage:
+      # TODO: "- wer war beteiligt?\n- was genau ist passiert?\n...
+      # aber: question skeleton setzt manchmal noch text dahinter
+      # wie lösen?
       title: "den genauen Schadenshergang"
       hint: "eine Schilderung, wie oder wodurch {{'Ihr' if formal else 'dein'}}
       {{get_answer('model_identifier')}} einen

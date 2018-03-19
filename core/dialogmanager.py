@@ -78,13 +78,17 @@ class DialogManager:
         self._process_update(bot, update)
 
     def _process_update(self, bot, update):
+        print()  # newline on incoming request, formats the logs a bit better
         context = self.context_manager.add_incoming_update(update)
 
         try:
-            next_response = self.planning_agent.build_next_actions(context)
-        except ForceReevaluation:
-            # Some handlers require to reevaluate the template parameters
-            next_response = self.planning_agent.build_next_actions(context)
+            try:
+                next_response = self.planning_agent.build_next_actions(context)
+            except ForceReevaluation:
+                # Some handlers require to reevaluate the template parameters
+                next_response = self.planning_agent.build_next_actions(context)
+        finally:
+            context.dialog_states.update_step()
 
         actions = next_response.collect_actions()
 
@@ -94,7 +98,7 @@ class DialogManager:
         try:
             bot.perform_action(actions)
         except Exception as e:
-            log.error("Error while processing update:")
+            log.error("Error while processing update_step:")
             log.exception(e)
         context.add_actions(actions)
 

@@ -11,11 +11,11 @@ from clients.facebook import FacebookClient
 from clients.nlpclients import DialogflowClient
 from clients.telegram import TelegramClient
 from clients.voice import VoiceRecognitionClient
-from core.context import ContextManager
+from core.context import ContextManager, States
 from core.dialogmanager import DialogManager
 from corpus.media import get_file_by_media_id
 from logic.planning import PlanningAgent
-from logic.rules.routing import States, controller
+from logic.rules.controller import application_router
 from tests.recorder import ConversationRecorder
 
 threads = list()  # type: List[Thread]
@@ -75,7 +75,7 @@ def main():
     if settings.ENABLE_CONVERSATION_RECORDING:
         conversation_recorder = ConversationRecorder(telegram_client.bot, settings.SUPPORT_CHANNEL_ID)
 
-    planning_agent = PlanningAgent(controller=controller)
+    planning_agent = PlanningAgent(router=application_router)
 
     DialogManager(
         context_manager=ContextManager(initial_state=States.SMALLTALK),

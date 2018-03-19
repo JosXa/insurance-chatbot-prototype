@@ -1,4 +1,4 @@
-from functools import wraps
+from logzero import logger as log
 
 
 def progress(scope):
@@ -8,8 +8,10 @@ def progress(scope):
         def wrapped(r, c, *args, **kwargs):
             counter = c.setdefault("progress", {}).setdefault(scope, 0)
             c.get_value("progress")[scope] = counter + 1
+            log.debug(f"Progress of {scope} is now at {counter + 1}")
             return func(r, c, *args, **kwargs)
 
+        wrapped.__name__ = func.__name__
         return wrapped
 
     return decorator

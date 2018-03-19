@@ -1,10 +1,8 @@
 import string
-from logzero import logger as log
 from typing import List, Union
 
 from core import ChatAction
-from corpus import Question
-from corpus.questions import Questionnaire
+from corpus.questions import Questionnaire, Question
 from corpus.responsetemplates import ResponseTemplate, SelectiveTemplateLoader, TemplateRenderer, format_intent
 from model import User
 
@@ -215,7 +213,7 @@ class SentenceComposer:
 
         default_question_params = dict(question=question)
         if parameters:
-            parameters.update(default_question_params)
+            parameters.update_step(default_question_params)
         else:
             parameters = default_question_params
 
@@ -224,7 +222,7 @@ class SentenceComposer:
             text = self.renderer.render_template(surrounding.text_template, parameters, recursive=True)
             choices = question.choices
         elif isinstance(question, str):
-            text = self.renderer.load_and_render(intent=question, template_selector=self.loader, parameters=parameters)
+            text = self.renderer.load_and_render(intent=question, template_loader=self.loader, parameters=parameters)
         else:
             raise ValueError(f"Incompatible type of question: {type(question)}")
 

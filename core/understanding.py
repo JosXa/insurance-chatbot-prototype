@@ -12,4 +12,7 @@ class MessageUnderstanding:
         self.media_location = media_location
 
     def __str__(self):
-        return f"{self.intent} -- {self.parameters} -- {self.contexts}"
+        params = {k: v for k, v in self.parameters.items() if v} if self.parameters else None
+        return f"Understanding('{self.intent}'" \
+               f"{', ' + str(params) if params else ''})" \
+               f"{', ' + str(self.contexts) if any(self.contexts) else ''}"

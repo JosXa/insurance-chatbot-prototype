@@ -12,6 +12,7 @@ well_done:
     - text: "Alles klar."
       condition: "{{questionnaire_completion == 0.9}}"
 
+
 ok_thank_you:
   choices:
     - "Okay, dankeschön."

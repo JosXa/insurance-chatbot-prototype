@@ -1,10 +1,16 @@
 import os
 import random
 import re
+import traceback
 from pprint import pprint
-from typing import List
+from typing import Iterable, List
+
+import itertools
+from logzero import logger as log
 
 import utils
+from corpus import conditions
+from corpus.responsetemplates import env
 
 PATH = os.path.split(os.path.abspath(__file__))[0]
 QUESTIONNAIRE_FILE = os.path.join(PATH, 'questionnaires.yml')
@@ -15,6 +21,7 @@ class Question:
                  qid,
                  title,
                  is_required,
+                 condition: str = None,
                  confirm: str = None,
                  implicit_grounding: str = None,
                  choices: List = None,
@@ -30,6 +37,7 @@ class Question:
         self.id = qid
         self.title = title
         self.is_required = is_required
+        self.condition_template = None if condition is None else env.from_string(condition)
         self.confirm = confirm
         self.implicit_grounding = implicit_grounding
         self.choices = choices
@@ -44,6 +52,7 @@ class Question:
             qid=id,
             title=values['title'],
             is_required=values.get('required', False),
+            condition=values.get('condition'),
             confirm=values.get('confirm'),
             implicit_grounding=values.get('implicit_grounding'),
             hint=values.get('hint'),
@@ -52,6 +61,14 @@ class Question:
             match_regex=values.get('match_regex'),
             media=values.get('media')
         )
+
+    def is_applicable(self, condition_context):
+        try:
+            return conditions.check_condition(self.condition_template, condition_context)
+        except Exception as e:
+            traceback.print_exc()
+            log.error(f"Error while rendering condition of question '{self.title}': {e}")
+            return False
 
     def is_valid(self, value):
         if self.match_regex:
@@ -76,17 +93,17 @@ class Questionnaire:
     def is_first_question(self, question: Question) -> bool:
         return self.questions.index(question) == 0
 
-    def next_question(self, answered_question_ids: List[str]) -> Question:
+    def next_question(self, answered_question_ids: Iterable[str]) -> Question:
         try:
             return next(x for x in self.questions if x.id not in answered_question_ids)
         except StopIteration:
             return None
 
-    def completion_ratio(self, answered_question_ids: List[str]) -> Question:
+    def completion_ratio(self, answered_question_ids: Iterable[str]) -> Question:
         relevant_ids = [x.id for x in self.questions if x.id in answered_question_ids]
         return len(relevant_ids) / len(self.questions)
 
-    def random_question(self, answered_question_ids: List[str]) -> Question:
+    def random_question(self, answered_question_ids: Iterable[str]) -> Question:
         all_unanswered = [x for x in self.questions if x.id not in answered_question_ids]
         return random.choice(all_unanswered)
 
@@ -118,6 +135,17 @@ def are_question_ids_unique(questionnaires: List[Questionnaire]) -> bool:
         else:
             ids.append(q.id)
     return True
+
+
+all_questionnaires = load_questionnaires()
+all_questions = list(itertools.chain.from_iterable([x.questions for x in all_questionnaires]))
+
+
+def get_question_by_id(identifier: str) -> Question:
+    try:
+        return next(x for x in all_questions if x.id == identifier.lower())
+    except StopIteration:
+        return None
 
 
 if __name__ == '__main__':

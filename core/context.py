@@ -4,13 +4,11 @@ from enum import Enum
 from pprint import pprint
 from typing import Callable, Deque, Dict, List, Union
 
-from logzero import logger
-
 import settings
 from core.chataction import ChatAction
+from core.dialogstates import DialogStates
 from core.understanding import MessageUnderstanding
-from corpus import all_questionnaires
-from corpus.questions import Question, Questionnaire
+from corpus.questions import Question, Questionnaire, all_questionnaires
 from corpus.responsetemplates import format_intent
 from model import Update, User, UserAnswers
 
@@ -33,11 +31,10 @@ class Context:
 
     def __init__(self, user: User, initial_state):
         self.user = user
+        self.dialog_states = DialogStates(initial_state)
 
         # User and Bot utterances from newest to oldest
         self._utterances = deque([], maxlen=self.SIZE_LIMIT)  # type: Deque[MessageUnderstanding, ChatAction]
-        self._state = initial_state  # type: States
-        self._state_lifetime = None
         self._value_store = dict()
 
         self._current_question = None  # type: Question
@@ -45,6 +42,10 @@ class Context:
         self._answered_question_ids = set()
         self._all_done = False
         self._update_question_context()
+        self.__name__ = "Context"
+
+        # cached property
+        self.__last_user_utterance = None  # type: MessageUnderstanding
 
     def set_value(self, key, value):
         # TODO: persist to database
@@ -59,9 +60,7 @@ class Context:
 
     def add_user_utterance(self, understanding: MessageUnderstanding):
         self._utterances.appendleft(understanding)
-        if self._state_lifetime:
-            logger.debug(f"Decrementing lifetime of {self._state} to {self._state_lifetime - 1}")
-            self._state_lifetime -= 1
+        self.__last_user_utterance = understanding
 
     def add_actions(self, actions: List[ChatAction]):
         for action in actions:
@@ -97,12 +96,12 @@ class Context:
 
         return results
 
-    def has_user_intent(self,
-                        intent: str,
-                        age_limit: Union[timedelta, datetime, int] = settings.CONTEXT_LOOKUP_RECENCY,
-                        ) -> bool:
+    def has_incoming_intent(self,
+                            intent: str,
+                            age_limit: Union[timedelta, datetime, int] = settings.CONTEXT_LOOKUP_RECENCY,
+                            ) -> bool:
         intent = format_intent(intent)
-        return bool(self.filter_user_utterances(
+        return bool(self.filter_incoming_utterances(
             lambda understanding: understanding.intent == intent,
             age_limit,
             only_latest=True
@@ -119,7 +118,7 @@ class Context:
             only_latest=True
         ))
 
-    def filter_user_utterances(
+    def filter_incoming_utterances(
             self,
             filter_func: Callable[[MessageUnderstanding], bool],
             age_limit: Union[timedelta, datetime, int] = settings.CONTEXT_LOOKUP_RECENCY,
@@ -147,9 +146,10 @@ class Context:
 
     def _update_question_context(self) -> None:
         try:
-            self.current_questionnaire = next(q for q
-                                              in all_questionnaires
-                                              if q.next_question(self._answered_question_ids))
+            self.current_questionnaire = next(
+                q for q
+                in all_questionnaires
+                if q.next_question(self._answered_question_ids))
             self._current_question = self.current_questionnaire.next_question(self._answered_question_ids)
             self._all_done = False
         except StopIteration:
@@ -160,16 +160,8 @@ class Context:
         return len(self._answered_question_ids) > 0
 
     @property
-    def last_utterance(self):
-        return self._utterances[-1]
-
-    @property
     def last_user_utterance(self):
-        # TODO: this should be made a cached property
-        try:
-            return next(x for x in self._utterances if isinstance(x, MessageUnderstanding))
-        except StopIteration:
-            return None
+        return self.__last_user_utterance
 
     @property
     def current_question(self):
@@ -183,27 +175,6 @@ class Context:
     def overall_completion_ratio(self):
         return (all_questionnaires.index(self.current_questionnaire) / len(all_questionnaires)) + (
                 self.questionnaire_completion_ratio / len(all_questionnaires))
-
-    @property
-    def state(self):
-        if self._state_lifetime and self._state_lifetime < 0:
-            self._state = None
-        return self._state
-
-    @state.setter
-    def state(self, value):
-        if isinstance(value, tuple):
-            try:
-                # Treat last state value of tuple as new lifetime of the state
-                lifetime = int(value[-1])
-                new_state = value[:-1]
-                self._state = new_state
-                self._state_lifetime = lifetime
-                return
-            except:
-                pass
-        self._state = value
-        self._state_lifetime = None
 
 
 class ContextManager:
@@ -229,6 +200,8 @@ class ContextManager:
         return ctx
 
     def get_user_context(self, user: User):
-        if user not in self.contexts.keys():
+        try:
+            return self.contexts[user]
+        except KeyError:
             self.contexts[user] = Context(user, self.initial_state)
-        return self.contexts[user]
+            return self.contexts[user]

@@ -20,9 +20,10 @@ hint_surrounding:
 
 questionnaire_finished:
   choices:
-    - "Erledigt"
-    - "Mit diesem Teil wären wir fertig"
-    - "Alles klar soweit"
+    - "So weit, so gut."
+    - "Erledigt."
+    - "Mit diesem Teil wären wir fertig."
+    - "Alles klar soweit."
 
 your_answer_is:
   choices:

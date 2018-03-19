@@ -1,10 +1,12 @@
 import random
 import re
+from pprint import pprint
 
 from core import Context, States, ChatAction
 from core.dialogmanager import ForceReevaluation
 from logic.rules import answercheckers
 from logic.rules.smalltalkhandlers import change_topic
+from logic.sentencecomposer import SentenceComposer
 from model import UserAnswers
 from logzero import logger as log
 
@@ -36,11 +38,10 @@ def ask_to_start(r, c):
         return
     else:
         r.ask("claim damage", choices=['affirm_yes', 'negate_no'])
-    return 'ask_to_start'
+    return 'ask_to_start', 1
 
 
 def record_phone_damage(r, c: Context):
-    log.error(c.current_question)
     if c.current_question.id in ('damage_type', 'cause_of_damage'):
         return  # We handle this as a normal answerchecker
 
@@ -50,12 +51,10 @@ def record_phone_damage(r, c: Context):
         c.add_answer_to_question('damage_type', str(dmg_type))
 
     if not c.has_outgoing_intent("sorry for broken phone", 40):
-        if dmg_type:
-            r.say("respond damage", "sorry for broken phone", parameters=dict(damage_type=dmg_type))
-        else:
-            r.say("sorry for broken phone")
+        r.say("sorry for broken phone")  # Automatically grounds damage_type if given
 
     c.set_value('is_phone_broken', True)
+    return True
 
 
 def start_claim(r, c):
@@ -155,9 +154,13 @@ def ask_to_confirm_answer(r, c, user_answer=None):
     return 'user_confirming_answer'
 
 
-def ask_next_question(r, c):
+def ask_next_question(r: SentenceComposer, c):
     if c.claim_finished:
         return claim_finished(r, c)
+
+    while not c.current_question.is_applicable(r.loader.selection_context):
+        c.add_answer_to_question(c.current_question, UserAnswers.NO_ANSWER)
+
     if c.current_questionnaire.is_first_question(c.current_question):
         # started a new questionnaire
         if c.has_answered_questions:
@@ -225,8 +228,8 @@ def change_formal_address(r, c: Context):
 
 def no_rule_found(r, c):
     # TODO: This is debatable. Should the user always be notified that something was not understood?
+    r.say("sorry", "what i understood", parameters={'understanding': c.last_user_utterance.intent})
     if chance(0.6):
         return change_topic(r, c)
     else:
-        r.say("sorry", "what i understood", parameters={'understanding': c.last_user_utterance.intent})
         r.say("ask something else")

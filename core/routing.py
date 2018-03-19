@@ -117,8 +117,7 @@ class MediaHandler(BaseHandler):
         return intent == 'media'
 
 
-class Controller(object):
-    # TODO: remove nesting of controllers
+class Router(object):
     def __init__(self, rules=None, warn_bypassed=True):
         self.warn_bypassed = warn_bypassed
         self.states = {}
@@ -128,11 +127,11 @@ class Controller(object):
             self.add_rules_dict(rules)
 
     def add_rules_dict(self, rules_dict):
-        states = rules_dict.get('states', {})
+        states = rules_dict.get('dialog_states', {})
         fallbacks = rules_dict.get('fallbacks', []) + rules_dict.get(States.FALLBACK, [])
         stateless = rules_dict.get('stateless', []) + rules_dict.get(States.STATELESS, [])
 
-        if any(isinstance(x, Controller) for x in stateless):
+        if any(isinstance(x, Router) for x in stateless):
             raise ValueError("Stateless handlers cannot be Controllers.")
 
         self.fallbacks.extend(self._flatten(fallbacks))
@@ -141,52 +140,31 @@ class Controller(object):
             handler_list = self._flatten(handlers)
             self.states.setdefault(state, []).extend(handler_list)
 
-    # def on_intent(self, state, intents=None, parameters=None):
-    #     def decorator(func):
-    #         handler = IntentHandler(func, intents, parameters)
-    #         if state == 'fallback' or state == States.FALLBACK:
-    #             self.fallbacks.append(handler)
-    #         elif state == 'stateless' or state == States.STATELESS:
-    #             self.stateless.append(handler)
-    #         else:
-    #             self.states.setdefault(state, []).append(handler)
-    #
-    #         def wrapped(*args, **kwargs):
-    #             return func(*args, **kwargs)
-    #
-    #         return wrapped
-    #
-    #     return decorator
-
-    def execute(self, state, intent, parameters, *callback_args):
+    def iter_matches_stateless(self, intent, parameters):
         for rule in self.stateless:
             # Non-breaking, execute all
             if rule.matches(intent, parameters):
-                rule.callback(*callback_args)
-                logger.debug(f"Stateless handler {rule} triggered.")
+                yield rule
+
+    def get_state_handler(self, state, intent, parameters):
         for rule in self.states.get(state, []):
             # break after first occurence
             if rule.matches(intent, parameters):
-                next_state = rule.callback(*callback_args)
-                logger.debug(f"{rule} triggered"
-                             f"{f' and switched to new state {next_state}' if next_state else ''}.")
-                return next_state
+                return rule
+        return None
+
+    def get_fallback_handler(self, intent, parameters):
         for rule in self.fallbacks:
             # break after first occurence
             if rule.matches(intent, parameters):
-                next_state = rule.callback(*callback_args)
-                logger.debug(f"Fallback handler {rule} triggered.")
-                return next_state
-
-        if self.warn_bypassed:
-            logger.warning(f"No matching rule found in state {state} with intent "
-                           f"{intent} and parameters {parameters}. Consider adding "
-                           f"a fallback to the controller.")
+                # logger.debug(f"Fallback handler {rule} triggered.")
+                return rule
+        return None
 
     @staticmethod
     def _flatten(obj):
         for i in obj:
             if isinstance(i, (list, tuple)):
-                yield from Controller._flatten(i)
+                yield from Router._flatten(i)
             else:
                 yield i

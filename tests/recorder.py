@@ -14,7 +14,7 @@ from core import ChatAction
 from model import Update
 
 # class IConversationRecorder(ABCMeta):
-#     def record_dialog(self, update: Update, actions: List[ChatAction]) -> NoReturn: pass
+#     def record_dialog(self, update_step: Update, actions: List[ChatAction]) -> NoReturn: pass
 
 
 PATH = 'tests/recordings'

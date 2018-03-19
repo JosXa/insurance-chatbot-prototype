@@ -1,18 +1,12 @@
 import random
 from abc import ABCMeta, abstractmethod
-from pprint import pprint
 from typing import Dict, List
 
-from jinja2 import Environment, PackageLoader
 from logzero import logger as log
 from telegram.utils.helpers import escape_markdown
 
-from corpus import emoji, raw_templates
+from corpus import conditions, emoji, env, raw_templates
 from utils import mutually_exclusive
-
-env = Environment(
-    loader=PackageLoader('corpus', 'templates'),
-)
 
 FORMATTING_PARAMS = {
     'bold': lambda s: f"*{escape_markdown(s)}*",
@@ -30,6 +24,19 @@ class TemplateRenderer(object):
     def __init__(self, rendering_parameters):
         self.parameters = rendering_parameters
 
+        # Add method to load and render response templates directly from the jinja2 template
+        self.parameters.update(dict(
+            render=lambda x: self.load_and_render(
+                intent=x,
+                parameters=self.parameters,
+                template_loader=SelectiveTemplateLoader(
+                    self.parameters,
+                    RandomTemplateSelector()
+                ),
+                safe=True
+            )
+        ))
+
     def render_template(self, template, parameters=None, recursive=True):
         # merge shared parameter dicts
         render_parameters = {**self.parameters, **(parameters or {})}
@@ -44,15 +51,15 @@ class TemplateRenderer(object):
     def load_and_render(self,
                         intent: str,
                         parameters=None,
-                        template_selector: 'SelectiveTemplateLoader' = None,
+                        template_loader: 'SelectiveTemplateLoader' = None,
                         safe=False
                         ):
-        if template_selector is None:
-            template_selector = SelectiveTemplateLoader(None)
+        if template_loader is None:
+            template_loader = SelectiveTemplateLoader(None)
 
         response_template = None
         try:
-            response_template = template_selector.select(intent)
+            response_template = template_loader.select(intent)
         except NoViableTemplateFoundError:
             if not safe:
                 raise
@@ -88,12 +95,9 @@ class ResponseTemplate:
         self._original_condition_str = condition
         self.condition_template = None if condition is None else env.from_string(condition)
 
-    def check_condition(self, selection_context):
-        if not self.condition_template:
-            return True
+    def check_condition(self, condition_context):
         try:
-            rendered = self.condition_template.render(**selection_context)
-            return bool(eval(str(rendered)))
+            return conditions.check_condition(self.condition_template, condition_context)
         except Exception as e:
             log.error(f"Error while rendering condition of '{self.original_text}': {e}")
             return False

@@ -1,6 +1,7 @@
 import datetime
 from typing import Set
 
+from mwt import mwt
 from peewee import *
 
 from model import User
@@ -34,7 +35,12 @@ class UserAnswers(BaseModel):
         )
 
     @staticmethod
+    @mwt(timeout=2)
     def get_answer(user: User, question_id: str) -> str:
+        """
+        Queries for the most recent answer to the given `question_id`.
+        If `safe` is `True`, returns `None` even if the `NO_ANSWER` flag is set.
+        """
         try:
             val = UserAnswers.select(
                 UserAnswers.answer
@@ -49,3 +55,9 @@ class UserAnswers(BaseModel):
             return None
         except UserAnswers.DoesNotExist:
             return None
+
+    @staticmethod
+    @mwt(timeout=2)
+    def has_answered(user: User, question_id: str):
+        ans = UserAnswers.get_answer(user, question_id)
+        return ans is not None and ans != UserAnswers.NO_ANSWER

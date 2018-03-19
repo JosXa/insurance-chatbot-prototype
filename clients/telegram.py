@@ -1,9 +1,12 @@
+import logging
 import os
 import time
 from pprint import pprint
 from threading import Thread
 from typing import Callable, List
 
+import logzero
+import telegram
 from flask import Flask, request
 from logzero import logger as log
 from telegram import *
@@ -20,7 +23,8 @@ from model.update import Update
 
 class TelegramClient(IBotAPIClient):
 
-    def __init__(self, app: Flask, webhook_url, token, test_mode=False):
+    def __init__(self, app: Flask, webhook_url, token, test_mode=False, log_level=logging.INFO):
+        logzero.setup_logger(telegram.__name__, level=logging.INFO)
         self._webhook_url = webhook_url
         self._app = app
         self._token = token
@@ -84,8 +88,6 @@ class TelegramClient(IBotAPIClient):
                                                  one_time_keyboard=True,
                                                  selective=True)
                 else:
-                    print(i)
-                    print(len(actions))
                     if i < len(actions) - 1:
                         markup = ReplyKeyboardRemove()
                     else:
@@ -196,5 +198,4 @@ class TelegramClient(IBotAPIClient):
         self.bot.send_chat_action(user.telegram_id, TelegramChatAction.TYPING)
 
     def add_error_handler(self, callback: Callable):
-        self.updater.dispatcher.logger = log
         self.updater.dispatcher.add_error_handler(callback)

@@ -1,8 +1,8 @@
-from core.controller import AffirmationHandler, IntentHandler, NegationHandler
+from core.routing import Router, IntentHandler, AffirmationHandler, NegationHandler
 from logic.rules.claimhandlers import *
 from logic.rules.smalltalkhandlers import *
 
-controller = Controller()
+application_router = Router()
 
 all_smalltalk_intents = [
     'who_are_you',
@@ -93,23 +93,23 @@ all_smalltalk_intents = [
     'smalltalk.user.loves_agent',
     'smalltalk.user.here']
 
-
-def force_return(func, return_value):
-    def handler(r, c):
-        func(r, c)
-        return return_value
-
-    return handler
-
-
-def evaluate_next_state(func):
-    def handler(r, c):
-        func(r, c)
-        if c.get_value('claim_started'):
-            return ask_next_question(r, c)
-        return States.SMALLTALK
-
-    return handler
+# TODO: Remove?
+# def force_return(func, return_value):
+#     def handler(r, c):
+#         func(r, c)
+#         return return_value
+#
+#     return handler
+#
+#
+# def evaluate_next_state(func):
+#     def handler(r, c):
+#         func(r, c)
+#         if c.get_value('claim_started'):
+#             return ask_next_question(r, c)
+#         return States.SMALLTALK
+#
+#     return handler
 
 
 # region  emotion-oriented
@@ -128,27 +128,27 @@ smalltalk_handlers.append(IntentHandler(
     intents=static_response_intents
 ))
 
+# TODO: Remove?
 # Set up all smalltalk handlers to ask the current question if the questionnaire was already started
-for h in smalltalk_handlers:
-    h.callback = evaluate_next_state(h.callback)
+# for h in smalltalk_handlers:
+#     h.callback = evaluate_next_state(h.callback)
 
 # endregion
 
 # region  dialog-oriented
-intro_intents = ['smalltalk.agent.can_you_help', 'clarify']
-clarify_help_intents = ['smalltalk.agent.can_you_help', 'clarify']
+request_help_intents = ['smalltalk.agent.can_you_help', 'clarify']
 
 RULES = {
     "stateless": [  # always applied
         IntentHandler(record_phone_damage, intents='phone_broken'),
         IntentHandler(change_formal_address),
     ],
-    "states": {  # triggered when context is in the key's state
+    "dialog_states": {  # triggered when context is in the key's dialog_states
         States.SMALLTALK: [
             IntentHandler(start, intents=['start', 'hello', 'smalltalk.greetings']),
-            IntentHandler(intro, intents=intro_intents),
+            IntentHandler(intro, intents=request_help_intents),
             IntentHandler(user_no_claim, intents='no_damage'),
-            IntentHandler(force_return(intro, States.SMALLTALK), intents=intro_intents),
+            IntentHandler(intro, intents=request_help_intents),
             IntentHandler(ask_to_start, intents=['phone_broken']),
         ],
         'ask_to_start': [
@@ -161,7 +161,7 @@ RULES = {
             NegationHandler(abort_claim),
         ],
         States.ASKING_QUESTION: [
-            IntentHandler(clarify, intents=clarify_help_intents),
+            IntentHandler(clarify, intents=request_help_intents),
             IntentHandler(send_example, intents='example'),
             IntentHandler(skip_question, intents='skip'),
             NegationHandler(skip_question),
@@ -185,8 +185,11 @@ RULES = {
             AffirmationHandler(tell_a_joke),
             NegationHandler(too_bad)
         ],
+        'told_joke': [
+            IntentHandler(tell_a_joke, intents='again_another')
+        ]
     },
-    "fallbacks": [  # triggered if not matching state handler is found
+    "fallbacks": [  # triggered if not matching dialog_states handler is found
         IntentHandler(intro, intents='what_can_you_do'),
         IntentHandler(user_astonished, intents=['astonished_interest', 'smalltalk.user.wow']),
         IntentHandler(excuse_did_not_understand, intents='fallback'),
@@ -195,4 +198,4 @@ RULES = {
     ]
 }
 
-controller.add_rules_dict(RULES)
+application_router.add_rules_dict(RULES)
