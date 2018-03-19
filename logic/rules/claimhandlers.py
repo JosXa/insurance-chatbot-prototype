@@ -1,11 +1,12 @@
 import random
 import re
 
-from core import Context, States
+from core import Context, States, ChatAction
 from core.dialogmanager import ForceReevaluation
 from logic.rules import answercheckers
 from logic.rules.smalltalkhandlers import ask_random_question
 from model import UserAnswers
+from logzero import logger as log
 
 
 def chance(value: float) -> bool:
@@ -39,19 +40,27 @@ def ask_to_start(r, c):
 
 
 def record_phone_damage(r, c: Context):
+    log.error(c.current_question)
+    if c.current_question.id in ('damage_type', 'cause_of_damage'):
+        return  # We handle this as a normal answerchecker
+
     dmg_type = c.last_user_utterance.parameters.get('damage_type')
+    dmg_type = dmg_type[0] if isinstance(dmg_type, list) and len(dmg_type) > 0 else dmg_type
     if dmg_type:
-        dmg_type = dmg_type[0] if isinstance(dmg_type, list) else dmg_type
-        r.say("respond damage", "sorry for that", parameters=dict(damage_type=dmg_type))
         c.add_answer_to_question('damage_type', str(dmg_type))
-    else:
-        r.say("sorry for that")
+
+    if not c.has_outgoing_intent("sorry for broken phone", 40):
+        if dmg_type:
+            r.say("respond damage", "sorry for broken phone", parameters=dict(damage_type=dmg_type))
+        else:
+            r.say("sorry for broken phone")
+
     c.set_value('is_phone_broken', True)
 
 
-def begin_questionnaire(r, c):
-    c.set_value("questionnaire_started", True)
-    r.say("with pleasure").then_ask(c.current_question)
+def start_claim(r, c):
+    c.set_value("claim_started", True)
+    r.say("start claim").then_ask(c.current_question, delay=ChatAction.Delay.VERY_LONG)
     return States.ASKING_QUESTION
 
 
@@ -108,14 +117,13 @@ def check_answer(r, c):
         else:
             r.say('please send media')
             return States.ASKING_QUESTION
-
     if ut.media_location:
         r.say('sorry', 'invalid answer').give_hint(question)
         return States.ASKING_QUESTION
 
     if question.is_valid(ut.text):
         if question.confirm:
-            return ask_to_confirm_answer(r, c)
+            return ask_to_confirm_answer(r, c, user_answer=ut.text)
         else:
             return store_answer(r, c, user_answer=ut.text)
     else:
@@ -123,12 +131,19 @@ def check_answer(r, c):
         return States.ASKING_QUESTION
 
 
-def store_answer(r, c, user_answer=None):
+def store_answer(r, c, question=None, user_answer=None):
     # Assumes answer is checked for validity
     if not user_answer:
         user_answer = c.get_value('user_answer')
-    c.add_answer_to_question(c.current_question, user_answer)
-    r.say("ok thank you")
+    if not question:
+        question = c.current_question
+
+    c.add_answer_to_question(question, user_answer)
+
+    if question.implicit_grounding:
+        r.implicitly_ground(question, user_answer)
+    else:
+        r.say("ok thank you")
     return ask_next_question(r, c)
 
 
@@ -180,7 +195,7 @@ def abort_claim(r, c):
 
 
 def claim_finished(r, c):
-    c.set_value('questionnaire_started', False)
+    c.set_value('claim_started', False)
     c.say('all done')
     return States.SMALLTALK
 

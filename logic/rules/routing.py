@@ -105,7 +105,7 @@ def force_return(func, return_value):
 def evaluate_next_state(func):
     def handler(r, c):
         func(r, c)
-        if c.get_value('questionnaire_started'):
+        if c.get_value('claim_started'):
             return ask_next_question(r, c)
         return States.SMALLTALK
 
@@ -136,6 +136,7 @@ for h in smalltalk_handlers:
 
 # region  dialog-oriented
 intro_intents = ['smalltalk.agent.can_you_help', 'clarify']
+clarify_help_intents = ['smalltalk.agent.can_you_help', 'clarify']
 
 RULES = {
     "stateless": [  # always applied
@@ -150,7 +151,7 @@ RULES = {
             IntentHandler(ask_to_start, intents=['phone_broken']),
         ],
         'ask_to_start': [
-            AffirmationHandler(begin_questionnaire),
+            AffirmationHandler(start_claim),
             IntentHandler(user_no_claim, intents='no_damage'),
             NegationHandler(user_no_claim),
         ],
@@ -159,7 +160,7 @@ RULES = {
             NegationHandler(abort_claim),
         ],
         States.ASKING_QUESTION: [
-            IntentHandler(clarify, intents=['clarify', 'smalltalk.dialog.what_do_you_mean']),
+            IntentHandler(clarify, intents=clarify_help_intents),
             IntentHandler(send_example, intents='example'),
             IntentHandler(skip_question, intents='skip'),
             NegationHandler(skip_question),
@@ -186,7 +187,7 @@ RULES = {
     },
     "fallbacks": [  # triggered if not matching state handler is found
         IntentHandler(intro, intents='what_can_you_do'),
-        IntentHandler(user_astonished, intents=['astonishment', 'smalltalk.user.wow']),
+        IntentHandler(user_astonished, intents=['astonished_interest', 'smalltalk.user.wow']),
         IntentHandler(excuse_did_not_understand, intents='fallback'),
         smalltalk_handlers,
         IntentHandler(no_rule_found),

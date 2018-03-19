@@ -1,13 +1,13 @@
 import random
 from abc import ABCMeta, abstractmethod
+from pprint import pprint
 from typing import Dict, List
 
 from jinja2 import Environment, PackageLoader
-from logzero import logger
+from logzero import logger as log
 from telegram.utils.helpers import escape_markdown
 
 from corpus import emoji, raw_templates
-from model import User
 from utils import mutually_exclusive
 
 env = Environment(
@@ -69,16 +69,24 @@ class TemplateRenderer(object):
 class ResponseTemplate:
     PROPERTIES = ['prefix', 'suffix', 'conjunction']
 
-    def __init__(self, intent, text):
+    def __init__(
+            self,
+            intent,
+            text,
+            is_conjunction=False,
+            is_prefix=False,
+            is_suffix=False,
+            condition: str = None):
         if not text:
             raise ValueError("Empty response templates make no sense.")
         self.intent = intent
         self.original_text = text
         self.text_template = env.from_string(emoji.replace_aliases(text))
-        self.is_conjunction = False
-        self.is_prefix = False
-        self.is_suffix = False
-        self.condition_template = None
+        self.is_conjunction = is_conjunction
+        self.is_prefix = is_prefix
+        self.is_suffix = is_suffix
+        self._original_condition_str = condition
+        self.condition_template = None if condition is None else env.from_string(condition)
 
     def check_condition(self, selection_context):
         if not self.condition_template:
@@ -87,7 +95,7 @@ class ResponseTemplate:
             rendered = self.condition_template.render(**selection_context)
             return bool(eval(str(rendered)))
         except Exception as e:
-            logger.error(f"Error while rendering condition of '{self.original_text}': {e}")
+            log.error(f"Error while rendering condition of '{self.original_text}': {e}")
             return False
 
     @classmethod
@@ -95,7 +103,6 @@ class ResponseTemplate:
         if isinstance(choice, dict):
             if not metadata:
                 metadata = {}
-            # TODO: refactor
 
             obj = cls(intent, choice.get('text'))
 
@@ -126,6 +133,17 @@ class ResponseTemplate:
         else:
             raise ValueError(f"Unexpected format for metadata: {type(choice)}")
 
+    def __str__(self):
+        return self.__repr__()
+
+    def __repr__(self):
+        return f"ResponseTemplate(intent={self.intent}, " \
+               f"text={self.original_text}), " + \
+               (f"is_conjunction=True, " if self.is_conjunction else "") + \
+               (f"is_prefix=True, " if self.is_prefix else "") + \
+               (f"is_suffix=True, " if self.is_suffix else "") + \
+               (f"condition={self._original_condition_str}" if self._original_condition_str else "")
+
 
 class TemplateSelector(metaclass=ABCMeta):
     @abstractmethod
@@ -154,7 +172,7 @@ class RandomTemplateSelector(TemplateSelector):
 
 
 class SelectiveTemplateLoader:
-    def __init__(self, selection_context: Dict, template_selector: TemplateSelector = None):
+    def __init__(self, selection_context: Dict = None, template_selector: TemplateSelector = None):
         if selection_context:
             self.selection_context = selection_context
         else:
@@ -166,7 +184,7 @@ class SelectiveTemplateLoader:
 
     def _select_best_template(self, intent: str) -> ResponseTemplate:
         intent = format_intent(intent)
-        candidate_templates = get_candidate_templates_by_id(intent)
+        candidate_templates = get_templates_by_id(intent)
 
         if not candidate_templates:
             raise NoViableTemplateFoundError(f"No template exists with intent '{intent}'.")
@@ -205,9 +223,8 @@ def load_templates(raw):
             else:
                 result[k] = ResponseTemplate.from_metadata(k, v)
         except Exception as e:
-            print('error')
-            logger.warning(f"Error parsing the template of intent {k}: {v}")
-            logger.exception(e)
+            log.warning(f"Error parsing the template of intent {k}: {v}")
+            log.exception(e)
 
     # Sanity checks
     assert not any(k is None or v is None for k, v in result.items()), "There are None values"
@@ -218,12 +235,5 @@ def load_templates(raw):
 all_response_templates = load_templates(raw_templates)
 
 
-def get_candidate_templates_by_id(identifier):
+def get_templates_by_id(identifier):
     return all_response_templates.get(identifier.lower(), None)
-
-
-if __name__ == '__main__':
-    tmp = TemplateRenderer(user=User(formal_address=False))
-
-    # pprint(all_response_templates)
-    print(tmp.load_and_render("start"))

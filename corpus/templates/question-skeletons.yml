@@ -2,12 +2,11 @@ question_surrounding:
   choices:
     - text: "Dann brauche ich jetzt bitte {{question.title}}"
     - text: "Ich benötige nun {{question.title}}"
-      condition: "{{questionnaire_completion >= 0}}"
     - text: "Bitte {{'senden Sie' if formal else 'sende'}} jetzt {{question.title}}"
     - text: "Als nächstes brauche ich bitte {{question.title}}"
       condition: "{{overall_completion >= 0.2}}"
     - text: "Wir brauchen auch {{question.title}}"
-      condition: "{{questionnaire_completion >= 0.6}}"
+      condition: "{{questionnaire_completion >= 0.8}}"
     - text: "Es wäre schön, wenn {{'Sie' if formal else 'du'}} mir {{question.title}} {{'senden'
      if question.media else 'nennen'}} {{'könnten' if formal else 'könntest'}}."
       condition: "{{overall_completion >= 0.1}}"

@@ -1,5 +1,6 @@
 """ These are matching functions, named after question titles and are called through a getattr() expression when the
 user utters a response to a question. """
+import re
 from collections import namedtuple
 
 import dateparser
@@ -22,15 +23,25 @@ def model_identifier(r, c, q):
 
 def date_and_time(r, c, q):
     answer = c.last_user_utterance.text
-    answer_date = None
-    try:
-        answer_date = dateparser.parse(answer, languages='de')
-    except:
-        pass
 
-    if answer_date:
-        return answer_date
-    else:
+    try:
+        result = dateparser.parse(answer, languages=['de'])
+        if result:
+            return result
+
+        # Perform some very naive transformations to try get the string to parse
+        answer = re.sub(r'(um|bis|am)', "", answer, re.IGNORECASE)
+        result = dateparser.parse(answer, languages=['de'])
+        if result:
+            return result
+
+        answer = re.sub(r'[a-zA-ZöäüÖÄÜ]', "", answer)
+        result = dateparser.parse(answer, languages=['de'])
+        if result:
+            return result
+
+        return False
+    except:
         return False
 
 
@@ -75,3 +86,7 @@ def name(r, c, question):
     from logic.rules.claimhandlers import ask_next_question
     ask_next_question(r, c)
     return None
+
+#
+# def damage_type(r, c, question):
+#     if c.current_question !=

@@ -33,13 +33,16 @@ class UserAnswers(BaseModel):
     @staticmethod
     def get_answer(user: User, question_id: str) -> str:
         try:
-            return UserAnswers.select(
+            val = UserAnswers.select(
                 UserAnswers.answer
             ).where(
                 (UserAnswers.user == user) &
                 (UserAnswers.question_id == question_id)
             ).order_by(
                 -UserAnswers.datetime
-            ).first().answer
+            ).first()
+            if val:
+                return val.answer
+            return None
         except UserAnswers.DoesNotExist:
             return None

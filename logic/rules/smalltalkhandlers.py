@@ -3,6 +3,7 @@ from functools import wraps
 
 from core import Context
 from core.controller import Controller
+from logic.rules.progresstracker import progress, on_progress_threshold
 
 controller = Controller(warn_bypassed=False)
 
@@ -32,7 +33,8 @@ def urge_to_start(func):
     return wrapped
 
 
-@urge_to_start
+# TODO: add argument instead of an own decorator to control the checker-callback
+@progress("smalltalk")
 def static_smalltalk_response(cp, ctx):
     # This is called when no specific smalltalk handler is set up
     # We take the response from the sentence bank

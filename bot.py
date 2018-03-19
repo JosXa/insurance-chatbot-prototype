@@ -31,7 +31,7 @@ def error_handler(bot, update, error):
 
 
 def main():
-    migrate.reset_answers()  # TODO
+    Thread(target=migrate.reset_answers()).start()  # TODO
 
     app = Flask(__name__)
 

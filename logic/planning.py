@@ -1,3 +1,4 @@
+import datetime
 import random
 from pprint import pprint
 from typing import List
@@ -5,6 +6,7 @@ from typing import List
 from collections import Counter
 from logzero import logger as log
 
+from const import MONTHS
 from core import Context
 from core.controller import Controller
 from core.planningagent import IPlanningAgent
@@ -37,7 +39,9 @@ class PlanningAgent(IPlanningAgent):
             get=lambda key: context.get_value(key, None),
             formal=context.user.formal_address,
             informal=not context.user.formal_address,
-            chance=chance
+            chance=chance,
+            month=lambda n: MONTHS.get(n),
+            is_this_year=lambda y: y == datetime.datetime.now().year
         )
 
         lru_selector = LeastRecentlyUsedSelector(context)

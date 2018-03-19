@@ -2,6 +2,14 @@ claim_damage:
   "Soll ich {{'Ihnen' if formal else 'dir'}} helfen, {{'den' if get('is_phone_broken') else 'einen'}}
   Schaden an {{'Ihrem' if formal else 'deinem'}} Smartphone zu melden?"
 
+start_claim:
+  "Okay, legen wir los. {{'Sagen Sie' if formal else 'Sag'}} einfach Bescheid, wenn {{'Sie' if
+  formal else 'du'}} zu einer Frage\n\n
+  👉  Hilfe {{'benötigen' if formal else 'benötigst'}},\n
+  👉  ein Beispiel {{'brauchen' if formal else 'brauchst'}}, oder\n
+  👉  keine Antwort geben {{'möchten' if formal else 'willst'}} oder {{'können' if
+  formal else 'kannst'}}."
+
 all_done:
   "Ich habe nun alle Informationen von {{'Ihnen' if formal else 'dir'}} erhalten, die wir benötigen um {{'Ihren' if
   formal else 'deinen'}} Schadensfall schnellstmöglich zu bearbeiten."

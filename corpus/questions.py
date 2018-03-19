@@ -16,6 +16,7 @@ class Question:
                  title,
                  is_required,
                  confirm: str = None,
+                 implicit_grounding: str = None,
                  choices: List = None,
                  hint=None,
                  example=None,
@@ -24,10 +25,13 @@ class Question:
         if media and any((confirm, choices, match_regex)):
             raise ValueError("If the `media` argument is True, then `confirm`, `choices` and `match_regex` are "
                              "forbidden.")
+        if confirm and implicit_grounding:
+            raise ValueError("The `confirm` and `implicit_grounding` parameters are mutually exclusive.")
         self.id = qid
         self.title = title
         self.is_required = is_required
         self.confirm = confirm
+        self.implicit_grounding = implicit_grounding
         self.choices = choices
         self.match_regex = re.compile(match_regex) if match_regex else None
         self.hint = hint
@@ -41,6 +45,7 @@ class Question:
             title=values['title'],
             is_required=values.get('required', False),
             confirm=values.get('confirm'),
+            implicit_grounding=values.get('implicit_grounding'),
             hint=values.get('hint'),
             choices=values.get('choices'),
             example=values.get('example'),
@@ -51,7 +56,6 @@ class Question:
     def is_valid(self, value):
         result = True
         if self.match_regex:
-            print(self.match_regex)
             result = bool(self.match_regex.search(value))
         # more to come
         return result

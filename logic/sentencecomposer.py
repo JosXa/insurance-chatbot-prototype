@@ -1,4 +1,5 @@
 import string
+from logzero import logger as log
 from typing import List, Union
 
 from core import ChatAction
@@ -6,6 +7,8 @@ from corpus import Question
 from corpus.questions import Questionnaire
 from corpus.responsetemplates import ResponseTemplate, SelectiveTemplateLoader, TemplateRenderer, format_intent
 from model import User
+
+NOT_SET = -1
 
 
 class SentenceComposer:
@@ -63,12 +66,21 @@ class SentenceComposer:
 
         return self
 
+    def implicitly_ground(self, question: Question, user_answer: str, parameters=None):
+        if parameters is None:
+            parameters = {}
+        parameters.update(answer=user_answer)
+        text = self.renderer.render_string(question.implicit_grounding, parameters)
+
+        return self._create_action('grounding_answer', text)
+
     def then_ask(self,
                  question: Union[Question, str],
                  choices: List = None,
                  parameters=None,
+                 delay=NOT_SET
                  ):
-        return self._create_question(question, choices, parameters, as_new_message=True)
+        return self._create_question(question, choices, parameters, as_new_message=True, delay=delay)
 
     def ask_to_confirm(self,
                        question: Question,
@@ -154,19 +166,21 @@ class SentenceComposer:
                        choices: List = None,
                        type_: ChatAction.Type = ChatAction.Type.SAYING,
                        as_new_message=True,
+                       delay=NOT_SET
                        ):
         if choices and any(x.choices for x in self._sequence):
             raise ValueError("Multiple messages with choices are not sensible.")
 
         intent = format_intent(intent)
 
-        delay = None  # If empty sequence
-        if len(self._sequence) == 1:
-            delay = ChatAction.Delay.SHORT
-        elif len(self._sequence) >= 3:
-            delay = ChatAction.Delay.LONG
-        elif len(self._sequence) > 0:
-            delay = ChatAction.Delay.MEDIUM
+        if delay is NOT_SET:
+            delay = None  # If empty sequence
+            if len(self._sequence) == 1:
+                delay = ChatAction.Delay.SHORT
+            elif len(self._sequence) >= 3:
+                delay = ChatAction.Delay.LONG
+            elif len(self._sequence) > 0:
+                delay = ChatAction.Delay.MEDIUM
 
         if as_new_message or len(self._sequence) == 0:
             # Create new message
@@ -191,7 +205,8 @@ class SentenceComposer:
                          question: Union[Question, str],
                          choices: List = None,
                          parameters=None,
-                         as_new_message=True
+                         as_new_message=True,
+                         delay=NOT_SET
                          ):
 
         if choices and isinstance(question, Question):
@@ -219,7 +234,7 @@ class SentenceComposer:
         question_id = question.id if isinstance(question, Question) else question
 
         return self._create_action(question_id, text, choices=choices, type_=ChatAction.Type.ASKING_QUESTION,
-                                   as_new_message=as_new_message)
+                                   as_new_message=as_new_message, delay=delay)
 
     def __str__(self):
         return ' then '.join(

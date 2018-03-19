@@ -60,7 +60,6 @@ class TelegramClient(IBotAPIClient):
             filename = os.path.split(file.file_path)[-1]
             ud.media_location = self.bot.get_file(media_id).download(
                 custom_path=os.path.join(ud.user.media_folder, filename))
-            print(ud.media_location)
 
         ud.message_id = update.effective_message.message_id
         ud.message_text = update.effective_message.text
