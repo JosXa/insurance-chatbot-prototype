@@ -10,8 +10,6 @@ sorry:
     - "Es tut mir leid"
     - text: "Sorry"
       condition: "{{informal}}"
-    - text: "Ah, Mist"
-      condition: "{{informal}}"
   prefix: yes
 
 did_not_understand:

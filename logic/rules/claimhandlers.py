@@ -4,7 +4,7 @@ import re
 from core import Context, States, ChatAction
 from core.dialogmanager import ForceReevaluation
 from logic.rules import answercheckers
-from logic.rules.smalltalkhandlers import ask_random_question
+from logic.rules.smalltalkhandlers import change_topic
 from model import UserAnswers
 from logzero import logger as log
 
@@ -196,7 +196,7 @@ def abort_claim(r, c):
 
 def claim_finished(r, c):
     c.set_value('claim_started', False)
-    c.say('all done')
+    r.say('all done')
     return States.SMALLTALK
 
 
@@ -224,8 +224,9 @@ def change_formal_address(r, c: Context):
 
 
 def no_rule_found(r, c):
-    r.say("sorry", "what i understood", parameters={'understanding': c.last_user_utterance.intent})
-    if chance(0.5):
-        return ask_random_question(r, c)
+    # TODO: This is debatable. Should the user always be notified that something was not understood?
+    if chance(0.6):
+        return change_topic(r, c)
     else:
+        r.say("sorry", "what i understood", parameters={'understanding': c.last_user_utterance.intent})
         r.say("ask something else")

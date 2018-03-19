@@ -76,3 +76,17 @@ damage_description:
       example: "\"Mein Handy ist mir aus den Händen geglitten und auf den
       Boden gefallen.\""
       required: yes
+
+additional_info:
+  title: "Ich habe nun alle Informationen von {{'Ihnen' if formal else 'dir'}} erhalten, die wir benötigen um {{'Ihren' if
+  formal else 'deinen'}} Schadensfall schnellstmöglich zu bearbeiten."
+  no_surrounding: ["title"]
+  questions:
+    remarks:
+      title: "\n\n{{'Möchten Sie' if formal else 'Möchtest du'}} uns sonst noch etwas zu
+      {{'Ihrem' if formal else 'deinem'}} Schadensfall mitteilen?"
+      hint: "sonstige Informationen, die {{'Sie' if formal else 'du'}} uns zu {{'Ihrem' if
+      formal else 'deinem'}} Schadensfall mitteilen {{'möchten' if formal else 'möchtest'}}."
+      example: "\"Ich bin jetzt für einen Monat im Ausland und kann in dieser Zeit keine
+      Nachrichten beantworten.\""
+      required: no

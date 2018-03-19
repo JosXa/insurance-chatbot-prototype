@@ -54,11 +54,13 @@ class Question:
         )
 
     def is_valid(self, value):
-        result = True
         if self.match_regex:
-            result = bool(self.match_regex.search(value))
-        # more to come
-        return result
+            if not bool(self.match_regex.search(value)):
+                return False
+        if self.choices:
+            if value.lower() not in (x.lower() for x in self.choices):
+                return False
+        return True
 
     def __repr__(self):
         return 'Question("{self.id}", "{self.title}", hint="{self.hint}", example=' \

@@ -84,7 +84,9 @@ class TelegramClient(IBotAPIClient):
                                                  one_time_keyboard=True,
                                                  selective=True)
                 else:
-                    if i < len(actions):
+                    print(i)
+                    print(len(actions))
+                    if i < len(actions) - 1:
                         markup = ReplyKeyboardRemove()
                     else:
                         markup = ForceReply()

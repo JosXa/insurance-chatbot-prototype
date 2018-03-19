@@ -462,8 +462,8 @@ smalltalk.emotions.ha_ha:
  # ahahaha
  # lautes Lachen
  choices:
-   - "Du bist witzig"
-   - "Ich mag dein Lachen"
+   - "Mir gefällt dass du lachst 😆"
+   - "Ich mag dein Lachen 😊"
 
 smalltalk.agent.my_friend:
  # du bist ein Freund von mir

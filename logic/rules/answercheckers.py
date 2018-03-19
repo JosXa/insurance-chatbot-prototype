@@ -87,6 +87,6 @@ def name(r, c, question):
     ask_next_question(r, c)
     return None
 
-#
-# def damage_type(r, c, question):
-#     if c.current_question !=
+
+def cause_of_damage(r, c, question):
+    answer = c.last_user_utterance.text

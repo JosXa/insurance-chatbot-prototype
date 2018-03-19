@@ -147,6 +147,7 @@ RULES = {
         States.SMALLTALK: [
             IntentHandler(start, intents=['start', 'hello', 'smalltalk.greetings']),
             IntentHandler(intro, intents=intro_intents),
+            IntentHandler(user_no_claim, intents='no_damage'),
             IntentHandler(force_return(intro, States.SMALLTALK), intents=intro_intents),
             IntentHandler(ask_to_start, intents=['phone_broken']),
         ],

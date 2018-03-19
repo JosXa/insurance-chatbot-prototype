@@ -11,8 +11,7 @@ start_claim:
   formal else 'kannst'}}."
 
 all_done:
-  "Ich habe nun alle Informationen von {{'Ihnen' if formal else 'dir'}} erhalten, die wir benötigen um {{'Ihren' if
-  formal else 'deinen'}} Schadensfall schnellstmöglich zu bearbeiten."
+  "ALL DONE TEXT"
 
 pity_no_claim:
   choices:

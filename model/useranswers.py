@@ -15,6 +15,9 @@ class UserAnswers(BaseModel):
     question_id = CharField()
     answer = TextField()
 
+    # cannot_answer = BooleanField(default=False)
+    # will_not_answer = BooleanField(default=False)
+
     @staticmethod
     def get_answered_question_ids(user: User) -> Set[int]:
         return {ua.question_id for ua in UserAnswers.select(UserAnswers.question_id).where(

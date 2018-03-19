@@ -3,7 +3,7 @@ from functools import wraps
 
 from core import Context
 from core.controller import Controller
-from logic.rules.progresstracker import progress, on_progress_threshold
+from logic.rules.progresstracker import progress, get_progress
 
 controller = Controller(warn_bypassed=False)
 
@@ -22,11 +22,9 @@ def urge_to_start(func):
     @wraps(func)
     def wrapped(composer, context: Context):
         if not context.get_value('user_no_claim', False):
-            new_value = context.get_value('smalltalk_counter', 0) + 1
-            context.set_value('smalltalk_counter', new_value)
-            if new_value >= 4:
+            if get_progress(context, "smalltalk") >= 4:
                 result = func(composer, context)
-                generate_topic(composer, context)
+                change_topic(composer, context)
                 return result
         return func(composer, context)
 
@@ -35,6 +33,7 @@ def urge_to_start(func):
 
 # TODO: add argument instead of an own decorator to control the checker-callback
 @progress("smalltalk")
+@urge_to_start
 def static_smalltalk_response(cp, ctx):
     # This is called when no specific smalltalk handler is set up
     # We take the response from the sentence bank
@@ -43,10 +42,10 @@ def static_smalltalk_response(cp, ctx):
 
 
 def fallback_smalltalk(cp, ctx):
-    return ask_random_question(cp, ctx)
+    return change_topic(cp, ctx)
 
 
-def ask_random_question(cp, ctx):
+def change_topic(cp, ctx):
     asked_questions = ctx.setdefault('random_questions', set())
 
     try:
@@ -61,6 +60,7 @@ def ask_random_question(cp, ctx):
     return return_value
 
 
+@progress("smalltalk")
 @urge_to_start
 def answer_to_how_are_you(r, c):
     intent = c.last_user_utterance.intent
@@ -93,9 +93,3 @@ def tell_a_joke(r, c):
 
 def bye(r, c):
     r.send_media('tschuess')
-
-
-def generate_topic(comp, ctx):
-    smalltalk_counter = ctx.get_value('smalltalk_counter', 0)
-    if smalltalk_counter <= 7:
-        comp.say(f"urge to start level {smalltalk_counter - 3}")
