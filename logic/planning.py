@@ -10,6 +10,7 @@ from core import Context
 from core.planningagent import IPlanningAgent
 from core.routing import Router
 from corpus.responsetemplates import ResponseTemplate, SelectiveTemplateLoader, TemplateRenderer, TemplateSelector
+from logic.rules.claimhandlers import excuse_did_not_understand
 from logic.sentencecomposer import SentenceComposer
 from model import UserAnswers
 
@@ -51,6 +52,12 @@ class PlanningAgent(IPlanningAgent):
             SelectiveTemplateLoader(shared_parameters, template_selector=lru_selector),
             TemplateRenderer(shared_parameters)
         )
+
+        if u.intent == 'fallback':
+            excuse_did_not_understand(composer, context)
+            log.debug(f'Incoming message was not understood: "{u.text}"')
+            log.debug("Not updating states.")
+            return composer
 
         log.debug(f'Incoming message: {u}')
         log.debug(f'Current dialog states: {context.dialog_states}')

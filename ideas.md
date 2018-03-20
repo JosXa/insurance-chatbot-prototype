@@ -1,1 +1,0 @@
-- Add reply keyboard lifetime to chat actions

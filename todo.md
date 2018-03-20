@@ -1,0 +1,2 @@
+- Add reply keyboard lifetime to chat actions
+- Implement emoji handling (sentiment analysis is done)

@@ -192,7 +192,6 @@ RULES = {
     "fallbacks": [  # triggered if not matching dialog_states handler is found
         IntentHandler(intro, intents='what_can_you_do'),
         IntentHandler(user_astonished, intents=['astonished_interest', 'smalltalk.user.wow']),
-        IntentHandler(excuse_did_not_understand, intents='fallback'),
         smalltalk_handlers,
         IntentHandler(no_rule_found),
     ]
