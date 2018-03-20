@@ -38,7 +38,7 @@ def ask_to_start(r, c):
         return
     else:
         r.ask("claim damage", choices=['affirm_yes', 'negate_no'])
-    return 'ask_to_start', 1
+    return 'ask_to_start', 2
 
 
 def record_phone_damage(r, c: Context):

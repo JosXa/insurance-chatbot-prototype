@@ -95,7 +95,7 @@ def too_bad(r, c):
 
 def tell_a_joke(r, c):
     r.say('tell_a_joke')
-    return "told_joke", 1
+    return "told_joke", 2
 
 
 def bye(r, c):
