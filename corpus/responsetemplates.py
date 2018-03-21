@@ -5,7 +5,8 @@ from typing import Dict, List
 from logzero import logger as log
 from telegram.utils.helpers import escape_markdown
 
-from corpus import conditions, emoji, env, raw_templates
+from corpus import conditions, env, raw_templates
+from corpus.emojis import emoji
 from utils import mutually_exclusive
 
 FORMATTING_PARAMS = {

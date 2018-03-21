@@ -1,97 +1,10 @@
-from core.routing import Router, IntentHandler, AffirmationHandler, NegationHandler
+from core.routing import AffirmationHandler, EmojiHandler, IntentHandler, NegationHandler, RegexHandler, Router
+from logic.intents import SMALLTALK_INTENTS, FEELING_INTENTS, ASTONISHED_AMAZED, REQUEST_HELP
+from logic.rules.adminhandlers import *
 from logic.rules.claimhandlers import *
 from logic.rules.smalltalkhandlers import *
 
 application_router = Router()
-
-all_smalltalk_intents = [
-    'who_are_you',
-    'tell_a_joke',
-    'smalltalk.user.will_be_back',
-    'smalltalk.agent.be_clever',
-    'smalltalk.user.looks_like',
-    'smalltalk.user.joking',
-    'smalltalk.greetings.nice_to_talk_to_you',
-    'smalltalk.agent.marry_user',
-    'smalltalk.agent.talk_to_me',
-    'smalltalk.user.has_birthday',
-    'smalltalk.user.wants_to_see_agent_again',
-    'smalltalk.user.happy',
-    'smalltalk.greetings.whatsup',
-    'smalltalk.agent.acquaintance',
-    'smalltalk.greetings.goodnight',
-    'smalltalk.user.lonely',
-    'smalltalk.emotions.wow',
-    'smalltalk.appraisal.bad',
-    'smalltalk.agent.funny',
-    'smalltalk.agent.birth_date',
-    'smalltalk.agent.occupation',
-    'smalltalk.appraisal.no_problem',
-    'smalltalk.agent.age',
-    'smalltalk.user.going_to_bed',
-    'smalltalk.user.bored',
-    'smalltalk.agent.bad',
-    'smalltalk.user.misses_agent',
-    'smalltalk.agent.beautiful',
-    'smalltalk.user.testing_agent',
-    'smalltalk.appraisal.good',
-    'smalltalk.agent.there',
-    'smalltalk.agent.annoying',
-    'smalltalk.user.angry',
-    'smalltalk.agent.busy',
-    'smalltalk.dialog.sorry',
-    'smalltalk.agent.right',
-    'smalltalk.appraisal.welcome',
-    'smalltalk.agent.suck',
-    'smalltalk.agent.happy',
-    'smalltalk.user.busy',
-    'smalltalk.user.excited',
-    'smalltalk.appraisal.well_done',
-    'smalltalk.agent.hobby',
-    'smalltalk.agent.family',
-    'smalltalk.agent.clever',
-    'smalltalk.agent.ready',
-    'smalltalk.greetings.nice_to_see_you',
-    'smalltalk.dialog.i_do_not_care',
-    'smalltalk.user.wants_to_talk',
-    'smalltalk.greetings.how_are_you',
-    'smalltalk.agent.sure',
-    'smalltalk.emotions.ha_ha',
-    'smalltalk.agent.my_friend',
-    'smalltalk.user.waits',
-    'smalltalk.agent.real',
-    'smalltalk.appraisal.thank_you',
-    'smalltalk.dialog.what_do_you_mean',
-    'smalltalk.user.back',
-    'smalltalk.agent.origin',
-    'smalltalk.agent.good',
-    'smalltalk.agent.drunk',
-    'smalltalk.agent.chatbot',
-    'smalltalk.dialog.hug',
-    'smalltalk.user.does_not_want_to_talk',
-    'smalltalk.greetings.start',
-    'smalltalk.user.sleepy',
-    'smalltalk.user.tired',
-    'smalltalk.greetings.nice_to_meet_you',
-    'smalltalk.greetings.goodevening',
-    'smalltalk.agent.answer_my_question',
-    'smalltalk.user.sad',
-    'smalltalk.agent.boss',
-    'smalltalk.agent.can_you_help',
-    'smalltalk.agent.crazy',
-    'smalltalk.user.likes_agent',
-    'smalltalk.agent.residence',
-    'smalltalk.user.can_not_sleep',
-    'smalltalk.agent.fired',
-    'smalltalk.agent.date_user',
-    'smalltalk.agent.hungry',
-    'smalltalk.agent.boring',
-    'smalltalk.dialog.hold_on',
-    'smalltalk.user.good',
-    'smalltalk.greetings.goodmorning',
-    'smalltalk.user.needs_advice',
-    'smalltalk.user.loves_agent',
-    'smalltalk.user.here']
 
 # TODO: Remove?
 # def force_return(func, return_value):
@@ -121,7 +34,7 @@ smalltalk_handlers = [
 ]
 # All unhandled smalltalk intents are responded to with a static message, as defined in smalltalk.yaml
 static_response_intents = [x for x
-                           in all_smalltalk_intents
+                           in SMALLTALK_INTENTS
                            if not any(y.contains_intent(x) for y in smalltalk_handlers)]
 smalltalk_handlers.append(IntentHandler(
     static_smalltalk_response,
@@ -136,19 +49,19 @@ smalltalk_handlers.append(IntentHandler(
 # endregion
 
 # region  dialog-oriented
-request_help_intents = ['smalltalk.agent.can_you_help', 'clarify']
 
 RULES = {
     "stateless": [  # always applied
+        RegexHandler(restart_system, pattern=r'^/r$'),
         IntentHandler(record_phone_damage, intents='phone_broken'),
         IntentHandler(change_formal_address),
     ],
     "dialog_states": {  # triggered when context is in the key's dialog_states
         States.SMALLTALK: [
             IntentHandler(start, intents=['start', 'hello', 'smalltalk.greetings']),
-            IntentHandler(intro, intents=request_help_intents),
+            IntentHandler(intro, intents=REQUEST_HELP),
             IntentHandler(user_no_claim, intents='no_damage'),
-            IntentHandler(intro, intents=request_help_intents),
+            IntentHandler(intro, intents=REQUEST_HELP),
             IntentHandler(ask_to_start, intents=['phone_broken']),
         ],
         'ask_to_start': [
@@ -161,7 +74,7 @@ RULES = {
             NegationHandler(abort_claim),
         ],
         States.ASKING_QUESTION: [
-            IntentHandler(clarify, intents=request_help_intents),
+            IntentHandler(clarify, intents=REQUEST_HELP),
             IntentHandler(send_example, intents='example'),
             IntentHandler(skip_question, intents='skip'),
             NegationHandler(skip_question),
@@ -174,11 +87,8 @@ RULES = {
             IntentHandler(check_answer)
         ],
         ('asking', 'how_are_you'): [
-            IntentHandler(start, intents=['start', 'hello', 'smalltalk.greetings']),
             IntentHandler(ask_to_start, intents='phone_broken'),
-            IntentHandler(answer_to_how_are_you, intents=['smalltalk.appraisal.good', 'smalltalk.user.can_not_sleep',
-                                                          'smalltalk.appraisal.thank_you', 'smalltalk.user.good',
-                                                          'smalltalk.user.happy']),
+            IntentHandler(answer_to_how_are_you, intents=FEELING_INTENTS),
             IntentHandler(answer_to_how_are_you, parameters='feeling'),
         ],
         ('asking', 'should_i_tell_a_joke'): [
@@ -187,13 +97,21 @@ RULES = {
         ],
         'told_joke': [
             IntentHandler(tell_a_joke, intents='again_another')
+        ],
+        'explained_something': [
+            IntentHandler(user_amazed_after_explanation, intents=ASTONISHED_AMAZED),
+            NegationHandler(lambda r, c: r.say("now you know"))
         ]
     },
     "fallbacks": [  # triggered if not matching dialog_states handler is found
         IntentHandler(intro, intents='what_can_you_do'),
-        IntentHandler(user_astonished, intents=['astonished_interest', 'smalltalk.user.wow']),
+        IntentHandler(change_topic, intents='yes'),
+        IntentHandler(user_astonished, intents=ASTONISHED_AMAZED),
+        EmojiHandler(user_happy, positive=True),  # positive sentiment
+        EmojiHandler(neutral_emoji, neutral=True),  # neutral sentiment
+        EmojiHandler(user_sad_or_angry, negative=True),  # negative sentiment
+        EmojiHandler(change_topic),  # any emoji
         smalltalk_handlers,
-        IntentHandler(no_rule_found),
     ]
 }
 

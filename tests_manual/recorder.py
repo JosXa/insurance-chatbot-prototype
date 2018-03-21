@@ -9,6 +9,7 @@ from typing import List
 from logzero import logger as log
 from ruamel.yaml.comments import CommentedMap
 
+import settings
 import utils
 from core import ChatAction
 from model import Update
@@ -17,7 +18,7 @@ from model import Update
 #     def record_dialog(self, update_step: Update, actions: List[ChatAction]) -> NoReturn: pass
 
 
-PATH = 'tests/recordings'
+PATH = 'tests_manual/recordings'
 if not os.path.exists(PATH):
     os.makedirs(PATH)
 
@@ -25,7 +26,7 @@ if not os.path.exists(PATH):
 class ConversationRecorder:
     # Time of inactivity, where the user does not say anything. When the duration has passed, publish the generated
     # conversation.yml to a support channel.
-    CLOSING_TIMEFRAME = datetime.timedelta(minutes=2)
+    CLOSING_TIMEFRAME = datetime.timedelta(minutes=3)
 
     def __init__(self, telegram_bot, support_channel_id):
         self.bot = telegram_bot
@@ -47,15 +48,16 @@ class ConversationRecorder:
         self._save(update.user.id, schedule_publish=True)
 
     def _close_and_publish(self, user_id):
-        self.bot.send_document(
-            self.support_channel_id,
-            open(self._get_filepath(user_id), 'rb'),
-            caption=self._get_filename(user_id),
-            disable_notification=True,
-            timeout=120
-        )
-        log.info(f"Published conversation recording for {user_id}.")
-        del self.conversations[user_id]
+        if not settings.DEBUG_MODE:
+            self.bot.send_document(
+                self.support_channel_id,
+                open(self._get_filepath(user_id), 'rb'),
+                caption=self._get_filename(user_id),
+                disable_notification=True,
+                timeout=120
+            )
+            log.info(f"Published conversation recording for {user_id}.")
+            del self.conversations[user_id]
 
     def _get_filename(self, user_id):
         return f"{user_id}_{self.date_started.strftime('%Y%m%d-%H%M%S')}.yml"

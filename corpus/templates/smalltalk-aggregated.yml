@@ -5,7 +5,9 @@ my_age:
 
 tell_a_joke:
   choices:
-    - "{% if chance(0.4) %}Einen Witz? Na klar:\n{% endif %}Was hast du eigentlich gegen Polen?\n\n<i>Antwort:</i> Eine
+    - "{% if not bot_recent('should i tell a joke') %}Einen Witz? Na klar:\n\n{% endif %}Was hast
+     du eigentlich gegen
+    Polen?\n\n<i>Antwort:</i> Eine
     gute Autoversicherung!"
     - "Anekdoten aus den Schadensfällen:\n\n\"Beim Kaffeemahlen sprang der Deckel von der Maschine ab. Dabei geriet
     meine
@@ -272,6 +274,7 @@ smalltalk.agent.annoying:
   # nerv nicht
   # du nervst mich
   choices:
+    - "Ja, lass es ruhig alles raus..."
     - "Es steht {{'dir' if informal else 'Ihnen'}} frei mich zu fragen, was
     {{'du willst' if informal else 'Sie wollen'}} ¯\_(ツ)_/¯"
 
@@ -307,7 +310,7 @@ smalltalk.dialog.sorry:
  # verzeih mir
  choices:
    - "Es ist okay"
-   - "Mach dir keine Gedanken"
+   - "{{'Machen Sie sich' if formal else 'mach dir'}} keine Gedanken"
    - "Entschuldigung angenommen"
 
 
@@ -356,7 +359,8 @@ smalltalk.user.busy:
  # wie beschäftigt bin ich
  # es ist gerade viel los
  choices:
-   - "Okay, dann schreibe mir doch einfach, wenn du mehr Zeit hast"
+   - "Okay, dann schreibe mir doch einfach, wenn {{'Sie' if formal else 'du'}} mehr Zeit
+   {{'haben' if formal else 'hast'}}"
 
 smalltalk.user.excited:
  # ich bin wirklich aufgeregt
@@ -382,7 +386,7 @@ smalltalk.agent.hobby:
  # was sind deine Hobbys
  # was ist deine Lieblingsbeschäftigung
  choices:
-   - "Ich helfe ehrenamtlich Menschen wie dir"
+   - "Ich helfe ehrenamtlich Menschen wie {{'Ihnen' if formal else 'dir'}}"
    - "Ich lese gerne"
 
 smalltalk.agent.family:
@@ -658,8 +662,8 @@ smalltalk.agent.can_you_help:
  choices:
    - "Natürlich."
    - "Immer gerne"
-   - "Wie kann ich dir helfen?"
-   - "Was ist dein Anliegen?"
+   - "Wie kann ich {{'Ihnen' if formal else 'dir'}} helfen?"
+   - "Was ist {{'Ihr' if formal else 'dein'}} Anliegen?"
 
 smalltalk.agent.crazy:
  # du bist total durchgeknallt
@@ -679,9 +683,9 @@ smalltalk.user.likes_agent:
  # ich hab dich gern
  choices:
    - "Ich finde mich auch toll"
-   - "Da bist du nicht allein"
+   - "Da {{'sind Sie' if formal else 'bist du'}} nicht allein"
    - "Vielen Dank."
-   - "Ich mag dich auch."
+   - "Ich mag {{'Sie' if formal else 'dich'}} auch."
 
 smalltalk.agent.residence:
  # wie heißt die Straße in der du wohnst
@@ -711,7 +715,6 @@ smalltalk.agent.fired:
  # keine Jobs mehr für dich
  # du bist gefeuert
  choices:
-   - "Schade"
    - "Ich verstehe nicht warum."
    - "Ich würde mich gerne verbessern"
    - "Ich würde gerne weiterhin helfen."
@@ -743,9 +746,15 @@ smalltalk.agent.boring:
  # du bist echt langweilig
  # du bist fantasielos
  choices:
-   - "Das finde ich sehr schade."
+   - "Das finde ich sehr schade, wie kann ich mich verbessern?"
    - "Das würde ich gerne ändern."
    - "Ich verstehe nicht warum."
+
+smalltalk.user.sick:
+  choices:
+    - "{{'Haben Sie' if formal else 'hast du'}} Schmerzen? Oh nein, hoffentlich geht es
+    {{'Ihnen' if formal else 'dir'}} bald wieder gut..."
+    - "Gute Besserung, ich hoffe das geht bald vorbei!"
 
 smalltalk.dialog.hold_on:
  # warte mal
@@ -763,7 +772,7 @@ smalltalk.user.good:
  # ich bin gut
  # Ich bin die Beste
  choices:
-   - "oh ja, du bist toll."
+   - "oh ja, {{'Sie sind' if formal else 'du bist'}} toll."
    - "Aber sicher."
    - "Es ist immer gut sich selbst einschätzen zu können"
 
@@ -783,7 +792,8 @@ smalltalk.user.needs_advice:
  # rate mir
  # können Sie mir einen Rat geben
  choices:
-   - "Ich kann bisher nur einen Schaden an deinem Smartphone aufnehmen.
+   - "Ich kann bisher nur einen Schaden an {{'Ihrem' if formal else 'deinem'}} Smartphone
+   aufnehmen.
    Vielleicht entscheidet sich mein Schöpfer ja irgendwann noch mehr Dinge
    einzubauen 🤔"
 

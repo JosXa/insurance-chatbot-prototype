@@ -12,9 +12,9 @@ reformulate:
 
 what_i_understood:
   choices:
-    - "Ich habe etwas wie '{{understanding}}' verstanden, kann damit
+    - "Ich habe etwas verstanden ({{understanding}}), kann damit
     aber gerade nichts anfangen 😣"
-    - "Ich habe '{{understanding}}' verstanden, mein Schöpfer hat
+    - "Ich habe etwas verstanden ({{understanding}}), mein Schöpfer hat
     mir aber noch keine passende Antwort darauf gegeben 😐"
     - text: ", mir sagt '{{understanding}}' gerade nichts..."
       suffix: yes

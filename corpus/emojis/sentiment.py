@@ -1,8 +1,13 @@
 import csv
 
+import os
+from pathlib import Path
+
+DIR = Path(os.path.dirname(os.path.abspath(__file__)))
+
 
 def get_emoji_sentiments():
-    with open('Emoji_Sentiment_Data_v1.0.csv', mode='r') as data:
+    with open(DIR / 'Emoji_Sentiment_Data_v1.0.csv', mode='r') as data:
         reader = csv.reader(data)
         results = {}
         for row in reader:

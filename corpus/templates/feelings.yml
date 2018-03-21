@@ -9,5 +9,31 @@ glad_to_hear_that:
 
 i_feel_good:
   choices:
+    - "Ich fühle mich auch super hier in meiner Blechbox 🤖"
     - "Mir geht es auch gut hier oben in der Cloud"
     - "Mir geht's gut"
+
+oh_no_user_sad:
+  choices:
+    - "Oh nein, ich hoffe {{'Ihnen' if formal else 'dir'}} geht es bald wieder besser 😕"
+    - "Oh nein, kann ich {{'Sie' if formal else 'dich'}} irgendwie aufheitern? Ich kann zum
+    Beispiel Witze erzählen 😁"
+
+glad_to_see_user_happy:
+  choices:
+    - "Freut mich zu sehen, dass {{'Ihnen' if formal else 'dir'}} das gefällt 😉"
+    - "Ah, das gefällt {{'Ihnen' if formal else 'dir'}}? 😊"
+    - "❤️🤗"  # emojis
+
+neutral_feeling:
+  choices:
+    - "Ist etwas unklar?"
+    - "😬"
+    - "Kann ich {{'Ihnen' if formal else 'dir'}} irgendwie helfen?"
+    - "Was ist los?"
+
+allay:
+  choices:
+    - "{{'Ihnen scheint' if formal else 'Dir scheint'}} das nicht zu gefallen. Kann ich
+    {{'Ihnen' if formal else 'dir'}} irgendwie weiterhelfen?"
+    - "Ich tue mein bestes..."

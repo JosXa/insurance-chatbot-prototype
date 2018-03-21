@@ -1,8 +1,6 @@
 what_i_can_do:
   "Ich kann {{'dir' if informal else 'Ihnen'}} helfen, {{render('dmg_type_snippet')}} an
-  {{'deinem' if informal else 'Ihrem'}} Smartphone zu beanstanden, falls
-  {{'du' if informal else 'Sie'}} bei uns versichert {{'bist' if informal
-  else 'sind'}}"
+  {{'deinem' if informal else 'Ihrem'}} Smartphone zu beanstanden."
 
 scope_of_bot:
   choices:

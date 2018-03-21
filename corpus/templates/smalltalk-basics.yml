@@ -1,11 +1,3 @@
-random_topic:
-  choices:
-    - "{{'Sind Sie' if formal else 'Bist du'}} an der frischen Luft?"
-    - "Ich fühle mich übrigens sehr wohl in meiner Blechbox, danke der Nachfrage."
-    - "Violett ist übrigens magentaer als rot :hmm:"
-    - "Ist Sodbrennen eigentlich gefährlich? Zum Glück kann ich das nicht bekommen..."
-    - "random topic 5"
-
 too_bad:
   choices:
     - "Okay, schade"
@@ -18,3 +10,8 @@ how_else_can_i_help:
     - "Sonst noch etwas?"
     - "Gibt es sonst noch etwas?"
     - "Womit kann ich sonst noch helfen?"
+
+pretty_cool_huh:
+  choices:
+    - "Sehr interessant, oder?"
+    - "Ziemlich cool, {{'finden Sie' if formal else 'findest du'}} nicht?"

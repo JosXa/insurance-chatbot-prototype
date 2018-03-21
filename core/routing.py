@@ -2,12 +2,13 @@
 
 #     def __init__(self):
 #         pass
+import re
 from abc import ABCMeta, abstractmethod
 from typing import Callable
 
-from logzero import logger
-
-from core import States
+from core import MessageUnderstanding, States
+from corpus import emojis
+from corpus.emojis.emoji import is_emoji
 
 
 class BaseHandler(metaclass=ABCMeta):
@@ -15,10 +16,19 @@ class BaseHandler(metaclass=ABCMeta):
         self.callback = callback
 
     @abstractmethod
-    def matches(self, intent, parameters): pass
+    def matches(self, understanding: MessageUnderstanding): pass
 
     def __str__(self):
         return self.callback.__name__
+
+
+class RegexHandler(BaseHandler):
+    def __init__(self, callback: Callable, pattern, flags=0):
+        self.pattern = re.compile(pattern, flags)
+        super(RegexHandler, self).__init__(callback)
+
+    def matches(self, understanding: MessageUnderstanding):
+        return self.pattern.match(understanding.text)
 
 
 class IntentHandler(BaseHandler):
@@ -41,20 +51,20 @@ class IntentHandler(BaseHandler):
     def contains_intent(self, intent):
         return intent in self._intents
 
-    def matches(self, intent, parameters):
+    def matches(self, understanding: MessageUnderstanding):
         """
         Returns True if any intent or parameter of the arguments is matched with the ones defined in this BaseHandler.
         """
         if self._intents is not None:
-            if not any(intent.startswith(x) for x in self._intents):
+            if not any(understanding.intent.startswith(x) for x in self._intents):
                 return False
         if self._parameters:
-            if not parameters:
+            if not understanding.parameters:
                 return False
             for p in self._parameters:
-                if p in parameters.keys():
+                if p in understanding.parameters.keys():
                     # Check if value is non-empty
-                    if not parameters[p]:
+                    if not understanding.parameters[p]:
                         return False
                 else:
                     return False
@@ -77,13 +87,13 @@ class AffirmationHandler(BaseHandler):
     def __init__(self, callback):
         super(AffirmationHandler, self).__init__(callback)
 
-    def matches(self, intent, parameters):
-        if parameters:
-            for k, v in parameters.items():
+    def matches(self, understanding: MessageUnderstanding):
+        if understanding.parameters:
+            for k, v in understanding.parameters.items():
                 if k in self.INTENTS and v:
                     return True
 
-        if intent in self.INTENTS:
+        if understanding.intent in self.INTENTS:
             return True
 
         return False
@@ -96,13 +106,13 @@ class NegationHandler(BaseHandler):
     def __init__(self, callback):
         super(NegationHandler, self).__init__(callback)
 
-    def matches(self, intent, parameters):
-        if parameters:
-            for k, v in parameters.items():
+    def matches(self, understanding: MessageUnderstanding):
+        if understanding.parameters:
+            for k, v in understanding.parameters.items():
                 if k in self.INTENTS and v:
                     return True
 
-        if intent in self.INTENTS:
+        if understanding.intent in self.INTENTS:
             return True
 
         return False
@@ -113,8 +123,52 @@ class MediaHandler(BaseHandler):
     def __init__(self, callback):
         super(MediaHandler, self).__init__(callback)
 
-    def matches(self, intent, parameters):
-        return intent == 'media'
+    def matches(self, understanding: MessageUnderstanding):
+        return understanding.intent == 'media'
+
+
+class EmojiHandler(BaseHandler):
+
+    def __init__(self, callback, negative=False, neutral=False, positive=False, threshold=0.5):
+        self.negative = negative
+        self.neutral = neutral
+        self.positive = positive
+        self.all_emotions = not any((negative, neutral, positive))
+        self.threshold = threshold
+        super(EmojiHandler, self).__init__(callback)
+
+    def matches(self, understanding: MessageUnderstanding):
+        # Short-circuit if all emotions (=all emojis) should be matched
+        if self.all_emotions:
+            return any(is_emoji(c) for c in understanding.text)
+
+        total = 0
+        neg = 0
+        neut = 0
+        pos = 0
+
+        for x in understanding.text:
+            emoji = emojis.sentiments.get(x)
+            if not emoji:
+                continue
+
+            total += 1
+            neg += emoji["negative"]
+            neut += emoji["neutral"]
+            pos += emoji["positive"]
+
+        if total == 0:
+            return False
+
+        print("neg", (neg / total))
+        print("neut", (neut / total))
+        print("pos", (pos / total))
+
+        return any((
+            self.negative and (neg / total) >= self.threshold,
+            self.neutral and (neut / total) >= self.threshold,
+            self.positive and (pos / total) >= self.threshold,
+        ))
 
 
 class Router(object):
@@ -140,23 +194,23 @@ class Router(object):
             handler_list = self._flatten(handlers)
             self.states.setdefault(state, []).extend(handler_list)
 
-    def iter_matches_stateless(self, intent, parameters):
+    def iter_matches_stateless(self, understanding: MessageUnderstanding):
         for rule in self.stateless:
             # Non-breaking, execute all
-            if rule.matches(intent, parameters):
+            if rule.matches(understanding):
                 yield rule
 
-    def get_state_handler(self, state, intent, parameters):
+    def get_state_handler(self, state, understanding: MessageUnderstanding):
         for rule in self.states.get(state, []):
             # break after first occurence
-            if rule.matches(intent, parameters):
+            if rule.matches(understanding):
                 return rule
         return None
 
-    def get_fallback_handler(self, intent, parameters):
+    def get_fallback_handler(self, understanding: MessageUnderstanding):
         for rule in self.fallbacks:
             # break after first occurence
-            if rule.matches(intent, parameters):
+            if rule.matches(understanding):
                 # logger.debug(f"Fallback handler {rule} triggered.")
                 return rule
         return None

@@ -16,7 +16,7 @@ from core.dialogmanager import DialogManager
 from corpus.media import get_file_by_media_id
 from logic.planning import PlanningAgent
 from logic.rules.controller import application_router
-from tests.recorder import ConversationRecorder
+from tests_manual.recorder import ConversationRecorder
 
 threads = list()  # type: List[Thread]
 

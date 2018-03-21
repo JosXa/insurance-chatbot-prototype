@@ -10,7 +10,7 @@ from core import Context
 from core.planningagent import IPlanningAgent
 from core.routing import Router
 from corpus.responsetemplates import ResponseTemplate, SelectiveTemplateLoader, TemplateRenderer, TemplateSelector
-from logic.rules.claimhandlers import excuse_did_not_understand
+from logic.rules.claimhandlers import excuse_did_not_understand, no_rule_found
 from logic.sentencecomposer import SentenceComposer
 from model import UserAnswers
 
@@ -53,50 +53,60 @@ class PlanningAgent(IPlanningAgent):
             TemplateRenderer(shared_parameters)
         )
 
-        if u.intent == 'fallback':
-            excuse_did_not_understand(composer, context)
-            log.debug(f'Incoming message was not understood: "{u.text}"')
-            log.debug("Not updating states.")
-            return composer
-
         log.debug(f'Incoming message: {u}')
         log.debug(f'Current dialog states: {context.dialog_states}')
 
         # Execute every matching stateless handler first
-        for handler in self.router.iter_matches_stateless(u.intent, u.parameters):
+        for handler in self.router.iter_matches_stateless(u):
             if handler.callback(composer, context):
                 log.debug(f"Stateless handler triggered: {handler}")
 
+        next_state = None
         # Dialog states are a priority queue
         for state in context.dialog_states.iter_states():
             # Find exactly one handler in any of the prioritized states
-            handler = self.router.get_state_handler(state, u.intent, u.parameters)
+            handler = self.router.get_state_handler(state, u)
 
             if handler is None:
                 continue
 
             next_state = handler.callback(composer, context)
             log.debug(f"State handler triggered: {handler}")
+            handler_found = True
             break
         else:
             # If no handler was found in any of the states, try the fallbacks
-            handler = self.router.get_fallback_handler(u.intent, u.parameters)
+            handler = self.router.get_fallback_handler(u)
 
-            if handler is None:
+            if handler is not None:
+                next_state = handler.callback(composer, context)
+                log.debug(f"Fallback handler triggered: {handler}")
+                handler_found = True
+            else:
                 log.warning(f"No matching rule found in dialog_states "
                             f"{list(context.dialog_states.iter_states())} with intent "
-                            f"{u.intent} and parameters {u.parameters}. Consider adding "
-                            f"a fallback to the controller.")
-                return None
+                            f"{u.intent} and parameters {u.parameters}.")
+                handler_found = False
 
-            next_state = handler.callback(composer, context)
-            log.debug(f"Fallback handler triggered: {handler}")
+        if not handler_found:
+            if u.intent == 'fallback':
+                excuse_did_not_understand(composer, context)
+                log.debug(f'Incoming message was not understood: "{u.text}"')
+                log.debug("Not updating state lifetimes.")
+                return composer
+            else:
+                next_state = no_rule_found(composer, context)
+
+        if isinstance(next_state, SentenceComposer):
+            # Lambdas return the senctence composer, which we don't need (call by reference)
+            next_state = None
 
         if next_state is not None:
             # Handlers return a tuple with the next state, with an integer determining the lifetime of this state as
             # the last tuple value.
             # E.g. `("asking", "do_something", 3)`  <-- lifetime of 3 incoming utterances
             context.dialog_states.put(next_state)
+            return composer
 
         text = ', then '.join(f'"{x.render()}"' for x in composer.collect_actions())
         log.debug(f'Sending {text}')

@@ -6,4 +6,10 @@ hello:
     - text: "{{'Hi' if informal else 'Hallo'}} {{user.name}}, wie kann ich {{'dir' if informal else 'Ihnen'}} heute
     behilflich sein?"
       condition: "{{bot_recent('start') and user.name != None}}"
+    - text: "Heyho!"
+      condition: "{{informal}}"
+    - text: "Na, alles klar?"
+      condition: "{{informal}}"
+    - text: "Einen wunderschönen guten Tag!"
+      condition: "{{formal}}"
 

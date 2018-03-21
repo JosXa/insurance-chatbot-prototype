@@ -10,9 +10,9 @@ from clients.voice import VoiceRecognitionClient
 from core.context import ContextManager
 from core.planningagent import IPlanningAgent
 from core.understanding import MessageUnderstanding
-from logic import const
+from logic.intents import MEDIA_INTENT
 from model import Update
-from tests.recorder import ConversationRecorder
+from tests_manual.recorder import ConversationRecorder
 
 
 class DialogManager:
@@ -37,10 +37,10 @@ class DialogManager:
         self.planning_agent = planning_agent
 
         for bot in bot_clients:
+            bot.set_start_handler(self.start_callback)
             bot.add_plaintext_handler(self.text_update_received)
             bot.add_voice_handler(self.voice_received)
             bot.add_media_handler(self.media_received)
-            bot.set_start_handler(self.start_callback)
 
     def __get_client_by_name(self, client_name: str) -> IBotAPIClient:
         return next(x for x in self.bots if client_name == x.client_name)
@@ -70,7 +70,7 @@ class DialogManager:
         self.text_update_received(bot, update)
 
     def media_received(self, bot: IBotAPIClient, update: Update):
-        update.understanding = MessageUnderstanding(None, const.MEDIA_INTENT, media_location=update.media_location)
+        update.understanding = MessageUnderstanding(None, MEDIA_INTENT, media_location=update.media_location)
         self._process_update(bot, update)
 
     def text_update_received(self, bot: IBotAPIClient, update: Update):

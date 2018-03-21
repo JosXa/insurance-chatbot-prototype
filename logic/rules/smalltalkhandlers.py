@@ -1,14 +1,18 @@
-import random
 from functools import wraps
 
 from logzero import logger as log
 
 from core import Context
+from logic.intents import FEELING_INTENTS
 from logic.rules.progresstracker import get_progress, progress
 
-RANDOM_QUESTIONS = {
+ORDERED_TOPICS = {
+    # { intent:  return_value }
     "should i tell a joke": ("asking", "should_i_tell_a_joke", 1),  # lifetime of 1 utterance
-    "how can i help": None
+    "smartphone_damage_explanation": ('explained_something', 1),
+    "urge_to_start": None,
+    "only_helpful_for_claims": None,
+    "how can i help": None,
 }
 
 
@@ -51,13 +55,17 @@ def fallback_smalltalk(r, c):
 def change_topic(r, c):
     asked_questions = c.setdefault('random_questions', set())
 
+    if c.get_value("no_claim", False):
+        r.say("random topic")
+        return
+
     try:
         # Get next unasked question
-        question = next(q for q in RANDOM_QUESTIONS.items() if q[0] not in asked_questions)
+        question = next(q for q in ORDERED_TOPICS.items() if q[0] not in asked_questions)
     except StopIteration:
         # Random choice if all have been asked
-        key = random.choice(list(RANDOM_QUESTIONS.keys()))
-        question = key, RANDOM_QUESTIONS[key]
+        r.say("random topic")
+        return
 
     intent, return_value = question
     r.then_ask(intent)
@@ -71,9 +79,9 @@ def change_topic(r, c):
 def answer_to_how_are_you(r, c):
     intent = c.last_user_utterance.intent
     if intent == 'smalltalk.appraisal.thank_you':
-        r.say('with pleasure')
-    elif any(intent.startswith(x) for x in ['smalltalk.appraisal', 'smalltalk.user.good', 'smalltalk.user.happy']):
-        r.say('glad to hear that', 'i feel good')
+        r.say('with pleasure', 'i feel good')
+    elif intent in FEELING_INTENTS:
+        return answer_user_feeling(r, c)
     else:
         feeling = c.last_user_utterance.parameters
         if feeling:
@@ -83,6 +91,17 @@ def answer_to_how_are_you(r, c):
                 return static_smalltalk_response(r, c)
             except:
                 r.say('interesting')
+
+
+def answer_user_feeling(r, c):
+    intent = c.last_user_utterance.intent
+    if any(intent.startswith(x) for x in ['smalltalk.appraisal.good', 'smalltalk.user.good',
+                                          'smalltalk.user.happy']):
+        r.say('glad to hear that', 'i feel good')
+    elif any(intent.startswith(x) for x in ['smalltalk.appraisal.bad', 'smalltalk.user.sad']):
+        r.say('oh_no_user_sad')
+    elif intent == 'smalltalk.user.sick':
+        static_smalltalk_response(r, c)
 
 
 def congratulate_birthday(r, c):
@@ -100,3 +119,19 @@ def tell_a_joke(r, c):
 
 def bye(r, c):
     r.send_media('tschuess')
+
+
+def user_happy(r, c):
+    r.say("glad to see user happy")
+
+
+def neutral_emoji(r, c):
+    r.say("neutral feeling")
+
+
+def user_sad_or_angry(r, c):
+    r.say("allay")
+
+
+def user_amazed_after_explanation(r, c):
+    r.say("pretty cool huh")

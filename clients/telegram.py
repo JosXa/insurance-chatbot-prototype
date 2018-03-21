@@ -145,7 +145,7 @@ class TelegramClient(IBotAPIClient):
     def add_plaintext_handler(self, callback: Callable):
         self.updater.dispatcher.add_handler(
             MessageHandler(
-                Filters.text,
+                Filters.text | Filters.command,
                 lambda bot, update: callback(self, self.unify_update(update))
             ))
 

@@ -24,13 +24,19 @@ def start(r, c: Context):
     if not c.has_outgoing_intent('how are you', 10):
         r.ask("how are you")
         return 'asking', 'how_are_you', 1
-    return States.SMALLTALK
+    else:
+        if not c.has_outgoing_intent('what i can do', 10):
+            r.say("what i can do")
+        else:
+            r.say("what you can say")
+        return States.SMALLTALK
 
 
 def intro(r, c):
     if not c.has_outgoing_intent("what i can do", age_limit=10):
         r.say("what i can do")
     r.say("what you can say")
+    return "explained_something", 1
 
 
 def ask_to_start(r, c):
