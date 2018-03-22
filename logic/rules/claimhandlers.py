@@ -236,6 +236,11 @@ def user_astonished(r, c):
 
 
 def change_formal_address(r, c: Context):
+    if c.get_value("we_say_du"):
+        r.say("we say du")
+        c.set_value("we_say_du", False)
+        return
+
     ut = c.last_user_utterance
     if not ut.text:
         return
@@ -245,6 +250,7 @@ def change_formal_address(r, c: Context):
     if re.search(r'\b(du|dein|dich|dir)\b', ut.text, re.IGNORECASE):
         if c.user.formal_address is True:
             c.user.formal_address = False
+            c.set_value("we_say_du", True)
             c.user.save()
             raise ForceReevaluation
     elif re.search(r'\b([Ii]hr|Sie|Ihnen|Euer|haben [sS]ie|sind [Ss]ie)\b', ut.text):

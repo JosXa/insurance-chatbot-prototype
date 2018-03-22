@@ -39,5 +39,5 @@ chat_on:
 
 now_you_know:
   choices:
-    - "Jetzt bist du ein kleines bisschen klüger 😏"
-    - "Jetzt weißt du es 😏"
+    - "Jetzt {{'sind Sie' if formal else 'bist du'}} ein kleines bisschen klüger 😏"
+    - "Jetzt {{'wissen Sie' if formal else 'weißt du'}} es 😏"

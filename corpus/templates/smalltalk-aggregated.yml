@@ -5,17 +5,12 @@ my_age:
 
 tell_a_joke:
   choices:
-    - "{% if not bot_recent('should i tell a joke') %}Einen Witz? Na klar:\n\n{% endif %}Was hast
-     du eigentlich gegen
-    Polen?\n\n<i>Antwort:</i> Eine
-    gute Autoversicherung!"
-    - "Anekdoten aus den Schadensfällen:\n\n\"Beim Kaffeemahlen sprang der Deckel von der Maschine ab. Dabei geriet
-    meine
-     Frau in das Mahlwerk.\""
-    - "Anekdoten aus den Schadensfällen:\n\n\"Auf Ihre Anfrage teilen wir mit, dass die Genannte viele Verhältnisse
-    hatte, aber kein Arbeitsverhältnis unterhält.\""
     - "Anekdoten aus den Schadensfällen:\n\n\"An der Kreuzung prallten unsere Fahrzeuge zusammen.
     Eine Abbremsung war nicht mehr notwendig.\""
+    - "Anekdoten aus den Schadensfällen:\n\n\"Beim Kaffeemahlen sprang der Deckel von der Maschine ab. Dabei geriet
+    meine Frau in das Mahlwerk.\""
+    - "Anekdoten aus den Schadensfällen:\n\n\"Auf Ihre Anfrage teilen wir mit, dass die Genannte viele Verhältnisse
+    hatte, aber kein Arbeitsverhältnis unterhält.\""
     - "Anekdoten aus den Schadensfällen:\n\n\"Der Pfosten raste auf mich zu, und als ich ihm Platz machen wollte, stieß
     ich frontal damit zusammen.\""
     - "Anekdoten aus den Schadensfällen:\n\n\"Ich fuhr mit meinem Wagen gegen die Leitschiene, überschlug mich und
