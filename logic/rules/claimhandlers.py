@@ -259,7 +259,7 @@ def no_rule_found(r, c):
     r.say("sorry", "what i understood", parameters={'understanding': c.last_user_utterance.intent})
     if c.get_value('claim_started', False):
         return
-    if chance(0.6) and not :
+    if chance(0.6):
         return change_topic(r, c)
     else:
         r.say("ask something else")
