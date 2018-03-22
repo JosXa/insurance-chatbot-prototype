@@ -253,7 +253,7 @@ def change_formal_address(r, c: Context):
             c.set_value("we_say_du", True)
             c.user.save()
             raise ForceReevaluation
-    elif re.search(r'\b([Ii]hr|Sie|Ihnen|Euer|haben [sS]ie|sind [Ss]ie)\b', ut.text):
+    elif re.search(r'\b([Ii]hr|^.Sie|Ihnen|Euer|haben [sS]ie|sind [Ss]ie)\b', ut.text):
         if c.user.formal_address is False:
             c.user.formal_address = True
             c.user.save()

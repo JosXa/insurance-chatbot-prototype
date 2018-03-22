@@ -1,2 +1,3 @@
 - Add reply keyboard lifetime to chat actions
-- Implement emoji handling (sentiment analysis is done)
+- Test: Thank you in States.ASKING_QUESTION
+- Anmerkung nicht in plaintext übernehmen: nö, danke

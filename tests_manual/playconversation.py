@@ -31,7 +31,7 @@ class FullConversationIntegrationTests(IntegrationTestBase):
 
     def play_recording(self, index=0):
         self.live_mode = False
-        print("Sending /r to restart the bot")
+        print("Sending /reset to restart and reset the bot")
         self.client.send_message(entity=self._peer, message="/r")
         time.sleep(2.5)
 

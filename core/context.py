@@ -1,3 +1,9 @@
+import sched
+import traceback
+
+from logzero import logger as log
+import threading
+import time
 from collections import deque
 from datetime import datetime, timedelta
 from enum import Enum
@@ -36,23 +42,33 @@ class Context:
         self.user = user
         uid = user.id
 
-        self.dialog_states = DialogStates(initial_state, redis=redis, key=f'ds_{uid}')
+        self.dialog_states = DialogStates(initial_state, redis=redis, key=f'{uid}:ds')
 
         # User and Bot utterances from newest to oldest
         if redis:
             self._utterances = SyncableDeque(
                 maxlen=self.SIZE_LIMIT,
                 redis=redis,
-                key=f'utt_{uid}')  # type: Deque[ MessageUnderstanding, ChatAction]
-            self._value_store = SyncableDict(redis=redis, writeback=True, key=f'kv_store_{uid}')
-            self._answered_question_ids = SyncableSet(redis=redis, key=f'answer_ids_{uid}')
+                key=f'{uid}:utterances')  # type: Deque[Union[MessageUnderstanding, ChatAction]]
+            self._value_store = SyncableDict(
+                redis=redis,
+                writeback=True,
+                key=f'{uid}:kv_store')
+            self._answered_question_ids = SyncableSet(
+                redis=redis,
+                key=f'{uid}:answer_ids')
         else:
-            self._utterances = deque()  # type: Deque[ MessageUnderstanding, ChatAction]
+            self._utterances = deque()  # type: Deque[Union[MessageUnderstanding, ChatAction]]
             self._value_store = dict()
             self._answered_question_ids = set()
 
         self._current_question = None  # type: Question
         self._current_questionnaire = None  # type: Questionnaire
+
+        self._sync_timeout = 5  # seconds
+        self._scheduler = sched.scheduler(time.time, time.sleep)
+        self.__sync_utt_job = None
+        self.__utt_sync_lock = threading.Lock()
 
         self._all_done = False
         self._update_question_context()
@@ -73,17 +89,29 @@ class Context:
     def get_value(self, key, default=None):
         return self._value_store.get(key, default)
 
-    def add_user_utterance(self, understanding: MessageUnderstanding):
-        self._utterances.appendleft(understanding)
-        if isinstance(self._utterances, SyncableDeque):
+    def _sched_sync_utterance(self):
+        try:
+            self._scheduler.cancel(self.__sync_utt_job)
+        except ValueError:
+            pass
+        self.__sync_utt_job = self._scheduler.enter(self._sync_timeout, 1, self._sync_utterances)
+        threading.Thread(target=self._scheduler.run).start()
+
+    def _sync_utterances(self):
+        with self.__utt_sync_lock:
             self._utterances.sync()
+
+    def add_user_utterance(self, understanding: MessageUnderstanding):
+        with self.__utt_sync_lock:
+            self._utterances.appendleft(understanding)
         self.__last_user_utterance = understanding
+        self._sched_sync_utterance()
 
     def add_actions(self, actions: List[ChatAction]):
         for action in actions:
-            self._utterances.appendleft(action)
-        if isinstance(self._utterances, SyncableDeque):
-            self._utterances.sync()
+            with self.__utt_sync_lock:
+                self._utterances.appendleft(action)
+        self._sched_sync_utterance()
 
     @property
     def claim_finished(self):
@@ -198,7 +226,7 @@ class Context:
 
 class ContextManager:
     def __init__(self, initial_state, redis: StrictRedis = None):
-        self.contexts = {}  # type: Dict[User, Context]
+        self.contexts = {}  # type: Dict[int, Context]
         self.initial_state = initial_state
         self.redis = redis
 
@@ -215,13 +243,13 @@ class ContextManager:
         return ctx
 
     def add_incoming_understanding(self, user: User, nlu: MessageUnderstanding) -> Context:
-        ctx = self.get_user_context(user)
+        ctx = self.get_user_context(user.id)
         ctx.add_user_utterance(nlu)
         return ctx
 
     def get_user_context(self, user: User):
         try:
-            return self.contexts[user]
+            return self.contexts[user.id]
         except KeyError:
-            self.contexts[user] = Context(user, self.initial_state, redis=self.redis)
-            return self.contexts[user]
+            self.contexts[user.id] = Context(user, self.initial_state, redis=self.redis)
+            return self.contexts[user.id]
