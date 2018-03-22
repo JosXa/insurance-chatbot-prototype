@@ -1,9 +1,9 @@
 invalid_answer:
   choices:
-    - "Damit kann ich nichts anfangen."
-    - "Was soll das sein?"
-    - "Mit dieser Eingabe kann ich nichts anfangen."
-    - "Leider sagt mir diese Eingabe nichts."
+    - "😶 Damit kann ich nichts anfangen."
+    - "😧 Was soll das sein?"
+    - "😶 Mit dieser Eingabe kann ich nichts anfangen."
+    - "😧 Leider sagt mir diese Eingabe nichts."
 
 reformulate:
   choices:

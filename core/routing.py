@@ -9,6 +9,7 @@ from typing import Callable
 from core import MessageUnderstanding, States
 from corpus import emojis
 from corpus.emojis.emoji import is_emoji
+from logic.intents import MEDIA_INTENT
 
 
 class BaseHandler(metaclass=ABCMeta):
@@ -28,6 +29,8 @@ class RegexHandler(BaseHandler):
         super(RegexHandler, self).__init__(callback)
 
     def matches(self, understanding: MessageUnderstanding):
+        if not understanding.text:
+            return False
         return self.pattern.match(understanding.text)
 
 
@@ -124,7 +127,7 @@ class MediaHandler(BaseHandler):
         super(MediaHandler, self).__init__(callback)
 
     def matches(self, understanding: MessageUnderstanding):
-        return understanding.intent == 'media'
+        return understanding.intent == MEDIA_INTENT
 
 
 class EmojiHandler(BaseHandler):
@@ -139,6 +142,8 @@ class EmojiHandler(BaseHandler):
 
     def matches(self, understanding: MessageUnderstanding):
         # Short-circuit if all emotions (=all emojis) should be matched
+        if not understanding.text:
+            return False
         if self.all_emotions:
             return any(is_emoji(c) for c in understanding.text)
 

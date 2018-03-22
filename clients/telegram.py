@@ -72,7 +72,7 @@ class TelegramClient(IBotAPIClient):
         ud.datetime = update.effective_message.date
         return ud
 
-    def perform_action(self, actions: List[ChatAction]):
+    def perform_actions(self, actions: List[ChatAction]):
         for i, action in enumerate(actions):
             if action.show_typing:
                 self.bot.send_chat_action(action.peer.telegram_id, TelegramChatAction.TYPING, timeout=20)

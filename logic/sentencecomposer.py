@@ -2,7 +2,7 @@ import string
 from typing import List, Union
 
 from core import ChatAction
-from corpus.questions import Questionnaire, Question
+from corpus.questions import Question, Questionnaire
 from corpus.responsetemplates import ResponseTemplate, SelectiveTemplateLoader, TemplateRenderer, format_intent
 from model import User
 
@@ -26,19 +26,26 @@ class SentenceComposer:
         return self._sequence
 
     def give_hint(self, question: Question):
-        surrounding = self.loader.select('hint_surrounding')
-        text = self.renderer.render_template(surrounding.text_template, {'question': question}, recursive=True)
+        if "hint" in question.no_surrounding:
+            text = self.renderer.render_string(question.hint)
+        else:
+            surrounding = self.loader.select('hint_surrounding')
+            text = self.renderer.render_template(surrounding.text_template, {'question': question}, recursive=True)
 
         return self._create_action('give_hint', text)
 
     def give_example(self, question: Question):
-        prefix = self.renderer.load_and_render('example')
-        suffix = self.renderer.render_string(question.example)
+        if "example" in question.no_surrounding:
+            return self.renderer.render_string(question.example)
+        else:
+            prefix = self.renderer.load_and_render('example')
+            suffix = self.renderer.render_string(question.example)
 
-        return self._create_action('give_example', f"{prefix} {suffix}")
+            return self._create_action('give_example', f"{prefix} {suffix}")
 
     def send_title(self, questionnaire: Questionnaire):
-        return self._create_action(questionnaire.id, questionnaire.title)
+        text = self.renderer.render_string(questionnaire.title)
+        return self._create_action(questionnaire.id, text)
 
     def ask(self,
             question: Union[Question, str],
@@ -213,13 +220,16 @@ class SentenceComposer:
 
         default_question_params = dict(question=question)
         if parameters:
-            parameters.update_step(default_question_params)
+            parameters.update(default_question_params)
         else:
             parameters = default_question_params
 
         if isinstance(question, Question):
-            surrounding = self.loader.select('question_surrounding')
-            text = self.renderer.render_template(surrounding.text_template, parameters, recursive=True)
+            if "title" in question.no_surrounding:
+                text = self.renderer.render_string(question.title, parameters, recursive=True)
+            else:
+                surrounding = self.loader.select('question_surrounding')
+                text = self.renderer.render_template(surrounding.text_template, parameters, recursive=True)
             choices = question.choices
         elif isinstance(question, str):
             text = self.renderer.load_and_render(intent=question, template_loader=self.loader, parameters=parameters)

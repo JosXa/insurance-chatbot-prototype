@@ -75,7 +75,7 @@ class FacebookClient(IBotAPIClient):
         watermark = delivery.get("watermark")
         log.info(f"Message delivered: {message_ids} ({watermark})")
 
-    def perform_action(self, actions: List[ChatAction]):
+    def perform_actions(self, actions: List[ChatAction]):
         for action in actions:
             try:
                 user_id = action.peer.facebook_id

@@ -3,6 +3,7 @@ from typing import List
 
 from logzero import logger as log
 
+import settings
 from appglobals import ROOT_DIR
 from clients.botapiclients import IBotAPIClient
 from clients.nlpclients import NLPEngine
@@ -95,10 +96,15 @@ class DialogManager:
         if self.recorder:
             self.recorder.record_dialog(update, actions)
 
+        if settings.NO_DELAYS:
+            # No delays while debugging
+            for a in actions:
+                a.delay = None
+
         try:
-            bot.perform_action(actions)
+            bot.perform_actions(actions)
         except Exception as e:
-            log.error("Error while processing update_step:")
+            log.error("Error while processing update:")
             log.exception(e)
         context.add_actions(actions)
 

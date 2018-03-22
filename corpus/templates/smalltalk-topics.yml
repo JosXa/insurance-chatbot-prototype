@@ -21,4 +21,4 @@ random_topic:
   choices:
     - "{{'Sind Sie' if formal else 'Bist du'}} gerade an der frischen Luft?"
     - "Ist Sodbrennen eigentlich gefährlich? Zum Glück kann ich das nicht bekommen..."
-    - "Violett ist übrigens magentaer als rot :hmm:"
+    - "Violett ist übrigens magentaer als rot :thinking:"

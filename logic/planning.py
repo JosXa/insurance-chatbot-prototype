@@ -53,7 +53,7 @@ class PlanningAgent(IPlanningAgent):
             TemplateRenderer(shared_parameters)
         )
 
-        log.debug(f'Incoming message: {u}')
+        log.info(f'Incoming message: {u}')
         log.debug(f'Current dialog states: {context.dialog_states}')
 
         # Execute every matching stateless handler first
@@ -71,7 +71,7 @@ class PlanningAgent(IPlanningAgent):
                 continue
 
             next_state = handler.callback(composer, context)
-            log.debug(f"State handler triggered: {handler}")
+            log.info(f"State handler triggered: {handler}")
             handler_found = True
             break
         else:
@@ -80,7 +80,7 @@ class PlanningAgent(IPlanningAgent):
 
             if handler is not None:
                 next_state = handler.callback(composer, context)
-                log.debug(f"Fallback handler triggered: {handler}")
+                log.info(f"Fallback handler triggered: {handler}")
                 handler_found = True
             else:
                 log.warning(f"No matching rule found in dialog_states "

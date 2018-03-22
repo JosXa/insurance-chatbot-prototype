@@ -50,4 +50,4 @@ class FullConversationIntegrationTests(IntegrationTestBase):
 
 if __name__ == '__main__':
     c = FullConversationIntegrationTests()
-    c.play_recording(index=2)
+    c.play_recording(index=0)

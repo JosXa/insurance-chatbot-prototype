@@ -1,7 +1,9 @@
 """ These are matching functions, named after question titles and are called through a getattr() expression when the
 user utters a response to a question. """
 import re
+import traceback
 from collections import namedtuple
+from pprint import pprint
 
 import dateparser
 import regex
@@ -42,6 +44,7 @@ def date_and_time(r, c, q):
 
         return False
     except:
+        traceback.print_exc()
         return False
 
 
@@ -59,10 +62,17 @@ def _parse_names(text) -> FirstLastName:
         return None
 
     names = match.groupdict()
+    last_name_parts = names['last_name'].strip().split()
+
+    if len(last_name_parts) == 1:
+        last_name = last_name_parts[0].title()
+    else:
+        # Uppercase last word of the last name
+        last_name = ' '.join(last_name_parts[:-1]) + ' ' + last_name_parts[-1].title()
 
     return FirstLastName(
         first_name=names['first_name'].strip().title(),
-        last_name=names['last_name'].strip()
+        last_name=last_name
     )
 
 
@@ -90,3 +100,10 @@ def name(r, c, question):
 
 def cause_of_damage(r, c, question):
     answer = c.last_user_utterance.text
+
+    words = answer.split()
+
+    if len(words) < 20:
+        r.say("too short damage cause", parameters=dict(words_required=20))
+        return None
+    return answer

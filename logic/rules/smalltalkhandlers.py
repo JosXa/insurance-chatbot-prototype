@@ -70,7 +70,6 @@ def change_topic(r, c):
     intent, return_value = question
     r.then_ask(intent)
     asked_questions.add(intent)
-    log.error(question)
     return return_value
 
 

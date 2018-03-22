@@ -15,7 +15,7 @@ from core import ChatAction
 from model import Update
 
 # class IConversationRecorder(ABCMeta):
-#     def record_dialog(self, update_step: Update, actions: List[ChatAction]) -> NoReturn: pass
+#     def record_dialog(self, update: List[ChatAction]) -> NoReturn: pass
 
 
 PATH = 'tests_manual/recordings'
@@ -48,7 +48,7 @@ class ConversationRecorder:
         self._save(update.user.id, schedule_publish=True)
 
     def _close_and_publish(self, user_id):
-        if not settings.DEBUG_MODE:
+        if not settings.NO_DELAYS:
             self.bot.send_document(
                 self.support_channel_id,
                 open(self._get_filepath(user_id), 'rb'),

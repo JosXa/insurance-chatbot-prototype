@@ -1,9 +1,11 @@
 import datetime
+from collections import OrderedDict
 from typing import Set
 
 from mwt import mwt
 from peewee import *
 
+from corpus.questions import get_question_by_id
 from model import User
 from model.basemodel import BaseModel
 
@@ -61,3 +63,25 @@ class UserAnswers(BaseModel):
     def has_answered(user: User, question_id: str):
         ans = UserAnswers.get_answer(user, question_id)
         return ans is not None and ans != UserAnswers.NO_ANSWER
+
+    @staticmethod
+    def get_name_answer_dict(user: User):
+        results = OrderedDict()
+        for ua in UserAnswers.select().where(
+                UserAnswers.user == user
+        ).order_by(+UserAnswers.datetime):
+            if ua.answer == UserAnswers.NO_ANSWER:
+                continue
+
+            q_id = ua.question_id
+
+            if q_id in ('first_name', 'last_name'):
+                continue
+
+            q = get_question_by_id(ua.question_id)
+            if not q.name:
+                # We ignore the imei photo
+                continue
+
+            results[q.name] = ua.answer
+        return results

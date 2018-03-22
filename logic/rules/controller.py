@@ -1,4 +1,5 @@
-from core.routing import AffirmationHandler, EmojiHandler, IntentHandler, NegationHandler, RegexHandler, Router
+from core.routing import AffirmationHandler, EmojiHandler, IntentHandler, NegationHandler, RegexHandler, Router, \
+    MediaHandler
 from logic.intents import SMALLTALK_INTENTS, FEELING_INTENTS, ASTONISHED_AMAZED, REQUEST_HELP
 from logic.rules.adminhandlers import *
 from logic.rules.claimhandlers import *
@@ -66,6 +67,7 @@ RULES = {
         ],
         'ask_to_start': [
             AffirmationHandler(start_claim),
+            IntentHandler(start_claim, intents='phone_broken'),
             IntentHandler(user_no_claim, intents='no_damage'),
             NegationHandler(user_no_claim),
         ],
@@ -78,7 +80,8 @@ RULES = {
             IntentHandler(send_example, intents='example'),
             IntentHandler(skip_question, intents='skip'),
             NegationHandler(skip_question),
-            IntentHandler(check_answer)
+            MediaHandler(check_answer),
+            IntentHandler(check_answer),
         ],
         'user_confirming_answer': [
             AffirmationHandler(store_answer),
@@ -101,6 +104,10 @@ RULES = {
         'explained_something': [
             IntentHandler(user_amazed_after_explanation, intents=ASTONISHED_AMAZED),
             NegationHandler(lambda r, c: r.say("now you know"))
+        ],
+        'previewing_claim': [
+            IntentHandler(submit_claim, intents='submit'),
+            NegationHandler(claim_needs_editing)
         ]
     },
     "fallbacks": [  # triggered if not matching dialog_states handler is found

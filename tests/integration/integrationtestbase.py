@@ -4,6 +4,7 @@ import time
 import logzero
 from telethon import TelegramClient, events
 
+import settings
 from core import ChatAction
 
 logzero.setup_logger('telethon').setLevel(level=logging.WARNING)
@@ -62,7 +63,10 @@ class IntegrationTestBase(object):
             time.sleep(0.4)
 
         # response received - wait a bit to see if the bot keeps sending messages
-        max_sleep_time = ChatAction.Delay.VERY_LONG.value + 0.3
+        if settings.DEBUG_MODE:
+            max_sleep_time = 0.8
+        else:
+            max_sleep_time = ChatAction.Delay.VERY_LONG.value + 0.3
         last_msg = self._last_response
         parts = [last_msg.text]
 

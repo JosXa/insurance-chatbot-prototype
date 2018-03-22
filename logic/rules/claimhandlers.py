@@ -171,7 +171,8 @@ def ask_next_question(r: SentenceComposer, c):
         # started a new questionnaire
         if c.has_answered_questions:
             r.say("questionnaire finished")
-        r.send_title(c.current_questionnaire)
+        if not c.current_question.id == 'cause_of_damage':
+            r.send_title(c.current_questionnaire)
 
     r.then_ask(c.current_question)
     return States.ASKING_QUESTION
@@ -188,9 +189,11 @@ def skip_question(r, c):
         r.ask("continue anyway", choices=("affirm_yes", "negate_no"))
         return "ask_continue_despite_no_skipping"
     else:
-        r.say("skip this question", parameters={'question': c.current_question})
+        if not c.current_question.id == 'remarks':
+            r.say("skip this question", parameters={'question': c.current_question})
+
         c.add_answer_to_question(c.current_question, UserAnswers.NO_ANSWER)
-        ask_next_question(r, c)
+        return ask_next_question(r, c)
 
 
 def excuse_did_not_understand(r, c):
@@ -204,9 +207,28 @@ def abort_claim(r, c):
 
 
 def claim_finished(r, c):
+    r.say('claim finished')
+    return preview_claim(r, c)
+
+
+def preview_claim(r, c):
+    all_answers = UserAnswers.get_name_answer_dict(c.user)
+    r.ask(
+        "preview claim",
+        parameters=dict(answers=all_answers),
+        choices=['affirm_submit', 'negate_no']
+    )
+    return "previewing_claim"
+
+
+def submit_claim(r, c):
     c.set_value('claim_started', False)
-    r.say('all done')
+    r.say("evaluate prototype")
     return States.SMALLTALK
+
+
+def claim_needs_editing(r, c):
+    print("claim needs editing!")
 
 
 def user_astonished(r, c):
@@ -235,7 +257,9 @@ def change_formal_address(r, c: Context):
 def no_rule_found(r, c):
     # TODO: This is debatable. Should the user always be notified that something was not understood?
     r.say("sorry", "what i understood", parameters={'understanding': c.last_user_utterance.intent})
-    if chance(0.6):
+    if c.get_value('claim_started', False):
+        return
+    if chance(0.6) and not :
         return change_topic(r, c)
     else:
         r.say("ask something else")

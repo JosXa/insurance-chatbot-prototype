@@ -1,22 +1,24 @@
 question_surrounding:
   choices:
-    - text: "Dann brauche ich jetzt bitte {{question.title}}"
-    - text: "Ich benötige nun {{question.title}}"
-    - text: "Bitte {{'senden Sie' if formal else 'sende'}} jetzt {{question.title}}"
-    - text: "Als nächstes brauche ich bitte {{question.title}}"
+    - text: ":pencil2: Dann brauche ich jetzt bitte {{question.title}}"
+    - text: ":pencil2: Ich benötige nun {{question.title}}"
+    - text: ":pencil2: Bitte {{'senden Sie' if formal else 'sende'}} jetzt {{question.title}}"
+    - text: ":pencil2: Als nächstes brauche ich bitte {{question.title}}"
       condition: "{{overall_completion >= 0.2}}"
-    - text: "Wir brauchen auch {{question.title}}"
+    - text: ":pencil2: Wir brauchen auch {{question.title}}"
       condition: "{{questionnaire_completion >= 0.8}}"
-    - text: "Es wäre schön, wenn {{'Sie' if formal else 'du'}} mir {{question.title}} {{'senden'
+    - text: ":pencil2: Es wäre schön, wenn {{'Sie' if formal else 'du'}} mir {{question.title}}
+    {{'senden'
      if question.media else 'nennen'}} {{'könnten' if formal else 'könntest'}}."
       condition: "{{overall_completion >= 0.1}}"
-    - text: "Um {{'Ihre' if formal else 'deine'}} Angaben zu vervollständigen, benötigen wir noch {{question.title}}"
+    - text: ":pencil2: Um {{'Ihre' if formal else 'deine'}} Angaben zu vervollständigen,
+    benötigen wir noch {{question.title}}"
       condition: "{{questionnaire_completion >= 0.9}}"
 
 hint_surrounding:
   choices:
-    - "Es handelt sich dabei um {{question.hint}}"
-    - "Es geht um {{question.hint}}"
+    - ":bulb: Es handelt sich dabei um {{question.hint}}"
+    - ":bulb: Es geht um {{question.hint}}"
 
 questionnaire_finished:
   choices:

@@ -1,3 +1,5 @@
+from pprint import pprint
+
 from model import *
 
 
@@ -15,6 +17,7 @@ def reset_all():
     Update.drop_table(fail_silently=True, cascade=True)
     Update.create_table()
     reset_answers()
+
 
 if __name__ == '__main__':
     reset_all()

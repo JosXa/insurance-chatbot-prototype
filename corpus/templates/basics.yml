@@ -1,35 +1,21 @@
-well_done:
-  choices:
-    - text: "Gut gemacht!"
-    - text: "Super!"
-      condition: "{{questionnaire_completion >= 0.2}}"
-    - text: "Danke {{user.name}}!"
-      condition: "{{questionnaire_completion >= 0.2}}"
-    - text: "Klasse, vielen Dank."
-    - text: "Ok."
-      condition: "{{questionnaire_completion >= 0.3}}"
-    - text: "Sehr schön."
-    - text: "Alles klar."
-      condition: "{{questionnaire_completion == 0.9}}"
-
-
 ok_thank_you:
   choices:
-    - "Okay, dankeschön."
-    - "Alles klar, ist notiert."
-    - "Okay, vielen Dank{{' ' + user.name if user.name else ''}}."
-    - "Das passt."
-    - "Perfekt, dankeschön{{' ' + user.name if user.name else ''}}."
-    - "Gut, danke{{' ' + user.name if user.name else ''}}."
-    - "Super!"
+    - ":white_check_mark: Okay, dankeschön."
+    - ":white_check_mark: Alles klar, ist notiert."
+    - ":white_check_mark: Okay, vielen Dank{{' ' + user.name if user.name else ''}}."
+    - ":white_check_mark: Klasse, vielen Dank."
+    - ":white_check_mark: Das passt."
+    - ":white_check_mark: Perfekt, dankeschön{{' ' + user.name if user.name else ''}}."
+    - ":white_check_mark: Gut, danke{{' ' + user.name if user.name else ''}}."
+    - ":white_check_mark: Super!"
 
 ok_thank_you_ground_name:
-  "Okay, vielen Dank {{user.first_name}}."
+  ":white_check_mark: Okay, vielen Dank {{user.first_name}}."
 
 
 again:
   choices:
-    - "Noch einmal"
+    - "Noch einmal\n"
 
 with_pleasure:
   choices:
@@ -51,6 +37,7 @@ affirm_correct:
     - "Stimmt"
     - "Passt so"
     - "In Ordnung"
+    - "Sieht gut aus"
     - "Das stimmt"
     - "Korrekt"
 
@@ -73,6 +60,9 @@ affirm_yes:
     - "Okay"
     - "OK"
 
+affirm_submit:
+  ":ballot_box: Absenden"
+
 negate_no:
   choices:
     - "Nein"
@@ -85,28 +75,3 @@ as_you_know:
   text: "Wie {{'Sie' if formal else 'du'}} schon {{'wissen' if formal else 'weißt'}}, "
   prefix: yes
 
-interesting:
-  choices:
-    - "Hmm... interessant!"
-    - "Cool, interessant!"
-    - "Oh wow, das ist spannend."
-
-i_think_so_too:
-  choices:
-    - "Nicht wahr? 😄"
-    - "Ja, finde ich auch 😄"
-
-its_okay:
-  choices:
-    - "Das ist in Ordnung"
-
-chat_on:
-  choices:
-    - "Wir können aber gerne weiterreden :)"
-    - "Lass uns doch trotzdem weitersprechen"
-    - "Sollen wir uns noch ein wenig unterhalten?"
-
-now_you_know:
-  choices:
-    - "Jetzt bist du ein kleines bisschen klüger 😏"
-    - "Jetzt weißt du es 😏"

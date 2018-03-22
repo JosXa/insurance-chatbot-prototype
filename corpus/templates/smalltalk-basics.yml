@@ -15,3 +15,29 @@ pretty_cool_huh:
   choices:
     - "Sehr interessant, oder?"
     - "Ziemlich cool, {{'finden Sie' if formal else 'findest du'}} nicht?"
+
+interesting:
+  choices:
+    - "Hmm... interessant!"
+    - "Cool, interessant!"
+    - "Oh wow, das ist spannend."
+
+i_think_so_too:
+  choices:
+    - "Nicht wahr? 😄"
+    - "Ja, finde ich auch 😄"
+
+its_okay:
+  choices:
+    - "Das ist in Ordnung"
+
+chat_on:
+  choices:
+    - "Wir können aber gerne weiterreden :)"
+    - "Lass uns doch trotzdem weitersprechen"
+    - "Sollen wir uns noch ein wenig unterhalten?"
+
+now_you_know:
+  choices:
+    - "Jetzt bist du ein kleines bisschen klüger 😏"
+    - "Jetzt weißt du es 😏"

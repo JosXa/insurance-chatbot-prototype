@@ -1,14 +1,19 @@
 skip_this_question:
   choices:
-    - "Dann überspringen wir diese Frage."
-    - "{{'Sie müssen' if formal else 'Du musst'}} das nicht beantworten."
-    - "Die Frage nach {{question.title}} {{'müssen Sie' if formal else 'musst du'}} nicht unbedingt beantworten."
-    - "Okay, kein Problem, {{question.title}} brauchen wir nicht unbedingt."
+    - "Dann :twisted_rightwards_arrows: überspringen wir diese Frage."
+    - ":twisted_rightwards_arrows: Okay, kein Problem, {{question.title}} brauchen wir nicht
+    unbedingt."
+    - ":twisted_rightwards_arrows: {{'Sie müssen' if formal else 'Du musst'}} das nicht
+    beantworten."
+    - ":twisted_rightwards_arrows: Die Frage nach {{question.title}} {{'müssen Sie' if formal
+    else 'musst du'}} nicht unbedingt beantworten."
 
 cannot_skip_this_question:
   choices:
-    - "{{'Sie können' if formal else 'Du kannst'}} diese Frage nicht überspringen."
-    - "Diese Antwort ist unbedingt nötig um {{'Ihren' if formal else 'deinen'}} Schadensfall aufzunehmen."
+    - "{{'Sie können' if formal else 'Du kannst'}} diese Frage nicht
+    überspringen."
+    - "Diese Antwort ist unbedingt nötig um {{'Ihren' if formal else
+    'deinen'}} Schadensfall aufzunehmen."
 
 continue_anyway:
   choices:
@@ -17,10 +22,10 @@ continue_anyway:
 
 example:
   choices:
-    - "Beispiel:"
-    - "Zum Beispiel:"
-    - "Das könnte zum Beispiel sein:"
-    - "Ein Beispiel dafür wäre:"
+    - ":bulb: Beispiel:"
+    - ":bulb: Zum Beispiel:"
+    - ":bulb: Das könnte zum Beispiel sein:"
+    - ":bulb: Ein Beispiel dafür wäre:"
   suffix: yes
 
 is_that_correct:

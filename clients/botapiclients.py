@@ -37,7 +37,7 @@ class IBotAPIClient(object, metaclass=ABCMeta):
     def unify_update(self, update): pass
 
     @abstractmethod
-    def perform_action(self, action: ChatAction): pass
+    def perform_actions(self, action: ChatAction): pass
 
     @abstractmethod
     def show_typing(self, user): pass

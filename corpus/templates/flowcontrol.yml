@@ -7,13 +7,14 @@ claim_damage:
 start_claim:
   "Okay, legen wir los. {{'Sagen Sie' if formal else 'Sag'}} einfach Bescheid, wenn {{'Sie' if
   formal else 'du'}} zu einer Frage\n\n
-  👉  Hilfe {{'benötigen' if formal else 'benötigst'}},\n
-  👉  ein Beispiel {{'brauchen' if formal else 'brauchst'}}, oder\n
-  👉  keine Antwort geben {{'möchten' if formal else 'willst'}} oder {{'können' if
+  :point_right: <b>Hilfe</b> {{'benötigen' if formal else 'benötigst'}},\n
+  :point_right: ein <b>Beispiel</b> {{'brauchen' if formal else 'brauchst'}}, oder\n
+  :point_right: <b>keine Antwort</b> geben {{'möchten' if formal else 'willst'}} oder {{'können' if
   formal else 'kannst'}}."
 
-all_done:
-  "ALL DONE TEXT"
+claim_finished:
+  "Wir sind fertig."
+
 
 pity_no_claim:
   choices:
@@ -22,13 +23,21 @@ pity_no_claim:
 
 please_select_choice:
   choices:
-    - "Welches genau? Bitte {{'wählen Sie' if formal else 'wähle'}} aus den
+    - "🎲 Welches genau? Bitte {{'wählen Sie' if formal else 'wähle'}} aus den
     Optionen"
-    - "Das ist noch nicht ganz eindeutig. Bitte unten auswählen"
-    - "Das ist mir noch nicht ganz klar. Bitte aus den Buttons auswählen"
+    - "🎲 Das ist noch nicht ganz eindeutig. Bitte unten auswählen"
+    - "🎲 Das ist mir noch nicht ganz klar. Bitte aus den Buttons auswählen"
 
 no_phone_results:
   choices:
-    - "Dieses Handymodell kenne ich nicht 😮."
+    - "Dieses Handymodell kenne ich nicht 😮"
     - "Was ist denn das für ein Smartphone? 😮 Noch nie gehört..."
     - "Das habe ich noch nie gehört 😮"
+
+evaluate_prototype:
+  "Hallo {{user.name}}, danke für das Testen dieses Chatbot-Prototypen. Ich hoffe es hat
+  Spaß gemacht! 😋
+  \n\nEs würde mir immens helfen, wenn du dir noch 3-4 Minuten Zeit nehmen würdest, deine
+  Erfahrungen in diesem Fragebogen zu teilen:\n\n
+  →  <a href='https://goo.gl/forms/23fQlHGh3NOLLvUJ2'>Fragebogen zur Evaluierung</a>\n\n
+  Vielen Dank! @Josxa"

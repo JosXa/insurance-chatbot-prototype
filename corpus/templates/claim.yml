@@ -1,0 +1,17 @@
+too_short_damage_cause:
+  "Das reicht noch nicht. Die Beschreibung des Vorfalls sollte mindestens
+{{words_required}}
+Worte umfassen.\n:wrench:
+{% if formal %}Am besten Sie kopieren was Sie schon geschrieben haben, und bearbeiten es im
+Eingabefeld.{% endif %}
+{% if informal %}Am besten du kopierst was du schon geschrieben hast, und bearbeitest es im
+Eingabefeld.{% endif %}"
+
+preview_claim:
+  "Hier ist eine Übersicht {{'Ihrer' if formal else 'deiner'}} Angaben:\n\n
+{% for name, answer in answers.items() %}
+{% if name in ('Schadenshergang', 'Anmerkungen') %}\n{% endif %}
+  <b>{{name}}</b>:  {{answer}}\n
+{% endfor %}
+  \n\nBitte {{'überprüfen Sie' if formal else 'überprüfe'}} diese Daten, um die Meldung abzusenden.
+  "

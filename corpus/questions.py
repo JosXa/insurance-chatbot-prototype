@@ -10,6 +10,7 @@ from logzero import logger as log
 
 import utils
 from corpus import conditions
+from corpus.emojis import emoji
 from corpus.responsetemplates import env
 
 PATH = os.path.split(os.path.abspath(__file__))[0]
@@ -21,36 +22,43 @@ class Question:
                  qid,
                  title,
                  is_required,
+                 name: str = None,
                  condition: str = None,
                  confirm: str = None,
                  implicit_grounding: str = None,
-                 choices: List = None,
+                 choices: List[str] = None,
                  hint=None,
                  example=None,
                  match_regex=None,
-                 media=False):
+                 media=False,
+                 no_surrounding: List[str] = None
+                 ):
         if media and any((confirm, choices, match_regex)):
             raise ValueError("If the `media` argument is True, then `confirm`, `choices` and `match_regex` are "
                              "forbidden.")
         if confirm and implicit_grounding:
             raise ValueError("The `confirm` and `implicit_grounding` parameters are mutually exclusive.")
         self.id = qid
-        self.title = title
+        self.name = name
+        self.title = emoji.replace_aliases(title)
         self.is_required = is_required
         self.condition_template = None if condition is None else env.from_string(condition)
-        self.confirm = confirm
-        self.implicit_grounding = implicit_grounding
-        self.choices = choices
+        self.confirm = emoji.replace_aliases(confirm) if confirm else None
+        self.implicit_grounding = emoji.replace_aliases(implicit_grounding) if implicit_grounding else None
+        choices = choices or []
+        self.choices = [emoji.replace_aliases(x) for x in choices]
         self.match_regex = re.compile(match_regex) if match_regex else None
-        self.hint = hint
-        self.example = example
+        self.hint = emoji.replace_aliases(hint) if hint else None
+        self.example = emoji.replace_aliases(example) if example else None
         self.media = media
+        self.no_surrounding = no_surrounding or []
 
     @classmethod
     def from_dict(cls, id, values: dict):
         return cls(
             qid=id,
             title=values['title'],
+            name=values.get('name'),
             is_required=values.get('required', False),
             condition=values.get('condition'),
             confirm=values.get('confirm'),
@@ -59,7 +67,8 @@ class Question:
             choices=values.get('choices'),
             example=values.get('example'),
             match_regex=values.get('match_regex'),
-            media=values.get('media')
+            media=values.get('media'),
+            no_surrounding=values.get('no_surrounding')
         )
 
     def is_applicable(self, condition_context):

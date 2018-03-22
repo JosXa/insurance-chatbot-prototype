@@ -1527,9 +1527,8 @@ def from_str(sentence: str):
 
 def replace_aliases(sentence: str):
     pattern = r"(:[A-Za-z0-9_-]+:)"
-    matches = re.search(pattern, sentence)
-    if matches:
-        for match in matches.groups():
-            if match in aliases_unicode:
-                sentence = sentence.replace(match, aliases_unicode[match])
+    matches = re.findall(pattern, sentence)
+    for match in matches:
+        if match in aliases_unicode:
+            sentence = sentence.replace(match, aliases_unicode[match])
     return sentence
