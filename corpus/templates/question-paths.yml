@@ -43,4 +43,4 @@ is_that_correct:
       condition: "{{user.informal == True}}"
 
 claim_aborted:
-  "In Ordnung. {{'Sagen Sie' if formal else 'Sag'}} dann Bescheid wenn {{'Sie mich wieder brauchen' if formal else 'du mich wieder brauchst'}} 😉."
+  "In Ordnung. {{'Sagen Sie' if formal else 'Sag'}} dann Bescheid wenn {{'Sie mich wieder brauchen' if formal else 'du mich wieder brauchst'}} 😉"

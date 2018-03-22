@@ -1,5 +1,7 @@
 from typing import Generator, List, NoReturn, Tuple, Union
+
 from logzero import logger as log
+from redis_collections import SyncableList
 
 INFINITE_LIFETIME = "infinite"
 
@@ -15,8 +17,17 @@ class _StateLifetime(object):
 
 class DialogStates(object):
 
-    def __init__(self, initial_state):
-        self._states_queue = [_StateLifetime(initial_state, INFINITE_LIFETIME)]  # type: List[_StateLifetime]
+    def __init__(self, initial_state, redis=None, key=None):
+        if redis:
+            if not key:
+                raise ValueError("If `redis` is used, then a `key` must be supplied.")
+            self._states_queue = SyncableList(redis=redis, key=key)
+        else:
+            self._states_queue = []  # type: List[_StateLifetime]
+
+        # There should always be a fallback state with infinite lifetime
+        if not any(x.lifetime == INFINITE_LIFETIME for x in self._states_queue):
+            self._states_queue.append(_StateLifetime(initial_state, INFINITE_LIFETIME))
 
     def put(self, new_state: Union[Tuple, str]):
         if new_state is None:
@@ -53,12 +64,13 @@ class DialogStates(object):
         for s in self._states_queue:
             current_lifetime = s.lifetime
 
-            if current_lifetime is INFINITE_LIFETIME:
+            if current_lifetime == INFINITE_LIFETIME:
                 continue
 
             new_lifetime = current_lifetime - 1
 
             if new_lifetime < 0:
+                log.debug(f"State exceeded lifetime: {s}")
                 to_remove.append(s)
             else:
                 # Update to new lifetime
@@ -66,6 +78,9 @@ class DialogStates(object):
 
         for s in to_remove:
             self._states_queue.remove(s)
+
+        if isinstance(self._states_queue, SyncableList):
+            self._states_queue.sync()
 
     def iter_states(self) -> Generator:
         # Extract actual dialog_states without lifetime

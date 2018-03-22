@@ -9,6 +9,7 @@ APP_URL = 'https://bachelor-thesis.herokuapp.com/'
 DEBUG_MODE = config('DEBUG', cast=bool, default=False)
 NO_DELAYS = config('NO_DELAYS', cast=bool, default=False)
 
+REDIS_URL = config('REDIS_URL')
 DIALOGFLOW_ACCESS_TOKEN = config('DIALOGFLOW_ACCESS_TOKEN')
 GOOGLE_VOICE_TOKEN = config('DATABASE_URL')
 FACEBOOK_ACCESS_TOKEN = config('FACEBOOK_ACCESS_TOKEN')

@@ -157,7 +157,7 @@ def ask_to_confirm_answer(r, c, user_answer=None):
         user_answer = c.last_user_utterance.text
     r.ask_to_confirm(c.current_question, user_answer)
     c.set_value('user_answer', user_answer)
-    return 'user_confirming_answer'
+    return 'user_confirming_answer', 1
 
 
 def ask_next_question(r: SentenceComposer, c):
@@ -187,7 +187,7 @@ def skip_question(r, c):
     if c.current_question.is_required:
         r.say("sorry", "but", "cannot skip this question")
         r.ask("continue anyway", choices=("affirm_yes", "negate_no"))
-        return "ask_continue_despite_no_skipping"
+        return "ask_continue_despite_no_skipping", 1
     else:
         if not c.current_question.id == 'remarks':
             r.say("skip this question", parameters={'question': c.current_question})
@@ -203,7 +203,7 @@ def excuse_did_not_understand(r, c):
 
 
 def abort_claim(r, c):
-    print("CLAIM ABORTED")  # TODO
+    r.say("claim aborted")
 
 
 def claim_finished(r, c):

@@ -54,6 +54,7 @@ smalltalk_handlers.append(IntentHandler(
 RULES = {
     "stateless": [  # always applied
         RegexHandler(restart_system, pattern=r'^/r$'),
+        RegexHandler(reset_database, pattern=r'^/reset$'),
         IntentHandler(record_phone_damage, intents='phone_broken'),
         IntentHandler(change_formal_address),
     ],
@@ -73,7 +74,9 @@ RULES = {
         ],
         'ask_continue_despite_no_skipping': [
             AffirmationHandler(repeat_question),
+            IntentHandler(repeat_question, intents='phone_broken'),
             NegationHandler(abort_claim),
+            IntentHandler(abort_claim, intents='no_damage'),
         ],
         States.ASKING_QUESTION: [
             IntentHandler(clarify, intents=REQUEST_HELP),
@@ -85,7 +88,6 @@ RULES = {
         ],
         'user_confirming_answer': [
             AffirmationHandler(store_answer),
-            IntentHandler(repeat_question, intents='repeat'),
             NegationHandler(repeat_question),
             IntentHandler(check_answer)
         ],

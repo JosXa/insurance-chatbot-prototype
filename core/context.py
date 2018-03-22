@@ -4,6 +4,9 @@ from enum import Enum
 from pprint import pprint
 from typing import Callable, Deque, Dict, List, Union
 
+from redis import StrictRedis
+from redis_collections import SyncableDeque, SyncableDict, SyncableSet
+
 import settings
 from core.chataction import ChatAction
 from core.dialogstates import DialogStates
@@ -29,17 +32,28 @@ class Context:
     """
     SIZE_LIMIT = 50
 
-    def __init__(self, user: User, initial_state):
+    def __init__(self, user: User, initial_state, redis=None):
         self.user = user
-        self.dialog_states = DialogStates(initial_state)
+        uid = user.id
+
+        self.dialog_states = DialogStates(initial_state, redis=redis, key=f'ds_{uid}')
 
         # User and Bot utterances from newest to oldest
-        self._utterances = deque([], maxlen=self.SIZE_LIMIT)  # type: Deque[MessageUnderstanding, ChatAction]
-        self._value_store = dict()
+        if redis:
+            self._utterances = SyncableDeque(
+                maxlen=self.SIZE_LIMIT,
+                redis=redis,
+                key=f'utt_{uid}')  # type: Deque[ MessageUnderstanding, ChatAction]
+            self._value_store = SyncableDict(redis=redis, writeback=True, key=f'kv_store_{uid}')
+            self._answered_question_ids = SyncableSet(redis=redis, key=f'answer_ids_{uid}')
+        else:
+            self._utterances = deque()  # type: Deque[ MessageUnderstanding, ChatAction]
+            self._value_store = dict()
+            self._answered_question_ids = set()
 
         self._current_question = None  # type: Question
         self._current_questionnaire = None  # type: Questionnaire
-        self._answered_question_ids = set()
+
         self._all_done = False
         self._update_question_context()
         self.__name__ = "Context"
@@ -48,8 +62,9 @@ class Context:
         self.__last_user_utterance = None  # type: MessageUnderstanding
 
     def set_value(self, key, value):
-        # TODO: persist to database
         self._value_store[key] = value
+        if isinstance(self._value_store, SyncableDict):
+            self._value_store.sync()
         return value
 
     def setdefault(self, key, default=None):
@@ -60,11 +75,15 @@ class Context:
 
     def add_user_utterance(self, understanding: MessageUnderstanding):
         self._utterances.appendleft(understanding)
+        if isinstance(self._utterances, SyncableDeque):
+            self._utterances.sync()
         self.__last_user_utterance = understanding
 
     def add_actions(self, actions: List[ChatAction]):
         for action in actions:
             self._utterances.appendleft(action)
+        if isinstance(self._utterances, SyncableDeque):
+            self._utterances.sync()
 
     @property
     def claim_finished(self):
@@ -178,9 +197,10 @@ class Context:
 
 
 class ContextManager:
-    def __init__(self, initial_state):
+    def __init__(self, initial_state, redis: StrictRedis = None):
         self.contexts = {}  # type: Dict[User, Context]
         self.initial_state = initial_state
+        self.redis = redis
 
     def add_outgoing_action(self, action: ChatAction) -> Context:
         ctx = self.get_user_context(action.peer)
@@ -203,5 +223,5 @@ class ContextManager:
         try:
             return self.contexts[user]
         except KeyError:
-            self.contexts[user] = Context(user, self.initial_state)
+            self.contexts[user] = Context(user, self.initial_state, redis=self.redis)
             return self.contexts[user]

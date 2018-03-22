@@ -85,7 +85,7 @@ class IntentHandler(BaseHandler):
 
 class AffirmationHandler(BaseHandler):
     INTENTS = ['yes', 'correct', 'smalltalk.dialog.correct',
-               'smalltalk.agent.right']
+               'smalltalk.agent.right', 'smalltalk.appraisal.good']
 
     def __init__(self, callback):
         super(AffirmationHandler, self).__init__(callback)
@@ -104,7 +104,7 @@ class AffirmationHandler(BaseHandler):
 
 class NegationHandler(BaseHandler):
     INTENTS = ['no', 'wrong', 'smalltalk.dialog.wrong', 'skip',
-               'smalltalk.agent.wrong', 'smalltalk.dialog.wrong']
+               'smalltalk.agent.wrong', 'smalltalk.dialog.wrong', 'smalltalk.appraisal.bad', 'repeat']
 
     def __init__(self, callback):
         super(NegationHandler, self).__init__(callback)
@@ -164,10 +164,6 @@ class EmojiHandler(BaseHandler):
 
         if total == 0:
             return False
-
-        print("neg", (neg / total))
-        print("neut", (neut / total))
-        print("pos", (pos / total))
 
         return any((
             self.negative and (neg / total) >= self.threshold,

@@ -4,6 +4,7 @@ from typing import List
 
 from flask import Flask, send_file
 from logzero import logger as log
+from redis import StrictRedis
 
 import migrate
 import settings
@@ -53,6 +54,8 @@ def main():
     # )
     # sms_client.initialize()
 
+    redis = StrictRedis.from_url(settings.REDIS_URL)
+
     facebook_client = FacebookClient(
         app,
         settings.FACEBOOK_ACCESS_TOKEN
@@ -78,7 +81,7 @@ def main():
     planning_agent = PlanningAgent(router=application_router)
 
     DialogManager(
-        context_manager=ContextManager(initial_state=States.SMALLTALK),
+        context_manager=ContextManager(initial_state=States.SMALLTALK, redis=redis),
         bot_clients=[telegram_client, facebook_client],
         nlp_client=dialogflow_client,
         planning_agent=planning_agent,
