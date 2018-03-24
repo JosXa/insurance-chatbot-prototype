@@ -10,7 +10,7 @@ start_claim:
   :point_right: <b>Hilfe</b> {{'benötigen' if formal else 'benötigst'}},\n
   :point_right: ein <b>Beispiel</b> {{'brauchen' if formal else 'brauchst'}}, oder\n
   :point_right: <b>keine Antwort</b> geben {{'möchten' if formal else 'willst'}} oder {{'können' if
-  formal else 'kannst'}}."
+  formal else 'kannst'}} (\"überspringen\")."
 
 claim_finished:
   "Wir sind fertig."

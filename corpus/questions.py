@@ -79,14 +79,19 @@ class Question:
             log.error(f"Error while rendering condition of question '{self.title}': {e}")
             return False
 
-    def is_valid(self, value):
+    def match_input(self, value):
+        # Replace more than two spaces with a single space
+        value = re.sub(r'\s{2,}', " ", value)
+        result = True
         if self.match_regex:
-            if not bool(self.match_regex.search(value)):
+            search = self.match_regex.search(value)
+            if not search:
                 return False
+            result = search.group(1).strip()
         if self.choices:
             if value.lower() not in (x.lower() for x in self.choices):
                 return False
-        return True
+        return result
 
     def __repr__(self):
         return 'Question("{self.id}", "{self.title}", hint="{self.hint}", example=' \

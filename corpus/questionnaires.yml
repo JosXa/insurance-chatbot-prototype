@@ -5,7 +5,7 @@ personal details:
     policy_nr:
       name: "Versicherungsschein-Nr."
       title: "{{'Ihre' if formal else 'deine'}} Versicherungsschein-Nr."
-      match_regex: "[0-9\\wöäÜÖÄÜ\\-\\/]{5,18}"
+      match_regex: "([0-9\\wöäÜÖÄÜ\\-\\/]{5,18})"
       confirm: "Die Nummer lautet {{answer}}"
       hint: "die Identifikationsnummer, die oben auf {{'Ihrem' if formal else 'deinem'}} Vertrag
       steht."
@@ -31,15 +31,18 @@ phone_details:
     imei:
       name: "IMEI"
       title: "die IMEI Seriennummer des beschädigten Gerätes"
-      match_regex: "[0-9]{15}([0-9]{15})*"
+      match_regex: "([0-9]{15})"
       hint: "die elektronische Gerätenummer - diese 15-stellige Nummer ist auf dem Typenschild des Gerätes oder
       über die Tastenkombination *#06# zu finden"
       example: "990000862471854"
       required: no
     imei_photo:
+      no_surrounding: ["title"]
       condition: "{{has_answered('imei')}}"
-      title: "ein Foto der Rechnung oder des Lieferscheins des beschädigten
-      Mobiltelefons/Tablets, aus der die IMEI-Nummer hervorgeht"
+      title: "Bitte nun ein Foto der Rechnung oder des Lieferscheins vom
+      beschädigten Mobiltelefon/Tablet, aus der die IMEI-Nummer hervorgeht. Falls {{'Sie' if
+      formal else 'du'}} diese Frage überspringen {{'möchten, sagen Sie' if formal else
+      'möchtest, sag'}} mir das einfach."
       hint: "ein Scan, Foto oder sonstiger Beweis, dass {{'Sie' if formal
        else 'du'}} dieses Gerät wirklich {{'besitzen' if formal else
        'besitzt'}}"
@@ -48,9 +51,9 @@ phone_details:
     phone_number:
       name: "Rufnummer"
       title: "die Rufnummer des versicherten Gerätes, sofern vorhanden"
-      match_regex: "[0-9+\\-\\s]{7,19}"
+      match_regex: "([0-9+\\-\\s]{8,19})"
       hint: "die Telefonnummer, auf die {{'Ihr' if formal else 'dein'}} beschädigtes Gerät registriert ist."
-      example: "+49 1234 567 89"
+      example: "\"Die Nummer lautet +49 1234 567 89\"."
       required: no
 
 damage_description:

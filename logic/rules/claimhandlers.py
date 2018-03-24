@@ -126,7 +126,11 @@ def check_answer(r, c):
         r.say('sorry', 'invalid answer').give_hint(question)
         return States.ASKING_QUESTION
 
-    if question.is_valid(ut.text):
+    result = question.match_input(ut.text)
+    if result:
+        if hasattr(result, "groups"):
+            groups = result.groups()
+            print(groups)
         if question.confirm:
             return ask_to_confirm_answer(r, c, user_answer=ut.text)
         else:

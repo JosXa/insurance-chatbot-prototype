@@ -3,6 +3,7 @@ import time
 
 import logzero
 from telethon import TelegramClient, events
+from telethon.tl.functions.messages import DeleteHistoryRequest
 
 import settings
 from core import ChatAction
@@ -50,6 +51,9 @@ class IntegrationTestBase(object):
     def event_handler(self, event: events.NewMessage.Event):
         self._last_response = Response(text=event.text)
 
+    def delete_history(self, max_id=None):
+        self.client(DeleteHistoryRequest(self._peer, max_id or 2147483647))
+
     def send_message_get_response(self, text) -> Response:
         self._last_response = None
 
@@ -63,7 +67,7 @@ class IntegrationTestBase(object):
             time.sleep(0.4)
 
         # response received - wait a bit to see if the bot keeps sending messages
-        if settings.DEBUG_MODE:
+        if settings.NO_DELAYS:
             max_sleep_time = 0.8
         else:
             max_sleep_time = ChatAction.Delay.VERY_LONG.value + 0.3

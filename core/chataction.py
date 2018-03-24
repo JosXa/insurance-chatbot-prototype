@@ -22,7 +22,7 @@ class ChatAction:
         SHORT = 1.3
         MEDIUM = 1.6
         LONG = 1.9
-        VERY_LONG = 2.6
+        VERY_LONG = 3.0
 
     def __init__(self,
                  action_type: Type,
