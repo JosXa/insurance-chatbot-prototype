@@ -1,53 +1,53 @@
 import unittest
 
-from core.controller import IntentHandler
+from core import MessageUnderstanding
+from core.routing import IntentHandler
 
 
-class MyTestCase(unittest.TestCase):
-    def test_matches(self):
-        def dummy():
-            pass
-
-        handler = IntentHandler(dummy, 'start', None)
-        self.assertTrue(handler.matches('start', {}))
-        self.assertTrue(handler.matches('start', {'kek': 'kektarine'}))
-        self.assertFalse(handler.matches(None, {}))
-        self.assertFalse(handler.matches('kek', {}))
-        self.assertFalse(handler.matches(None, {'kek': 'kektarine'}))
-
-        handler = IntentHandler(dummy, None, ['param'])
-        self.assertTrue(handler.matches('something', {'param': True}))
-        self.assertTrue(handler.matches('somethingelse', {'param': True}))
-        self.assertFalse(handler.matches(None, {}))
-        self.assertFalse(handler.matches('kek', {}))
-
-        handler = IntentHandler(dummy, ['t1', 't2'], None)
-        self.assertTrue(handler.matches('t1', {'param': True}))
-        self.assertTrue(handler.matches('t1', {}))
-        self.assertTrue(handler.matches('t2', {'param': True}))
-        self.assertTrue(handler.matches('t2', {}))
-        self.assertFalse(handler.matches('t3', {}))
-        self.assertFalse(handler.matches('t3', {'param': True}))
-        self.assertFalse(handler.matches(None, {}))
-        self.assertFalse(handler.matches('kek', {}))
-
-        handler = IntentHandler(dummy, None, 'formal_address')
-        self.assertFalse(handler.matches('start', None))
-
-        handler = IntentHandler(dummy, None, ['p1', 'p2'])
-        self.assertTrue(handler.matches('start', {'p1': 'kek', 'p2': 'kektarine'}))
-        self.assertTrue(handler.matches(None, {'p1': 'kek', 'p2': 'kektarine'}))
-        self.assertTrue(handler.matches('start', {'p1': 'kek', 'p2': 'kektarine', 'p3': 'test'}))
-        self.assertFalse(handler.matches(None, {'p1': 'kek', 'p3': 'test'}))
-        self.assertFalse(handler.matches('start', {'p1': 'kek', 'p3': 'test'}))
-        self.assertFalse(handler.matches(None, {'p3': 'kek'}))
-        self.assertFalse(handler.matches('start', {'p3': 'kek'}))
-
-        handler = IntentHandler(dummy, 't1', ['p1', 'p2'])
-        self.assertTrue(handler.matches('t1', {'p1': 'kek', 'p2': 'kektarine'}))
-        self.assertFalse(handler.matches('kek', {'p1': 'kek', 'p2': 'kektarine'}))
+def dummy():
+    pass
 
 
-if __name__ == '__main__':
-    unittest.main()
+def u(intent, parameters):
+    return MessageUnderstanding(intent=intent, parameters=parameters, text="")
 
+
+def test_intent_handler():
+    handler = IntentHandler(dummy, intents='start', parameters=None)
+    assert handler.matches(u('start', {}))
+    assert handler.matches(u('start', {'kek': 'kektarine'}))
+    assert not handler.matches(u(None, {}))
+    assert not handler.matches(u('kek', {}))
+    assert not handler.matches(u(None, {'kek': 'kektarine'}))
+
+    handler = IntentHandler(dummy, None, ['param'])
+    assert handler.matches(u('something', {'param': True}))
+    assert handler.matches(u('somethingelse', {'param': True}))
+    assert handler.matches(u(None, {}))
+    assert handler.matches(u('kek', {}))
+
+    handler = IntentHandler(dummy, intents=['t1', 't2'], parameters=None)
+    assert handler.matches(u('t1', {'param': True}))
+    assert handler.matches(u('t1', {}))
+    assert handler.matches(u('t2', {'param': True}))
+    assert handler.matches(u('t2', {}))
+    assert handler.matches(u('t3', {}))
+    assert handler.matches(u('t3', {'param': True}))
+    assert handler.matches(u(None, {}))
+    assert handler.matches(u('kek', {}))
+
+    handler = IntentHandler(dummy, intents=None, parameters='formal_address')
+    assert handler.matches(u('start', None))
+
+    handler = IntentHandler(dummy, intents=None, parameters=['p1', 'p2'])
+    assert handler.matches(u('start', {'p1': 'kek', 'p2': 'kektarine'}))
+    assert handler.matches(u(None, {'p1': 'kek', 'p2': 'kektarine'}))
+    assert handler.matches(u('start', {'p1': 'kek', 'p2': 'kektarine', 'p3': 'test'}))
+    assert handler.matches(u(None, {'p1': 'kek', 'p3': 'test'}))
+    assert handler.matches(u('start', {'p1': 'kek', 'p3': 'test'}))
+    assert handler.matches(u(None, {'p3': 'kek'}))
+    assert handler.matches(u('start', {'p3': 'kek'}))
+
+    handler = IntentHandler(dummy, 't1', ['p1', 'p2'])
+    assert handler.matches(u('t1', {'p1': 'kek', 'p2': 'kektarine'}))
+    assert handler.matches(u('kek', {'p1': 'kek', 'p2': 'kektarine'}))

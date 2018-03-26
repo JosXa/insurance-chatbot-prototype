@@ -1,32 +1,20 @@
-from core.routing import AffirmationHandler, EmojiHandler, IntentHandler, NegationHandler, RegexHandler, Router, \
-    MediaHandler
-from logic.intents import SMALLTALK_INTENTS, FEELING_INTENTS, ASTONISHED_AMAZED, REQUEST_HELP
+from core.routing import AffirmationHandler, EmojiHandler, IntentHandler, MediaHandler, NegationHandler, RegexHandler, \
+    Router
+from logic.intents import ASTONISHED_AMAZED, REQUEST_HELP, SMALLTALK_INTENTS
 from logic.rules.adminhandlers import *
 from logic.rules.claimhandlers import *
 from logic.rules.smalltalkhandlers import *
 
 application_router = Router()
 
-# TODO: Remove?
-# def force_return(func, return_value):
-#     def handler(r, c):
-#         func(r, c)
-#         return return_value
-#
-#     return handler
-#
-#
-# def evaluate_next_state(func):
-#     def handler(r, c):
-#         func(r, c)
-#         if c.get_value('claim_started'):
-#             return ask_next_question(r, c)
-#         return States.SMALLTALK
-#
-#     return handler
 
+def force_return(func, return_value):
+    def handler(r, c):
+        func(r, c)
+        return return_value
 
-# region  emotion-oriented
+    return handler
+
 
 # Custom smalltalk handlers
 smalltalk_handlers = [
@@ -42,17 +30,10 @@ smalltalk_handlers.append(IntentHandler(
     intents=static_response_intents
 ))
 
-# TODO: Remove?
-# Set up all smalltalk handlers to ask the current question if the questionnaire was already started
-# for h in smalltalk_handlers:
-#     h.callback = evaluate_next_state(h.callback)
-
-# endregion
-
 # region  dialog-oriented
 
 RULES = {
-    "stateless": [  # always applied
+    "stateless": [  # always viable
         RegexHandler(restart_system, pattern=r'^/r$'),
         RegexHandler(lambda r, c: reset_database(r, c, all=True), pattern=r'^/resetall$'),
         RegexHandler(lambda r, c: reset_database(r, c), pattern=r'^/reset$'),
@@ -114,7 +95,7 @@ RULES = {
             NegationHandler(claim_needs_editing)
         ]
     },
-    "fallbacks": [  # triggered if not matching dialog_states handler is found
+    "fallbacks": [  # triggered if no matching dialog_states handler is found
         IntentHandler(intro, intents='what_can_you_do'),
         IntentHandler(change_topic, intents='yes'),
         IntentHandler(user_astonished, intents=ASTONISHED_AMAZED),

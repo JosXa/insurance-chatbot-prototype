@@ -7,21 +7,22 @@ import utils
 import itertools
 import unittest
 import warnings
-from typing import List
+from typing import List, ContextManager
 
 import settings
 from clients.nlpclients import DialogflowClient
-from core import ChatAction, ContextManager, rule_controller
-from logic.planningagent import PlanningAgent
+from core import ChatAction
+from logic.planning import PlanningAgent
+from logic.rules.controller import application_router
 from model import Update, User
 
 
 class RuleTests(unittest.TestCase):
     def setUp(self):
-        self.controller = rule_controller
+        self.router = application_router
         self.nlp = DialogflowClient(settings.DIALOGFLOW_ACCESS_TOKEN)
         self.context_manager = ContextManager()
-        self.planning_agent = PlanningAgent(self.controller)
+        self.planning_agent = PlanningAgent(self.router)
         self.msg_count = 0
         self.conversation = utils.load_yaml_as_dict('conversation.yml')
         self.user = User(insurance_id=1234)
@@ -65,9 +66,5 @@ class RuleTests(unittest.TestCase):
             self.assertIntentsEqual(self.say(user_says), expected_responses)
 
 
-
-
-
 if __name__ == '__main__':
     unittest.main()
-
