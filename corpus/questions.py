@@ -8,7 +8,7 @@ from typing import Iterable, List
 import itertools
 from logzero import logger as log
 
-import utils
+import util
 from corpus import conditions
 from corpus.emojis import emoji
 from corpus.responsetemplates import env
@@ -135,7 +135,7 @@ class Questionnaire:
 
 
 def load_questionnaires():
-    q_dict = utils.load_yaml_as_dict(QUESTIONNAIRE_FILE)
+    q_dict = util.load_yaml_as_dict(QUESTIONNAIRE_FILE)
     questionnaires = [Questionnaire.from_dict(k, v) for k, v in q_dict.items()]
     assert are_question_ids_unique(questionnaires)
     return questionnaires

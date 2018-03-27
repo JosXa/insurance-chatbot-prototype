@@ -45,7 +45,6 @@ RULES = {
             IntentHandler(start, intents=['start', 'hello', 'smalltalk.greetings']),
             IntentHandler(intro, intents=REQUEST_HELP),
             IntentHandler(user_no_claim, intents='no_damage'),
-            IntentHandler(intro, intents=REQUEST_HELP),
             IntentHandler(ask_to_start, intents=['phone_broken']),
         ],
         'ask_to_start': [
@@ -86,7 +85,7 @@ RULES = {
         'told_joke': [
             IntentHandler(tell_a_joke, intents='again_another')
         ],
-        'explained_something': [
+        'explanation_given': [
             IntentHandler(user_amazed_after_explanation, intents=ASTONISHED_AMAZED),
             NegationHandler(lambda r, c: r.say("now you know"))
         ],

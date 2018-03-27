@@ -9,7 +9,7 @@ from logic.rules.progresstracker import get_progress, progress
 ORDERED_TOPICS = {
     # { intent:  return_value }
     "should i tell a joke": ("asking", "should_i_tell_a_joke", 1),  # lifetime of 1 utterance
-    "smartphone_damage_explanation": ('explained_something', 1),
+    "smartphone_damage_explanation": ('explanation_given', 1),
     "urge_to_start": None,
     "only_helpful_for_claims": None,
     "how can i help": None,

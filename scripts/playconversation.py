@@ -2,27 +2,17 @@ import os
 import random
 import time
 
-from telethon.tl.functions.messages import DeleteHistoryRequest
-
 import settings
-import utils
+import util
+from core.recorder import RECORDING_PATH
+from scripts.visualize import visualize_recording
 from tests.integration.integrationtestbase import IntegrationTestBase
 
 
 class FullConversationIntegrationTests(IntegrationTestBase):
 
-    # def test_full_conversation(self):
-    #     hallo = self.send_message_get_response("Hallo")
-    #     self.assertRegex(hallo.text, r'^(Guten Tag|Hallo).*')
-    #
-    #     hmm = self.send_message_get_response("Hmm")
-    #     self.assertRegex(hmm.text, r'.*Ich kann.*')
-    #
-    #     ja_gern = self.send_message_get_response("Ja, gern")
-    #     self.assertRegex(ja_gern.text, r'.*Versicherungsschein.*')
-
     def _get_latest_recording(self, index=0):
-        path = '/home/joscha/bachelorarbeit/src/tests_manual/recordings/valid'
+        path = os.path.join(RECORDING_PATH, 'valid')
         files = os.listdir(path)
         idx = - (index + 1)
         print(files[idx])
@@ -34,7 +24,8 @@ class FullConversationIntegrationTests(IntegrationTestBase):
         self.delete_history()
         time.sleep(3)
 
-        rec = utils.load_yaml_as_dict(self._get_latest_recording(index))
+        filepath = self._get_latest_recording(index)
+        rec = util.load_yaml_as_dict(filepath)
         try:
             for r in rec:
                 text = r['user_says']
@@ -49,6 +40,7 @@ class FullConversationIntegrationTests(IntegrationTestBase):
                 print(f'Bot answers: {response.text}')
         finally:
             self.disconnect()
+        return filepath
 
 
 if __name__ == '__main__':

@@ -10,17 +10,19 @@ from logzero import logger as log
 from ruamel.yaml.comments import CommentedMap
 
 import settings
-import utils
-from core import ChatAction
+import util
+from appglobals import ROOT_DIR
+from core import ChatAction, States
+from core.dialogstates import DialogStates
 from model import Update
 
 # class IConversationRecorder(ABCMeta):
 #     def record_dialog(self, update: List[ChatAction]) -> NoReturn: pass
 
+RECORDING_PATH = ROOT_DIR + '/files/recordings'
 
-PATH = 'tests_manual/recordings'
-if not os.path.exists(PATH):
-    os.makedirs(PATH)
+if not os.path.exists(RECORDING_PATH):
+    os.makedirs(RECORDING_PATH)
 
 
 class ConversationRecorder:
@@ -37,11 +39,12 @@ class ConversationRecorder:
         self._scheduler = sched.scheduler(time.time, time.sleep)
         self._wait_publish_events = {}
 
-    def record_dialog(self, update: Update, actions: List[ChatAction]):
+    def record_dialog(self, update: Update, actions: List[ChatAction], dialog_states: DialogStates):
         entry = CommentedMap(
             user_says=update.message_text,
             intent=update.understanding.intent,
             parameters=update.understanding.parameters,
+            new_states=[str(x) for x in list(dialog_states.iter_states())],
             responses=list(itertools.chain.from_iterable([a.intents for a in actions]))
         )
         self.conversations.setdefault(update.user.id, []).append(entry)
@@ -63,10 +66,10 @@ class ConversationRecorder:
         return f"{user_id}_{self.date_started.strftime('%Y%m%d-%H%M%S')}.yml"
 
     def _get_filepath(self, user_id):
-        return os.path.join(PATH, self._get_filename(user_id))
+        return os.path.join(RECORDING_PATH, self._get_filename(user_id))
 
     def _save(self, user_id, schedule_publish=True):
-        utils.save_dict_as_yaml(self._get_filepath(user_id), self.conversations[user_id])
+        util.save_dict_as_yaml(self._get_filepath(user_id), self.conversations[user_id])
 
         if not schedule_publish:
             return

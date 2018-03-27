@@ -9,7 +9,7 @@ from typing import Callable
 from core import MessageUnderstanding, States
 from corpus import emojis
 from corpus.emojis.emoji import is_emoji
-from logic.intents import MEDIA_INTENT
+from logic.intents import MEDIA_INTENT, AFFIRMATION_INTENTS, NEGATION_INTENTS
 
 
 class BaseHandler(metaclass=ABCMeta):
@@ -84,38 +84,36 @@ class IntentHandler(BaseHandler):
 
 
 class AffirmationHandler(BaseHandler):
-    INTENTS = ['yes', 'correct', 'smalltalk.dialog.correct',
-               'smalltalk.agent.right', 'smalltalk.appraisal.good']
 
     def __init__(self, callback):
+        self.intents = AFFIRMATION_INTENTS
         super(AffirmationHandler, self).__init__(callback)
 
     def matches(self, understanding: MessageUnderstanding):
         if understanding.parameters:
             for k, v in understanding.parameters.items():
-                if k in self.INTENTS and v:
+                if k in self.intents and v:
                     return True
 
-        if understanding.intent in self.INTENTS:
+        if understanding.intent in self.intents:
             return True
 
         return False
 
 
 class NegationHandler(BaseHandler):
-    INTENTS = ['no', 'wrong', 'smalltalk.dialog.wrong', 'skip',
-               'smalltalk.agent.wrong', 'smalltalk.dialog.wrong', 'smalltalk.appraisal.bad', 'repeat']
 
     def __init__(self, callback):
+        self.intents = NEGATION_INTENTS
         super(NegationHandler, self).__init__(callback)
 
     def matches(self, understanding: MessageUnderstanding):
         if understanding.parameters:
             for k, v in understanding.parameters.items():
-                if k in self.INTENTS and v:
+                if k in self.intents and v:
                     return True
 
-        if understanding.intent in self.INTENTS:
+        if understanding.intent in self.intents:
             return True
 
         return False

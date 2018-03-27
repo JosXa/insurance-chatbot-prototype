@@ -1,5 +1,4 @@
 import os
-import pickle
 from typing import List
 
 from logzero import logger as log
@@ -14,7 +13,7 @@ from core.planningagent import IPlanningAgent
 from core.understanding import MessageUnderstanding
 from logic.intents import MEDIA_INTENT
 from model import Update
-from tests_manual.recorder import ConversationRecorder
+from core.recorder import ConversationRecorder
 
 
 class DialogManager:
@@ -95,7 +94,7 @@ class DialogManager:
         actions = next_response.collect_actions()
 
         if self.recorder:
-            self.recorder.record_dialog(update, actions)
+            self.recorder.record_dialog(update, actions, context.dialog_states)
 
         if settings.NO_DELAYS:
             # No delays while debugging

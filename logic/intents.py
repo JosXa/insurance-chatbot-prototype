@@ -1,9 +1,16 @@
 MEDIA_INTENT = 'media'
+
 FEELING_INTENTS = ['smalltalk.appraisal.good', 'smalltalk.user.can_not_sleep',
                    'smalltalk.appraisal.thank_you', 'smalltalk.user.good',
                    'smalltalk.user.happy', 'smalltalk.user.sad',
                    'smalltalk.appraisal.bad', 'smalltalk.agent.happy',
                    'smalltalk.user.sick']
+
+AFFIRMATION_INTENTS = ['yes', 'correct', 'smalltalk.dialog.correct',
+                       'smalltalk.agent.right', 'smalltalk.appraisal.good']
+
+NEGATION_INTENTS = ['no', 'wrong', 'smalltalk.dialog.wrong', 'skip',
+                    'smalltalk.agent.wrong', 'smalltalk.dialog.wrong', 'smalltalk.appraisal.bad', 'repeat']
 
 SMALLTALK_INTENTS = [
     'who_are_you',

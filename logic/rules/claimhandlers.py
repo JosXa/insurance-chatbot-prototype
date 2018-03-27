@@ -36,7 +36,7 @@ def intro(r, c):
     if not c.has_outgoing_intent("what i can do", age_limit=10):
         r.say("what i can do")
     r.say("what you can say")
-    return "explained_something", 1
+    return "explanation_given", 1
 
 
 def ask_to_start(r, c):
@@ -257,7 +257,7 @@ def change_formal_address(r, c: Context):
             c.set_value("we_say_du", True)
             c.user.save()
             raise ForceReevaluation
-    elif re.search(r'\b([Ii]hr|^.Sie|Ihnen|Euer|haben [sS]ie|sind [Ss]ie)\b', ut.text):
+    elif re.search(r'\b([Ii]hr|Sie|Ihnen|Euer|haben [sS]ie|sind [Ss]ie)\b', ut.text):
         if c.user.formal_address is False:
             c.user.formal_address = True
             c.user.save()

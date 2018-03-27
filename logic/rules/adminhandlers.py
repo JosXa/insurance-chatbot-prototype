@@ -18,7 +18,7 @@ def restart_system(r, c: Context):
 
 
 def reset_database(r, c: Context, all=False):
-    if c.user.telegram_id != 62056065:
+    if all and c.user.telegram_id != 62056065:
         return r.say("no permission")
     log.warning("Resetting and restarting...")
     migrate.reset_answers()

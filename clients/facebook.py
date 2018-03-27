@@ -108,7 +108,7 @@ class FacebookClient(IBotAPIClient):
         all_args = request.args
         if 'hub.challenge' in all_args:
             return all_args['hub.challenge']
-        log.info("Root request: " + all_args)
+        log.info("Root request: " + str(all_args))
         return ''
 
     def _webhook(self):

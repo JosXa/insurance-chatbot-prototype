@@ -10,7 +10,7 @@ def load_yaml_as_dict(filepath: str) -> dict:
 
 def save_dict_as_yaml(filepath, values):
     with open(filepath, 'w') as handle:
-        ruamel.yaml.round_trip_dump(values, handle, default_flow_style=False)
+        ruamel.yaml.round_trip_dump(values, handle, default_flow_style=False, explicit_start=True)
 
 
 from functools import wraps

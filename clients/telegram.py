@@ -13,7 +13,7 @@ from telegram import *
 from telegram import ChatAction as TelegramChatAction, Update as TelegramUpdate
 from telegram.ext import CommandHandler, Filters, MessageHandler, Updater
 
-import utils
+import util
 from clients.botapiclients import IBotAPIClient
 from core import ChatAction
 from corpus.media import get_file_by_media_id
@@ -83,7 +83,7 @@ class TelegramClient(IBotAPIClient):
             if action.action_type == ChatAction.Type.ASKING_QUESTION:
                 if action.choices:
                     buttons = [KeyboardButton(x) for x in action.choices]
-                    markup = ReplyKeyboardMarkup(utils.build_menu(buttons, 3),
+                    markup = ReplyKeyboardMarkup(util.build_menu(buttons, 3),
                                                  resize_keyboard=True,
                                                  one_time_keyboard=True,
                                                  selective=True)

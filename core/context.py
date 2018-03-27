@@ -90,6 +90,8 @@ class Context:
         return self._value_store.get(key, default)
 
     def _sched_sync_utterance(self):
+        if not isinstance(self._utterances, SyncableDeque):
+            return
         try:
             self._scheduler.cancel(self.__sync_utt_job)
         except ValueError:

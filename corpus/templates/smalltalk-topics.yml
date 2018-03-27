@@ -10,7 +10,7 @@ smartphone_damage_explanation:
 
 urge_to_start:
   "Wenn {{'Sie' if formal else 'du'}} {{render('dmg_type_snippet')}} an {{'Ihrem' if formal else
-  'deinem'}} Smartphone melden {{'möchten, Sagen Sie' if formal else 'möchtest, sag'}}, mir einfach was
+  'deinem'}} Smartphone melden {{'möchten, Sagen Sie' if formal else 'möchtest, sag'}} mir einfach was
   kaputt ist."
 
 only_helpful_for_claims:

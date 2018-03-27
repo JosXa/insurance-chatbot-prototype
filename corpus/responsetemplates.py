@@ -7,7 +7,7 @@ from telegram.utils.helpers import escape_markdown
 
 from corpus import conditions, env, raw_templates
 from corpus.emojis import emoji
-from utils import mutually_exclusive
+from util import mutually_exclusive
 
 FORMATTING_PARAMS = {
     'bold': lambda s: f"*{escape_markdown(s)}*",
@@ -133,7 +133,7 @@ class ResponseTemplate:
             return obj
         elif isinstance(choice, str):
             return cls(intent, choice)
-        elif isinstance(intent, choice, list):
+        elif isinstance(choice, list):
             raise NotImplementedError()
         else:
             raise ValueError(f"Unexpected format for metadata: {type(choice)}")

@@ -3,7 +3,7 @@ from pprint import pprint
 from unittest.mock import MagicMock
 
 import model
-import utils
+import util
 import itertools
 import unittest
 import warnings
@@ -24,7 +24,7 @@ class RuleTests(unittest.TestCase):
         self.context_manager = ContextManager()
         self.planning_agent = PlanningAgent(self.router)
         self.msg_count = 0
-        self.conversation = utils.load_yaml_as_dict('conversation.yml')
+        self.conversation = util.load_yaml_as_dict('conversation.yml')
         self.user = User(insurance_id=1234)
         self.user.save()
 

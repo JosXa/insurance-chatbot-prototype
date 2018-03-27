@@ -109,3 +109,4 @@ venv.bak/
 /assets/files/voice.ogg
 /tests/integration/josxa.session
 /nludata/
+/files/recordings/
