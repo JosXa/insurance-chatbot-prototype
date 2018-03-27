@@ -21,4 +21,13 @@ random_topic:
   choices:
     - "{{'Sind Sie' if formal else 'Bist du'}} gerade an der frischen Luft?"
     - "Ist Sodbrennen eigentlich gefährlich? Zum Glück kann ich das nicht bekommen..."
-    - "Violett ist übrigens magentaer als rot :thinking:"
+    - "Violett ist übrigens magentaer als rot 🤔"
+    - "Fakt: Apple-Geräte sind auf Nummer eins der häufigsten Schadensmeldungen."
+    - "Fakt: Mit 0,85% passieren Flüssigkeitsschäden an Smartphones relativ selten, dafür
+    verursachen
+    sie mit die höchsten Kosten."
+    - "Fakt: Nordrhein-Westfalen meldet die meisten Schäden an Handys. Im bevölkerungsreichsten Bundesland Deutschlands passieren eben auch die meisten Handyunfälle"
+    - "Fakt: Im Sommer passieren die meisten Schäden, im Winter die wenigsten."
+    - "Eine Statistik von blog.friendsinsurance.de zeigt, dass mit 44% deutlich weniger Handyschäden von Frauen gemeldet werden als von Männern."
+    - "Wenn Ihr Handy in die Toilette gefallen oder aus Versehen in der Waschmaschine
+    mitgewaschen wurde, ist der Schaden noch vergleichsweise gering. Salziges Meerwasser ist jedoch viel aggressiver und beschädigt die empfindliche Elektronik dauerhaft."

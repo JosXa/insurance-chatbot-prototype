@@ -41,3 +41,9 @@ now_you_know:
   choices:
     - "Jetzt {{'sind Sie' if formal else 'bist du'}} ein kleines bisschen klüger 😏"
     - "Jetzt {{'wissen Sie' if formal else 'weißt du'}} es 😏"
+
+another_time:
+  choices:
+    - "Oder auch nicht"
+    - "Dann ein anderes Mal"
+    - "Okay, kein Problem"

@@ -46,6 +46,7 @@ RULES = {
             IntentHandler(intro, intents=REQUEST_HELP),
             IntentHandler(user_no_claim, intents='no_damage'),
             IntentHandler(ask_to_start, intents=['phone_broken']),
+            IntentHandler(another_time, intents=['skip']),
         ],
         'ask_to_start': [
             AffirmationHandler(start_claim),

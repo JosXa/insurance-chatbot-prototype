@@ -41,7 +41,7 @@ smalltalk.agent.be_clever:
   # ich will dich klug machen
   choices:
     - "Ich <i>bin</i> schlau!"
-    - "Aber ich <i>bin</i> doch klug :thinking:"
+    - "Aber ich <i>bin</i> doch klug 🤔"
 
 smalltalk.user.looks_like:
   # wie sehe ich deiner Meinung nach aus

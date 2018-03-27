@@ -134,3 +134,7 @@ def user_sad_or_angry(r, c):
 
 def user_amazed_after_explanation(r, c):
     r.say("pretty cool huh")
+
+
+def another_time(r, c):
+    r.say("another time")
