@@ -30,6 +30,6 @@ SUPPORT_CHANNEL_ID = -1001265422831
 # json.dump(creds, open(filename, 'w'), ensure_ascii=False)
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = 'service-account-file.json'
 
-ENABLE_CONVERSATION_RECORDING = DEBUG_MODE
+ENABLE_CONVERSATION_RECORDING = config('RECORD_CONVERSATIONS', cast=bool, default=True)
 
 CONTEXT_LOOKUP_RECENCY = 15
