@@ -25,7 +25,7 @@ who_are_you:
     - "Ich bin ein Chatbot, also ein Programm das mit dir sprechen kann"
 
 smalltalk.agent.make_sandwich:
-  "Wie heißt das Zauberwort?"
+  "Machs dir doch selber!"
 
 smalltalk.user.will_be_back:
   # ich komme bald wieder
