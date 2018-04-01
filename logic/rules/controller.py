@@ -27,7 +27,8 @@ RULES = {
     "stateless": [  # always viable
         RegexHandler(restart_system, pattern=r'^/r$'),
         RegexHandler(lambda r, c: reset_database(r, c, all=True), pattern=r'^/resetall$'),
-        RegexHandler(lambda r, c: reset_database(r, c), pattern=r'^/reset$'),
+        RegexHandler(reset_database, pattern=r'^/reset$'),
+        RegexHandler(send_questionnaires, pattern=r'^/query$'),
         IntentHandler(record_phone_damage, intents='phone_broken'),
         IntentHandler(change_formal_address),
     ],
