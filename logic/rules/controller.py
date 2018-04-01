@@ -11,7 +11,6 @@ application_router = Router()
 smalltalk_handlers = [
     IntentHandler(congratulate_birthday, intents='smalltalk.user.has_birthday'),
     IntentHandler(bye, intents='smalltalk.greetings.bye'),
-    IntentHandler(sudo_make_sandwich, intents='smalltalk.agent.sudo_make_sandwich'),
 ]
 # All unhandled smalltalk intents are responded to with a static message, as defined in smalltalk-aggregated.yaml
 static_response_intents = [x for x
@@ -96,6 +95,7 @@ RULES = {
         EmojiHandler(neutral_emoji, neutral=True),  # neutral sentiment
         EmojiHandler(user_sad_or_angry, negative=True),  # negative sentiment
         EmojiHandler(change_topic),  # any emoji
+        IntentHandler(sudo_make_sandwich, intents='smalltalk.agent.sudo_make_sandwich'),  # easteregg
         smalltalk_handlers,
     ]
 }
