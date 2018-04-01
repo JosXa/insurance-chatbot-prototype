@@ -90,7 +90,6 @@ class SentenceComposer:
     def ask_to_confirm(self,
                        question: Question,
                        user_answer: str):
-        user_answer = str(user_answer)
         text = self.renderer.render_string(question.confirm, parameters={'answer': user_answer, 'question': question})
         self._create_action('confirm_answer', text[0].upper() + text[1:])
         self.ask('is that correct', choices=['affirm_correct', 'negate_wrong'])

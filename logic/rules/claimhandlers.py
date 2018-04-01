@@ -158,7 +158,7 @@ def store_answer(r, c, question=None, user_answer=None):
 def ask_to_confirm_answer(r, c, user_answer=None):
     if user_answer is None:
         user_answer = c.last_user_utterance.text
-    r.ask_to_confirm(c.current_question, str(user_answer))
+    r.ask_to_confirm(c.current_question, user_answer)
     c.set_value('user_answer', user_answer)
     return 'user_confirming_answer', 1
 

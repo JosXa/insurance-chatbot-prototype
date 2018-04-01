@@ -72,8 +72,8 @@ damage_description:
       required: yes
     date_and_time:
       title: "das Datum und die Uhrzeit des Vorfalls"
-      confirm: "Es ist also am {{answer.day}}. {{month(answer.month)}} {{answer.year + ' ' if not
-      is_this_year(answer.year)}}um {{answer.hour}}:{{answer.minute}} passiert?"
+      confirm: "Es ist also am {{answer.day}}. {{month(answer.month)}} {{str(answer.year) + ' ' if
+       not is_this_year(answer.year)}}um {{answer.hour}}:{{answer.minute}} passiert?"
       hint: "Datum und Uhrzeit, am besten in deutschem Format. {{'Gib' if
       informal else 'Geben Sie'}} diese einfach nach bestem Wissen an"
       example: "10.3.2018 15:30"
