@@ -68,6 +68,7 @@ damage_description:
         - Displayschaden
         - Wasserschaden
         - Softwarefehler
+        - Akku defekt
       hint: "die Art des Schadens an {{'Ihrem' if formal else 'deinem'}} Handy."
       required: yes
     date_and_time:
