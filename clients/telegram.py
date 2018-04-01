@@ -43,6 +43,9 @@ class TelegramClient(IBotAPIClient):
         """
         Creates the common representation of an `Update` object from the update returned by Telegram.
         """
+        if update is None:
+            return
+
         ud = Update()
         ud.original_update = update
         ud.client_name = self.client_name

@@ -113,4 +113,5 @@ START = ['start',
          'smalltalk.greetings.start',
          'smalltalk.greetings.goodevening',
          'smalltalk.greetings.goodmorning',
+         'smalltalk.greetings.hello',
          ]
