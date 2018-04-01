@@ -11,6 +11,7 @@ application_router = Router()
 smalltalk_handlers = [
     IntentHandler(congratulate_birthday, intents='smalltalk.user.has_birthday'),
     IntentHandler(bye, intents='smalltalk.greetings.bye'),
+    IntentHandler(sudo_make_sandwich, intents='smalltalk.agent.sudo_make_sandwich'),
 ]
 # All unhandled smalltalk intents are responded to with a static message, as defined in smalltalk-aggregated.yaml
 static_response_intents = [x for x

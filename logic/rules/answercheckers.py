@@ -29,6 +29,7 @@ def model_identifier(r: SentenceComposer, c, q):
 
 
 def _check_time(r, c, answer: datetime.datetime):
+    print(answer)
     if answer > datetime.datetime.now():
         r.say("sorry", "but", "date in future")
         return None
@@ -39,6 +40,8 @@ def date_and_time(r, c, q):
     answer = c.last_user_utterance.text
 
     try:
+        answer = answer.replace(" Uhr", ":00")
+
         result = dateparser.parse(answer, languages=['de'])
         if result:
             return _check_time(r, c, result)

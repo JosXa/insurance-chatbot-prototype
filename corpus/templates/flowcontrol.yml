@@ -15,7 +15,6 @@ start_claim:
 claim_finished:
   "Wir sind fertig."
 
-
 pity_no_claim:
   choices:
     - "Schade, ich kann {{'Ihnen' if formal else 'dir'}} nur dabei helfen"

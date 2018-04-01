@@ -4,7 +4,6 @@ import time
 
 import settings
 import util
-from core.recorder import RECORDING_PATH
 from scripts.visualize import visualize_recording
 from tests.integration.integrationtestbase import IntegrationTestBase
 

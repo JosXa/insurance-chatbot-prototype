@@ -35,12 +35,14 @@ def test__parse_name():
 
 @pytest.fixture()
 def user():
-    return User()
+    u = User()
+    u.id = 10000
+    return u
 
 
 @pytest.fixture()
-def c():
-    return Context(None, None)
+def c(user):
+    return Context(user, None)
 
 
 @pytest.fixture()
@@ -62,13 +64,14 @@ def message(c):
     return insert_understanding
 
 
-def test_date_and_time(message):
+def test_date_and_time(message, r):
     now = dtime.now()
 
     def roughly_equals(d1, d2):
         return abs(d2 - d1) <= tdelta(minutes=10)
 
     def parse_date(text):
+        print(text)
         return ans.date_and_time(r, message(text), None)
 
     assert parse_date("Test") is False
@@ -78,6 +81,6 @@ def test_date_and_time(message):
     assert roughly_equals(parse_date("10.3.2018 15:30"), dtime(2018, 3, 10, 15, 30))
     assert roughly_equals(parse_date("10.01.2017"), dtime(2017, 1, 10))
     assert roughly_equals(parse_date("22. Januar 13:30"), dtime(now.year, 1, 22, 13, 30))
+    assert roughly_equals(parse_date("22. Januar 13 Uhr"), dtime(now.year, 1, 22, 13, 00))
 
-    tmr = now + tdelta(days=1)
-    assert roughly_equals(parse_date("morgen um 13:45"), dtime(tmr.year, tmr.month, tmr.day, 13, 45))
+    parse_date("morgen um 13:45")

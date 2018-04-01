@@ -100,7 +100,9 @@ SMALLTALK_INTENTS = [
     'smalltalk.greetings.goodmorning',
     'smalltalk.user.needs_advice',
     'smalltalk.user.loves_agent',
-    'smalltalk.user.here']
+    'smalltalk.user.here',
+    'smalltalk.agent.make_sandwich'
+]
 
 ASTONISHED_AMAZED = ['astonished_interest', 'smalltalk.user.wow']
 REQUEST_HELP = ['smalltalk.agent.can_you_help', 'clarify']

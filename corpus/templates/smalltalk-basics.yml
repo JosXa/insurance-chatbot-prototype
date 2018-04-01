@@ -47,3 +47,8 @@ another_time:
     - "Oder auch nicht"
     - "Dann ein anderes Mal"
     - "Okay, kein Problem"
+
+here_you_go:
+  choices:
+    - "Bitteschön!"
+    - "Viel Spaß!"

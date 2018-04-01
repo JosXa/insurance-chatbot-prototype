@@ -5,6 +5,7 @@ from logzero import logger as log
 from core import Context
 from logic.intents import FEELING_INTENTS
 from logic.rules.progresstracker import get_progress, progress
+from logic.sentencecomposer import SentenceComposer
 
 ORDERED_TOPICS = {
     # { intent:  return_value }
@@ -138,3 +139,7 @@ def user_amazed_after_explanation(r, c):
 
 def another_time(r, c):
     r.say("another time")
+
+
+def sudo_make_sandwich(r: SentenceComposer, c):
+    r.send_media('sandwich', caption_intent='here you go')
