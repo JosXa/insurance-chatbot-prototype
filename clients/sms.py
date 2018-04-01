@@ -2,7 +2,7 @@ import threading
 import time
 from typing import List
 
-from twilio.rest import Client
+from twilio.rest import Client as TwilioClient
 
 from clients.botapiclients import IBotAPIClient
 from core import ChatAction
@@ -10,9 +10,14 @@ from model import User
 
 
 class SMSClient(IBotAPIClient):
-    def __init__(self, access_token, account_sid):
+    """
+    Integration with Twilio to provide SMS capabilities.
 
-        self.client = Client(account_sid, access_token)
+    TODO: Currently not operational. This is an experiment and left as an exercise for the reader.
+    """
+
+    def __init__(self, access_token, account_sid):
+        self.client = TwilioClient(account_sid, access_token)
 
     @property
     def client_name(self):
@@ -57,3 +62,16 @@ class SMSClient(IBotAPIClient):
             body="Hello from Python!")
 
         print(message.sid)
+
+    def add_voice_handler(self, callback):
+        pass
+
+    def add_media_handler(self, callback):
+        pass
+
+    def show_typing(self, user):
+        pass
+
+    def download_voice(self, voice_id, filepath):
+        pass
+

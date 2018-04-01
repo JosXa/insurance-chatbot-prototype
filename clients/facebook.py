@@ -18,11 +18,15 @@ from model import Update, User
 
 
 class FacebookClient(IBotAPIClient):
+    """
+    Facebook Messenger Bot API client
+    """
 
     def __init__(self, app, token):
         self._app = app
         self._token = token
 
+        # Set in `initialize()`
         self._page = None  # type: Page
 
         self._error_handler = None  # type: Callable[Exception]
@@ -34,7 +38,10 @@ class FacebookClient(IBotAPIClient):
     def client_name(self):
         return 'facebook'
 
-    def unify_update(self, event: Event, payload: str = None):
+    def unify_update(self, event: Event, payload: str = None) -> Update:
+        """
+        Create the internal `Update` type from facebook's `Event`
+        """
         ud = Update()
         ud.original_update = event
         ud.client_name = self.client_name
@@ -69,19 +76,24 @@ class FacebookClient(IBotAPIClient):
         self._page.set_webhook_handler('message', self._message_handler)
         self._page.set_webhook_handler('delivery', self._delivery_handler)
 
-    def _delivery_handler(self, event):
+    @staticmethod
+    def _delivery_handler(event):
         delivery = event.delivery
         message_ids = delivery.get("mids")
         watermark = delivery.get("watermark")
-        log.info(f"Message delivered: {message_ids} ({watermark})")
+        log.debug(f"Message delivered: {message_ids} ({watermark})")
 
     def perform_actions(self, actions: List[ChatAction]):
+        """
+        Executes a sequence of `ChatActions` planned by the `DialogManager`.
+        This includes sending messages, showing "typing" notifications, waiting when there are delays planned,
+        and adding QuickReply buttons.
+        """
         for action in actions:
             try:
                 user_id = action.peer.facebook_id
 
                 if action.show_typing:
-                    log.debug("User id: " + user_id)
                     self.show_typing(user_id)
                 if action.delay:
                     # Facebook bots are very slow, shorten timeout
@@ -92,8 +104,7 @@ class FacebookClient(IBotAPIClient):
                     if action.choices:
                         quick_replies = [QuickReply(title=x, payload=f"test_{x}") for x in action.choices[:10]]
                 elif action.action_type == ChatAction.Type.SENDING_MEDIA:
-                    res = self.send_media(action.peer, action.media_id, action.render())
-                    print(res)
+                    self.send_media(action.peer, action.media_id, caption=action.render())
                     return
 
                 self._page.send(
@@ -105,6 +116,9 @@ class FacebookClient(IBotAPIClient):
 
     @staticmethod
     def _authentication():
+        """
+        Authentication is done when the webhook is set up in the facebook developer console
+        """
         all_args = request.args
         if 'hub.challenge' in all_args:
             return all_args['hub.challenge']
@@ -115,18 +129,15 @@ class FacebookClient(IBotAPIClient):
         self._page.handle_webhook(request.get_data(as_text=True))
         return "ok"
 
+    def start_listening(self):
+        pass  # Flask handles this automatically
+
     @staticmethod
-    def __shutdown_server():
+    def stop_listening():
         func = request.environ.get('werkzeug.server.shutdown')
         if func is None:
             raise RuntimeError('Not running with the Werkzeug Server')
         func()
-
-    def start_listening(self):
-        pass
-
-    def stop_listening(self):
-        self.__shutdown_server()
 
     def set_start_handler(self, callback):
         @self._page.callback(['START_BOT'])
@@ -165,21 +176,21 @@ class FacebookClient(IBotAPIClient):
         filepath = get_file_by_media_id(media_id)
         ext = os.path.splitext(filepath)[1]
 
-        return  # TODO: broken
+        return  # TODO: This is broken
 
-        if ext == '.mp4':
-            video_url = settings.APP_URL + f'media/video/{media_id}{ext}'
-            print(video_url)
-            return self._page.send(peer.facebook_id, Attachment.Video(video_url))
-        elif ext in ('.jpg', '.jpeg', '.png'):
-            image_url = settings.APP_URL + f'media/image/{media_id}{ext}'
-            return self._page.send(peer.facebook_id, Attachment.Image(image_url))
-        elif ext == '.webp':
-            pass  # sticker
-            # msg = self.bot.send_sticker(peer.telegram_id, file)
-            # if caption:
-            #     self.send_message(peer, caption)
-            # return msg
+        # if ext == '.mp4':
+        #     video_url = settings.APP_URL + f'media/video/{media_id}{ext}'
+        #     print(video_url)
+        #     return self._page.send(peer.facebook_id, Attachment.Video(video_url))
+        # elif ext in ('.jpg', '.jpeg', '.png'):
+        #     image_url = settings.APP_URL + f'media/image/{media_id}{ext}'
+        #     return self._page.send(peer.facebook_id, Attachment.Image(image_url))
+        # elif ext == '.webp':
+        #     pass  # sticker
+        #     # msg = self.bot.send_sticker(peer.telegram_id, file)
+        #     # if caption:
+        #     #     self.send_message(peer, caption)
+        #     # return msg
 
     def show_typing(self, user_id):
         try:

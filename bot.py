@@ -11,6 +11,7 @@ import settings
 from clients.facebook import FacebookClient
 from clients.nlpclients import DialogflowClient
 from clients.telegram import TelegramClient
+from clients.telegramsupport import TelegramSupportChannel
 from clients.voice import VoiceRecognitionClient
 from core.context import ContextManager, States
 from core.dialogmanager import DialogManager
@@ -23,8 +24,8 @@ threads = list()  # type: List[Thread]
 
 USER_SEQ = dict()
 
-if not os.path.exists('files'):
-    os.makedirs('files')
+if not os.path.exists('tmp'):
+    os.makedirs('tmp')
 
 
 def error_handler(bot, update, error):
@@ -32,8 +33,6 @@ def error_handler(bot, update, error):
 
 
 def main():
-    Thread(target=migrate.reset_answers()).start()  # TODO
-
     app = Flask(__name__)
 
     @app.route('/ping', methods=['GET'])
@@ -62,20 +61,25 @@ def main():
     facebook_client.initialize()
 
     telegram_client = TelegramClient(
-        app,
-        settings.APP_URL,
-        settings.TELEGRAM_ACCESS_TOKEN,
+        app=app,
+        webhook_url=settings.APP_URL,
+        token=settings.TELEGRAM_ACCESS_TOKEN,
         test_mode=settings.DEBUG_MODE
     )
     telegram_client.initialize()
     telegram_client.add_error_handler(error_handler)
+
+    support_client = TelegramSupportChannel(
+        telegram_bot=telegram_client.bot,
+        channel_id=settings.SUPPORT_CHANNEL_ID
+    )
 
     dialogflow_client = DialogflowClient(settings.DIALOGFLOW_ACCESS_TOKEN)
     voice_client = VoiceRecognitionClient()
 
     conversation_recorder = None
     if settings.ENABLE_CONVERSATION_RECORDING:
-        conversation_recorder = ConversationRecorder(telegram_client.bot, settings.SUPPORT_CHANNEL_ID)
+        conversation_recorder = ConversationRecorder(telegram_client.bot, support_client)
 
     planning_agent = PlanningAgent(router=application_router)
 
@@ -85,7 +89,8 @@ def main():
         nlp_client=dialogflow_client,
         planning_agent=planning_agent,
         recorder=conversation_recorder,
-        voice_recognition_client=voice_client
+        voice_recognition_client=voice_client,
+        support_channel=support_client
     )
 
     telegram_client.start_listening()
@@ -104,8 +109,10 @@ def main():
                 use_reloader=False
             )
         ).start()
+        # long polling
         telegram_client.updater.idle()
     else:
+        # webhooks
         log.info("Listening...")
         app.run(host='0.0.0.0', port=settings.PORT)
 

@@ -1,27 +1,18 @@
 from core.routing import AffirmationHandler, EmojiHandler, IntentHandler, MediaHandler, NegationHandler, RegexHandler, \
     Router
-from logic.intents import ASTONISHED_AMAZED, REQUEST_HELP, SMALLTALK_INTENTS
+from logic.intents import ASTONISHED_AMAZED, REQUEST_HELP, SMALLTALK_INTENTS, START
 from logic.rules.adminhandlers import *
 from logic.rules.claimhandlers import *
 from logic.rules.smalltalkhandlers import *
 
 application_router = Router()
 
-
-def force_return(func, return_value):
-    def handler(r, c):
-        func(r, c)
-        return return_value
-
-    return handler
-
-
 # Custom smalltalk handlers
 smalltalk_handlers = [
     IntentHandler(congratulate_birthday, intents='smalltalk.user.has_birthday'),
     IntentHandler(bye, intents='smalltalk.greetings.bye'),
 ]
-# All unhandled smalltalk intents are responded to with a static message, as defined in smalltalk.yaml
+# All unhandled smalltalk intents are responded to with a static message, as defined in smalltalk-aggregated.yaml
 static_response_intents = [x for x
                            in SMALLTALK_INTENTS
                            if not any(y.contains_intent(x) for y in smalltalk_handlers)]
@@ -42,11 +33,11 @@ RULES = {
     ],
     "dialog_states": {  # triggered when context is in the key's dialog_states
         States.SMALLTALK: [
-            IntentHandler(start, intents=['start', 'hello', 'smalltalk.greetings']),
+            IntentHandler(start, intents=START),
             IntentHandler(intro, intents=REQUEST_HELP),
             IntentHandler(user_no_claim, intents='no_damage'),
-            IntentHandler(ask_to_start, intents=['phone_broken']),
-            IntentHandler(another_time, intents=['skip']),
+            IntentHandler(ask_to_start, intents='phone_broken'),
+            IntentHandler(another_time, intents='skip'),
         ],
         'ask_to_start': [
             AffirmationHandler(start_claim),

@@ -2,10 +2,10 @@ too_short_damage_cause:
   "Das reicht noch nicht. Die Beschreibung des Vorfalls sollte mindestens
 {{words_required}}
 Worte umfassen.\n:wrench:
-{% if formal %}Am besten Sie kopieren was Sie schon geschrieben haben, und bearbeiten es im
-Eingabefeld.{% endif %}
-{% if informal %}Am besten du kopierst was du schon geschrieben hast, und bearbeitest es im
-Eingabefeld.{% endif %}"
+{% if formal %}Am besten Sie kopieren was Sie schon geschrieben haben, fügen es ins Eingabefeld
+ein und bearbeiten es dort.{% endif %}
+{% if informal %}Am besten du kopierst was du schon geschrieben hast, fügst es ins Eingabefeld
+ein und bearbeitest es dort.{% endif %}"
 
 preview_claim:
   "Hier ist eine Übersicht {{'Ihrer' if formal else 'deiner'}} Angaben:\n\n

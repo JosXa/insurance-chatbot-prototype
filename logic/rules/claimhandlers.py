@@ -16,7 +16,6 @@ def chance(value: float) -> bool:
 
 
 def start(r, c: Context):
-    # TODO: If user has already interacted (after bot restart), go immediately to "current" question
     if c.last_user_utterance.intent == 'smalltalk.greetings.whatsup':
         r.say("smalltalk.greetings.whatsup")
         return
@@ -159,7 +158,7 @@ def store_answer(r, c, question=None, user_answer=None):
 def ask_to_confirm_answer(r, c, user_answer=None):
     if user_answer is None:
         user_answer = c.last_user_utterance.text
-    r.ask_to_confirm(c.current_question, user_answer)
+    r.ask_to_confirm(c.current_question, str(user_answer))
     c.set_value('user_answer', user_answer)
     return 'user_confirming_answer', 1
 
@@ -265,7 +264,6 @@ def change_formal_address(r, c: Context):
 
 
 def no_rule_found(r, c):
-    # TODO: This is debatable. Should the user always be notified that something was not understood?
     r.say("sorry", "what i understood", parameters={'understanding': c.last_user_utterance.intent})
     if c.get_value('claim_started', False):
         return

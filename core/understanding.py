@@ -1,8 +1,22 @@
 import datetime
 
+from typing import Dict
+
 
 class MessageUnderstanding:
-    def __init__(self, text, intent, parameters=None, contexts=None, date=None, score=None, media_location=None):
+    """
+    Data holding class for an incoming utterance, enriched with NLU information.
+    """
+
+    def __init__(
+            self,
+            text: str,
+            intent: str,
+            parameters: Dict[str, str] = None,
+            contexts=None,
+            date: datetime.datetime = None,
+            score: float = None,
+            media_location: str = None):
         self.text = text
         self.intent = intent
         self.parameters = parameters if parameters else None

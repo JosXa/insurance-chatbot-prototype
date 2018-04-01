@@ -2,6 +2,7 @@
 import os
 from peewee import *
 
+from appglobals import ROOT_DIR
 from model.basemodel import BaseModel
 
 
@@ -41,9 +42,24 @@ class User(BaseModel):
         from model import UserAnswers
         UserAnswers.add_answer(user=self, question_id='last_name', answer=value)
 
-    @property
-    def media_folder(self):
-        path = os.path.join('files', str(self.id), 'media')
+    def get_media_folder(self, create=True):
+        return _create_folder("media", self.id, create)
+
+    def get_recording_folder(self, create=True):
+        return _create_folder("recordings", self.id, create)
+
+    def __str__(self):
+        if self.first_name and self.last_name:
+            return f"{self.first_name} {self.last_name} ({self.id})"
+        elif self.first_name:
+            return f"{self.first_name} ({self.id})"
+        else:
+            return f"User(id={self.id})"
+
+
+def _create_folder(name, user_id, create=True):
+    path = os.path.join(ROOT_DIR, 'tmp', str(user_id), name)
+    if create:
         if not os.path.exists(path):
             os.makedirs(path)
-        return path
+    return path

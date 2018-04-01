@@ -1,16 +1,15 @@
 import functools
 import logging
 import os
+from typing import List
 
 import graphviz as gv
-import sys
 from logzero import logger as log
 from mock import Mock
 
 import util
 from core import MessageUnderstanding, States
 from core.dialogstates import DialogStates
-from core.recorder import RECORDING_PATH
 from logic.rules.controller import Context, SentenceComposer, application_router
 from model import User
 
@@ -97,7 +96,7 @@ def user_mock():
 
 def step(current_state, context, u):
     for state in current_state.iter_states():
-        handler = application_router.get_state_handler(state, u)
+        handler = application_router.find_matching_state_handler(state, u)
 
         if handler is None:
             continue
@@ -110,22 +109,8 @@ def get_state_machine():
     return DialogStates(States.SMALLTALK)
 
 
-visualization_path = os.path.join(RECORDING_PATH, 'visualization')
-
-if not os.path.exists(visualization_path):
-    os.makedirs(visualization_path)
-
-
-def get_recording(index=0):
-    path = os.path.join(RECORDING_PATH, 'valid')
-    files = os.listdir(path)
-    idx = - (index + 1)
-    print(files[idx])
-    return os.path.join(path, files[idx])
-
-
-def visualize_recording(filepath):
-    rec = util.load_yaml_as_dict(filepath)
+def visualize_recording(in_file):
+    rec = util.load_yaml_as_dict(in_file)
 
     g = gv.Digraph(format='svg', strict=True)
 
@@ -143,9 +128,19 @@ def visualize_recording(filepath):
         )
         last_state = state
 
-    g.render(os.path.splitext(os.path.split(filepath)[-1])[0], visualization_path)
+    f = os.path.split(in_file)
+    apply_styles(g, styles)
+    g.render(os.path.splitext(f[-1])[0], f[0])
 
 
 if __name__ == '__main__':
-    file = get_recording(0)
-    visualize_recording(file)
+    users = User.select()  # type: List[User]
+    for u in users:
+        p = u.get_recording_folder(create=False)
+        if not os.path.exists(p):
+            continue
+
+        recordings = [os.path.join(p, x) for x in os.listdir(p)]
+
+        for r in recordings:
+            visualize_recording(r)

@@ -10,15 +10,19 @@ import regex
 
 from corpus import phones
 from corpus.phones import format_device
+from logic.sentencecomposer import SentenceComposer
 
 
-def model_identifier(r, c, q):
+def model_identifier(r: SentenceComposer, c, q):
     answer = c.last_user_utterance.text
-    choices = [format_device(x[0]) for x in phones.devices_by_name(answer)]
-    if not choices:
+    results = phones.devices_by_name(answer)
+    choices = [format_device(x[0]) for x in results]
+    if not results:
         r.say('no phone results')
         return None
-    if len(choices) == 1:
+    if len(results) == 1:
+        device_id = results[0][0]['id']
+        r.send_media(device_id)
         return choices[0]
     return choices
 

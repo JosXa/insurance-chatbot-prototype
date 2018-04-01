@@ -3,10 +3,15 @@ from typing import Generator, List, NoReturn, Tuple, Union
 from logzero import logger as log
 from redis_collections import SyncableList
 
+# Used to denote that a state will be used as fallback forever
 INFINITE_LIFETIME = "infinite"
 
 
 class _StateLifetime(object):
+    """
+    Internal data holding class to represent a state with its dynamic lifetime
+    """
+
     def __init__(self, state: Union[Tuple, str], lifetime: int):
         self.state = state
         self.lifetime = lifetime
@@ -16,6 +21,11 @@ class _StateLifetime(object):
 
 
 class DialogStates(object):
+    """
+    Holds a priority queue of multiple states that a conversation may be in at the same time.
+    Use the `put(new_state)` method to add a state to the queue with a specific lifetime, the latter being
+    decremented by one for each call to `update_step()`.
+    """
 
     def __init__(self, initial_state, redis=None, key=None):
         if redis:
@@ -30,6 +40,27 @@ class DialogStates(object):
             self._states_queue.append(_StateLifetime(initial_state, INFINITE_LIFETIME))
 
     def put(self, new_state: Union[Tuple, str]):
+        """
+        Adds a new state to the priority queue of states for a given dialog.
+
+        As tuples are hashable, they are a great choice for context sensitive dialog states.
+        If the `new_state` argument is a tuple, then the last tuple value on the right will be treated as the
+        lifetime of this state. The rest of the values will be condensed to a new tuple, or a single value if there
+        is only one value left after stripping away the lifetime.
+
+        If no integer value for the lifetime is given, an `INFINITE` lifetime is assumed.
+
+        This mechanic serves convenience in that it simplifies returning states in the actual logic handlers:
+
+        ```
+        def do_something(response, context):
+            response.say("Hello World!")
+
+            # Return a tuple ("said", "hello world") as the new state with a lifetime of 3 cycles
+            return ("said", "hello world", 3)
+        ```
+
+        """
         if new_state is None:
             log.debug("No state change")
             return
@@ -60,6 +91,10 @@ class DialogStates(object):
         self._states_queue.insert(0, state_container)
 
     def update_step(self) -> NoReturn:
+        """
+        Decrements all non-infinity state lifetimes in the internal queue and remove ones that have exceeded their
+        lifetime.
+        """
         to_remove = []
         for s in self._states_queue:
             current_lifetime = s.lifetime
@@ -83,7 +118,7 @@ class DialogStates(object):
             self._states_queue.sync()
 
     def iter_states(self) -> Generator:
-        # Extract actual dialog_states without lifetime
+        # Returns a generator with the current states in order of recency
         return (s.state for s in self._states_queue)
 
     def __str__(self):

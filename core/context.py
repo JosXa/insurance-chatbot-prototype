@@ -23,19 +23,25 @@ from model import Update, User, UserAnswers
 
 
 class States(Enum):
-    # Special
     SMALLTALK = 0
     FALLBACK = 1
     STATELESS = 2
-
-    # Normal
-    ASKING_QUESTION = 4
+    ASKING_QUESTION = 3
 
 
 class Context:
     """
-    Stores machine-understandable data about the recent conversation context
+    Stores machine-understandable data about the recent conversation context.
+
+    This includes the current state of the dialog, incoming `MessageUnderstandings` and outgoing `ChatActions`,
+    the questions a user has answered so far (`_answered_question_ids`), as well as a way to calculate the next
+    question applicable for a user (done automatically when new utterances are added).
+
+    Acts like a dictionary with methods `set_value` and `get_value` to provide a persistent, random access data
+    storage for a particular user.
     """
+
+    # Maximum number of utterances a single context keeps stored.
     SIZE_LIMIT = 50
 
     def __init__(self, user: User, initial_state, redis=None):
@@ -54,23 +60,24 @@ class Context:
                 redis=redis,
                 writeback=True,
                 key=f'{uid}:kv_store')
-            self._answered_question_ids = SyncableSet(
-                redis=redis,
-                key=f'{uid}:answer_ids')
+            self._utterances.sync()
+            self._value_store.sync()
         else:
             self._utterances = deque()  # type: Deque[Union[MessageUnderstanding, ChatAction]]
             self._value_store = dict()
-            self._answered_question_ids = set()
+
+        self._answered_question_ids = UserAnswers.get_answered_question_ids(self.user)
 
         self._current_question = None  # type: Question
         self._current_questionnaire = None  # type: Questionnaire
 
+        # Utterances are synced with the redis database every couple of seconds, as opposed to immediately.
         self._sync_timeout = 5  # seconds
         self._scheduler = sched.scheduler(time.time, time.sleep)
-        self.__sync_utt_job = None
+        self.__sync_utt_job = None  # type: sched.Event
         self.__utt_sync_lock = threading.Lock()
 
-        self._all_done = False
+        self._all_done = False  # type: bool
         self._update_question_context()
         self.__name__ = "Context"
 
@@ -120,6 +127,14 @@ class Context:
         return self._all_done
 
     def _filter_utterances(self, utterance_type, filter_func, age_limit, only_latest):
+        """
+        Filters all contained utterances by a callable `filter_func` and an `age_limit`.
+        :param utterance_type: Either `MessageUnderstanding` or `ChatAction`
+        :param filter_func: A function to filter the valid utterances
+        :param age_limit: A timedelta or number in seconds
+        :param only_latest: Return the most recent utterance only
+        :return:
+        """
         if isinstance(age_limit, timedelta):
             age_limit = datetime.now() - age_limit
 
@@ -149,6 +164,10 @@ class Context:
                             intent: str,
                             age_limit: Union[timedelta, datetime, int] = settings.CONTEXT_LOOKUP_RECENCY,
                             ) -> bool:
+        """
+        Returns True if there has been an incoming `MessageUnderstanding` with the specified `intent` not older than
+        `age_limit`.
+        """
         intent = format_intent(intent)
         return bool(self.filter_incoming_utterances(
             lambda understanding: understanding.intent == intent,
@@ -160,6 +179,10 @@ class Context:
                             intent: str,
                             age_limit: Union[timedelta, datetime, int] = settings.CONTEXT_LOOKUP_RECENCY,
                             ) -> bool:
+        """
+        Returns True if there has been an outgoing `ChatAction` with the specified `intent` not older than
+        `age_limit`.
+        """
         intent = format_intent(intent)
         return bool(self.filter_outgoing_utterances(
             lambda action: intent in action.intents,
@@ -173,7 +196,13 @@ class Context:
             age_limit: Union[timedelta, datetime, int] = settings.CONTEXT_LOOKUP_RECENCY,
             only_latest: bool = False
     ) -> Union[MessageUnderstanding, List[MessageUnderstanding]]:
-        pprint(self._utterances)
+        """
+        Filters all incoming utterances by a callable `filter_func` not older than `age_limit`.
+        :param filter_func: A function to filter the valid utterances
+        :param age_limit: A timedelta or number in seconds
+        :param only_latest: Whether to return only the most recent utterance
+        :return: An object or a list of type `MessageUnderstandings`
+        """
         return self._filter_utterances(MessageUnderstanding, filter_func, age_limit, only_latest)
 
     def filter_outgoing_utterances(
@@ -182,9 +211,19 @@ class Context:
             age_limit: Union[timedelta, datetime, int] = settings.CONTEXT_LOOKUP_RECENCY,
             only_latest: bool = False
     ) -> Union[ChatAction, List[ChatAction]]:
+        """
+        Filters all outgoing chat actions by a callable `filter_func` not older than `age_limit`.
+        :param filter_func: A function to filter the valid utterances
+        :param age_limit: A timedelta or number in seconds
+        :param only_latest: Whether to return only the most recent utterance
+        :return: An object or a list of type `ChatAction`
+        """
         return self._filter_utterances(ChatAction, filter_func, age_limit, only_latest)
 
-    def add_answer_to_question(self, question, answer):
+    def add_answer_to_question(self, question: Union[Question, str], answer: str):
+        """
+        Creates a database entry for the answer given by the user to which this context belongs.
+        """
         UserAnswers.add_answer(
             user=self.user,
             question_id=question.id if isinstance(question, Question) else question,
@@ -194,6 +233,10 @@ class Context:
         self._update_question_context()
 
     def _update_question_context(self) -> None:
+        """
+        Calculates the best next question and questionnaire to ask
+        depending on the `self._answered_question_ids`.
+        """
         try:
             self.current_questionnaire = next(
                 q for q
@@ -218,15 +261,21 @@ class Context:
 
     @property
     def questionnaire_completion_ratio(self):
+        """ Returns a ratio of how many questions in the current questionnaire have been answered. """
         return self.current_questionnaire.completion_ratio(self._answered_question_ids)
 
     @property
     def overall_completion_ratio(self):
+        """ Returns a ratio of how many questions have been answered divided by the total number of questions. """
         return (all_questionnaires.index(self.current_questionnaire) / len(all_questionnaires)) + (
                 self.questionnaire_completion_ratio / len(all_questionnaires))
 
 
 class ContextManager:
+    """
+    Holds and creates the contexts of individual users
+    """
+
     def __init__(self, initial_state, redis: StrictRedis = None):
         self.contexts = {}  # type: Dict[int, Context]
         self.initial_state = initial_state

@@ -57,7 +57,7 @@ class PlanningAgent(IPlanningAgent):
         log.debug(f'Current dialog states: {context.dialog_states}')
 
         # Execute every matching stateless handler first
-        for handler in self.router.iter_matches_stateless(u):
+        for handler in self.router.iter_stateless_matches(u):
             if handler.callback(composer, context):
                 log.debug(f"Stateless handler triggered: {handler}")
 
@@ -65,7 +65,7 @@ class PlanningAgent(IPlanningAgent):
         # Dialog states are a priority queue
         for state in context.dialog_states.iter_states():
             # Find exactly one handler in any of the prioritized states
-            handler = self.router.get_state_handler(state, u)
+            handler = self.router.find_matching_state_handler(state, u)
 
             if handler is None:
                 continue

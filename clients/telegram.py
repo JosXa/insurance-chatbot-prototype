@@ -40,6 +40,9 @@ class TelegramClient(IBotAPIClient):
         return 'telegram'
 
     def unify_update(self, update: TelegramUpdate):
+        """
+        Creates the common representation of an `Update` object from the update returned by Telegram.
+        """
         ud = Update()
         ud.original_update = update
         ud.client_name = self.client_name
@@ -63,7 +66,7 @@ class TelegramClient(IBotAPIClient):
             file = self.bot.get_file(media_id)
             filename = os.path.split(file.file_path)[-1]
             ud.media_location = self.bot.get_file(media_id).download(
-                custom_path=os.path.join(ud.user.media_folder, filename))
+                custom_path=os.path.join(ud.user.get_media_folder(), filename))
 
         ud.message_id = update.effective_message.message_id
         ud.message_text = update.effective_message.text
@@ -73,6 +76,11 @@ class TelegramClient(IBotAPIClient):
         return ud
 
     def perform_actions(self, actions: List[ChatAction]):
+        """
+        Executes a sequence of `ChatActions` planned by the `DialogManager`.
+        This includes sending messages, showing "typing" notifications, waiting when there are delays planned,
+        and adding ReplyKeyboard buttons.
+        """
         for i, action in enumerate(actions):
             if action.show_typing:
                 self.bot.send_chat_action(action.peer.telegram_id, TelegramChatAction.TYPING, timeout=20)
@@ -93,7 +101,8 @@ class TelegramClient(IBotAPIClient):
                     else:
                         markup = ForceReply()
             elif action.action_type == ChatAction.Type.SENDING_MEDIA:
-                return self.send_media(action.peer, action.media_id, action.render())
+                self.send_media(action.peer, action.media_id, action.render())
+                continue
 
             text = action.render()
             self.send_message(peer=action.peer, text=text, markup=markup)
@@ -180,7 +189,12 @@ class TelegramClient(IBotAPIClient):
 
     def send_media(self, peer: User, media_id: str, caption: str = None):
         filepath = get_file_by_media_id(media_id)
-        ext = os.path.splitext(filepath)[1]
+
+        try:
+            ext = os.path.splitext(filepath)[1]
+        except TypeError:
+            log.error(f"Media id {media_id} was not found.")
+            return
 
         file = open(filepath, 'rb')
         if ext == '.mp4':

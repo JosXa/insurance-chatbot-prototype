@@ -7,6 +7,7 @@ import settings
 from appglobals import ROOT_DIR
 from clients.botapiclients import IBotAPIClient
 from clients.nlpclients import NLPEngine
+from clients.supportchannel import SupportChannel
 from clients.voice import VoiceRecognitionClient
 from core.context import ContextManager
 from core.planningagent import IPlanningAgent
@@ -18,8 +19,10 @@ from core.recorder import ConversationRecorder
 
 class DialogManager:
     """
-    Enriches incoming updates with a MessageUnderstanding and lets the PlanningAgent decide on the next actions to
-    perform.
+    Responsible for handling incoming `Updates` and generating a response.
+
+    Enriches incoming updates with a `MessageUnderstanding` and lets the `PlanningAgent` decide on which actions to
+    perform next. Then calls `perform_actions` on the respective client with the laid-out `ChatActions`.
     """
 
     def __init__(self,
@@ -29,6 +32,7 @@ class DialogManager:
                  planning_agent: IPlanningAgent,
                  recorder: ConversationRecorder = None,
                  voice_recognition_client: VoiceRecognitionClient = None,
+                 support_channel: SupportChannel = None
                  ):
         self.context_manager = context_manager
         self.bots = bot_clients
@@ -36,6 +40,7 @@ class DialogManager:
         self.recorder = recorder
         self.voice = voice_recognition_client
         self.planning_agent = planning_agent
+        self.support_channel = support_channel
 
         for bot in bot_clients:
             bot.set_start_handler(self.start_callback)
@@ -55,7 +60,7 @@ class DialogManager:
     def voice_received(self, bot: IBotAPIClient, update: Update):
         bot.show_typing(update.user)
 
-        path = os.path.join(ROOT_DIR, 'assets', 'files')
+        path = os.path.join(ROOT_DIR, 'tmp')
         filepath = bot.download_voice(update.voice_id, path)
 
         converted = self.voice.convert_audio_ffmpeg(filepath, os.path.join(path, 'voice.flac'))
@@ -78,8 +83,8 @@ class DialogManager:
         self.nlp.insert_understanding(update)
         self._process_update(bot, update)
 
-    def _process_update(self, bot, update):
-        print()  # newline on incoming request, formats the logs a bit better
+    def _process_update(self, bot: IBotAPIClient, update: Update):
+        print()  # newline on incoming request makes the logs more readable
         context = self.context_manager.add_incoming_update(update)
 
         try:
@@ -112,4 +117,8 @@ class DialogManager:
 
 
 class ForceReevaluation(Exception):
+    """
+    Raised when a handler changes e.g. context state and needs a refreshed set
+    of rendering parameters.
+    """
     pass
