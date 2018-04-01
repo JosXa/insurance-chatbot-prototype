@@ -41,6 +41,7 @@ def open_image(device_id):
 
 
 def devices_by_name(name: str) -> List[str]:
+    name = name.strip()
     matches = list()
     for d in DEVICES:
         formatted = format_device(d).lower()
@@ -53,7 +54,7 @@ def devices_by_name(name: str) -> List[str]:
 
 
 def format_device(device):
-    return device['maker'] + ' ' + device['name']
+    return (device['maker'] + ' ' + device['name']).strip()
 
 
 DEVICES = load_devices()
