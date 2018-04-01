@@ -1,5 +1,6 @@
 """ These are matching functions, named after question titles and are called through a getattr() expression when the
 user utters a response to a question. """
+import datetime
 import re
 import traceback
 from collections import namedtuple
@@ -27,24 +28,31 @@ def model_identifier(r: SentenceComposer, c, q):
     return choices
 
 
+def _check_time(r, c, answer: datetime.datetime):
+    if answer > datetime.datetime.now():
+        r.say("sorry", "but", "date in future")
+        return None
+    return answer
+
+
 def date_and_time(r, c, q):
     answer = c.last_user_utterance.text
 
     try:
         result = dateparser.parse(answer, languages=['de'])
         if result:
-            return result
+            return _check_time(r, c, result)
 
         # Perform some very naive transformations to try get the string to parse
         answer = re.sub(r'(um|bis|am)', "", answer, re.IGNORECASE)
         result = dateparser.parse(answer, languages=['de'])
         if result:
-            return result
+            return _check_time(r, c, result)
 
         answer = re.sub(r'[a-zA-ZöäüÖÄÜ]', "", answer)
         result = dateparser.parse(answer, languages=['de'])
         if result:
-            return result
+            return _check_time(r, c, result)
 
         return False
     except:

@@ -44,3 +44,6 @@ evaluate_prototype:
 
 changed_mind:
   "Oh, jetzt also doch? Na gut."
+
+date_in_future:
+  "Ein Datum in der Zukunft macht keinen Sinn 🙃"
