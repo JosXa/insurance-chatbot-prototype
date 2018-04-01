@@ -7,8 +7,8 @@ claim_damage:
 start_claim:
   "Okay, legen wir los. {{'Sagen Sie' if formal else 'Sag'}} einfach Bescheid, wenn {{'Sie' if
   formal else 'du'}} zu einer Frage\n\n
-  :point_right: <b>Hilfe</b> {{'benötigen' if formal else 'benötigst'}},\n
-  :point_right: ein <b>Beispiel</b> {{'brauchen' if formal else 'brauchst'}}, oder\n
+  :point_right: <b>\"Hilfe\"</b> {{'benötigen' if formal else 'benötigst'}},\n
+  :point_right: ein <b>\"Beispiel\"</b> {{'brauchen' if formal else 'brauchst'}}, oder\n
   :point_right: <b>keine Antwort</b> geben {{'möchten' if formal else 'willst'}} oder {{'können' if
   formal else 'kannst'}} (\"überspringen\")."
 

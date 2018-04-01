@@ -9,9 +9,12 @@ import settings
 from model import *
 
 
-def reset_answers():
-    UserAnswers.drop_table(fail_silently=True, cascade=True)
-    UserAnswers.create_table()
+def reset_answers(users: List[User] = None):
+    if users is None:
+        UserAnswers.drop_table()
+        UserAnswers.create_table()
+    else:
+        UserAnswers.delete().where(UserAnswers.user << users).execute()
 
 
 def clear_redis(users: List[User] = None):
