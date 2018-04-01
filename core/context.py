@@ -23,10 +23,13 @@ from model import Update, User, UserAnswers
 
 
 class States(Enum):
+    # Special
     SMALLTALK = 0
     FALLBACK = 1
     STATELESS = 2
-    ASKING_QUESTION = 3
+
+    # Normal
+    ASKING_QUESTION = 4
 
 
 class Context:
