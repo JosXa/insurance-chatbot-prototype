@@ -241,11 +241,11 @@ class Context:
         depending on the `self._answered_question_ids`.
         """
         try:
-            self.current_questionnaire = next(
+            self._current_questionnaire = next(
                 q for q
                 in all_questionnaires
                 if q.next_question(self._answered_question_ids))
-            self._current_question = self.current_questionnaire.next_question(self._answered_question_ids)
+            self._current_question = self._current_questionnaire.next_question(self._answered_question_ids)
             self._all_done = False
         except StopIteration:
             self._all_done = True
@@ -263,14 +263,18 @@ class Context:
         return self._current_question
 
     @property
+    def current_questionnaire(self):
+        return self._current_questionnaire
+
+    @property
     def questionnaire_completion_ratio(self):
         """ Returns a ratio of how many questions in the current questionnaire have been answered. """
-        return self.current_questionnaire.completion_ratio(self._answered_question_ids)
+        return self._current_questionnaire.completion_ratio(self._answered_question_ids)
 
     @property
     def overall_completion_ratio(self):
         """ Returns a ratio of how many questions have been answered divided by the total number of questions. """
-        return (all_questionnaires.index(self.current_questionnaire) / len(all_questionnaires)) + (
+        return (all_questionnaires.index(self._current_questionnaire) / len(all_questionnaires)) + (
                 self.questionnaire_completion_ratio / len(all_questionnaires))
 
 
