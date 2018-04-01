@@ -53,7 +53,8 @@ class PlanningAgent(IPlanningAgent):
             TemplateRenderer(shared_parameters)
         )
 
-        log.info(f'Incoming message: {u}')
+        text = u.text[:40] if u.text else 'No text'
+        log.info(f'Incoming message: "{text}", {u}')
         log.debug(f'Current dialog states: {context.dialog_states}')
 
         # Execute every matching stateless handler first
