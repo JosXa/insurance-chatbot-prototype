@@ -40,9 +40,8 @@ def intro(r, c):
 
 def ask_to_start(r, c):
     if c.get_value('user_no_claim', False):
-        return
-    else:
-        r.ask("claim damage", choices=['affirm_yes', 'negate_no'])
+        r.say("changed mind")
+    r.ask("claim damage", choices=['affirm_yes', 'negate_no'])
     return 'ask_to_start', 2
 
 
@@ -64,6 +63,7 @@ def record_phone_damage(r, c: Context):
 
 def start_claim(r, c):
     c.set_value("claim_started", True)
+    c.set_value("user_no_claim", False)
     r.say("start claim").then_ask(c.current_question, delay=ChatAction.Delay.VERY_LONG)
     return States.ASKING_QUESTION
 
