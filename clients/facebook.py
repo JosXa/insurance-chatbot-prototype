@@ -11,13 +11,13 @@ from flask import request
 from logzero import logger as log
 
 import settings
-from clients.botapiclients import IBotAPIClient
+from clients.botapiclients import BotAPIClient
 from core import ChatAction
 from corpus.media import get_file_by_media_id
 from model import Update, User
 
 
-class FacebookClient(IBotAPIClient):
+class FacebookClient(BotAPIClient):
     """
     Facebook Messenger Bot API client
     """

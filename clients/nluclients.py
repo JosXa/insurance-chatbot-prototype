@@ -12,7 +12,7 @@ from model import User
 Update = TypeVar('Update')
 
 
-class NLPEngine(metaclass=ABCMeta):
+class NLUEngine(metaclass=ABCMeta):
     @abstractmethod
     def insert_understanding(self, update: Update) -> MessageUnderstanding: pass
 
@@ -20,7 +20,7 @@ class NLPEngine(metaclass=ABCMeta):
     def get_user_entities(self, user: User) -> List[str]: pass
 
 
-class DialogflowClient(NLPEngine):
+class DialogflowClient(NLUEngine):
     def __init__(self, token):
         self.ai = apiai.ApiAI(token)
 
@@ -38,14 +38,25 @@ class DialogflowClient(NLPEngine):
     def insert_understanding(self, update) -> MessageUnderstanding:
         result_obj, timestamp = self.perform_nlu(update.message_text, update.user.id)
 
-        nlu = MessageUnderstanding(
-            update.message_text,
-            result_obj['metadata']['intentName'],
-            result_obj['parameters'],
-            result_obj.get('contexts'),
-            score=result_obj['score'],
-            date=timestamp
-        )
+        try:
+            nlu = MessageUnderstanding(
+                text=update.message_text,
+                intent=result_obj['metadata']['intentName'],
+                parameters=result_obj['parameters'],
+                contexts=result_obj.get('contexts'),
+                score=result_obj['score'],
+                date=timestamp
+            )
+        except (KeyError, TypeError):
+            nlu = MessageUnderstanding(
+                text=update.message_text,
+                intent='fallback',
+                parameters={},
+                contexts=None,
+                score=0,
+                date=timestamp
+            )
+
         update.understanding = nlu
         return nlu
 

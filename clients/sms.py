@@ -4,12 +4,12 @@ from typing import List
 
 from twilio.rest import Client as TwilioClient
 
-from clients.botapiclients import IBotAPIClient
+from clients.botapiclients import BotAPIClient
 from core import ChatAction
 from model import User
 
 
-class SMSClient(IBotAPIClient):
+class SMSClient(BotAPIClient):
     """
     Integration with Twilio to provide SMS capabilities.
 
@@ -74,4 +74,3 @@ class SMSClient(IBotAPIClient):
 
     def download_voice(self, voice_id, filepath):
         pass
-

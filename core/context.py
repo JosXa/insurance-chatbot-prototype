@@ -1,17 +1,13 @@
 import sched
-import traceback
-
-from logzero import logger as log
 import threading
 import time
 from collections import deque
 from datetime import datetime, timedelta
 from enum import Enum
-from pprint import pprint
 from typing import Callable, Deque, Dict, List, Union
 
 from redis import StrictRedis
-from redis_collections import SyncableDeque, SyncableDict, SyncableSet
+from redis_collections import SyncableDeque, SyncableDict
 
 import settings
 from core.chataction import ChatAction
@@ -59,7 +55,7 @@ class Context:
                 maxlen=self.SIZE_LIMIT,
                 redis=redis,
                 key=f'{uid}:utterances')  # type: Deque[Union[MessageUnderstanding, ChatAction]]
-            self._value_store = SyncableDict(
+            self._value_store = SyncableDict(  # type: Dict
                 redis=redis,
                 writeback=True,
                 key=f'{uid}:kv_store')

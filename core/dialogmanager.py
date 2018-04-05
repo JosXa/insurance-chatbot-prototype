@@ -5,8 +5,8 @@ from logzero import logger as log
 
 import settings
 from appglobals import ROOT_DIR
-from clients.botapiclients import IBotAPIClient
-from clients.nlpclients import NLPEngine
+from clients.botapiclients import BotAPIClient
+from clients.nluclients import NLUEngine
 from clients.supportchannel import SupportChannel
 from clients.voice import VoiceRecognitionClient
 from core.context import ContextManager
@@ -27,8 +27,8 @@ class DialogManager:
 
     def __init__(self,
                  context_manager: ContextManager,
-                 bot_clients: List[IBotAPIClient],
-                 nlp_client: NLPEngine,
+                 bot_clients: List[BotAPIClient],
+                 nlp_client: NLUEngine,
                  planning_agent: IPlanningAgent,
                  recorder: ConversationRecorder = None,
                  voice_recognition_client: VoiceRecognitionClient = None,
@@ -48,16 +48,16 @@ class DialogManager:
             bot.add_voice_handler(self.voice_received)
             bot.add_media_handler(self.media_received)
 
-    def __get_client_by_name(self, client_name: str) -> IBotAPIClient:
+    def __get_client_by_name(self, client_name: str) -> BotAPIClient:
         return next(x for x in self.bots if client_name == x.client_name)
 
-    def start_callback(self, bot: IBotAPIClient, update: Update):
+    def start_callback(self, bot: BotAPIClient, update: Update):
         update.understanding = MessageUnderstanding(
             text=update.message_text,
             intent='start')
         self._process_update(bot, update)
 
-    def voice_received(self, bot: IBotAPIClient, update: Update):
+    def voice_received(self, bot: BotAPIClient, update: Update):
         bot.show_typing(update.user)
 
         path = os.path.join(ROOT_DIR, 'tmp')
@@ -75,15 +75,15 @@ class DialogManager:
 
         self.text_update_received(bot, update)
 
-    def media_received(self, bot: IBotAPIClient, update: Update):
+    def media_received(self, bot: BotAPIClient, update: Update):
         update.understanding = MessageUnderstanding(None, MEDIA_INTENT, media_location=update.media_location)
         self._process_update(bot, update)
 
-    def text_update_received(self, bot: IBotAPIClient, update: Update):
+    def text_update_received(self, bot: BotAPIClient, update: Update):
         self.nlp.insert_understanding(update)
         self._process_update(bot, update)
 
-    def _process_update(self, bot: IBotAPIClient, update: Update):
+    def _process_update(self, bot: BotAPIClient, update: Update):
         print()  # newline on incoming request makes the logs more readable
         context = self.context_manager.add_incoming_update(update)
 

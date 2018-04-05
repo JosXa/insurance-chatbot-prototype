@@ -9,7 +9,7 @@ from redis import StrictRedis
 import migrate
 import settings
 from clients.facebook import FacebookClient
-from clients.nlpclients import DialogflowClient
+from clients.nluclients import DialogflowClient
 from clients.telegram import TelegramClient
 from clients.telegramsupport import TelegramSupportChannel
 from clients.voice import VoiceRecognitionClient
@@ -42,7 +42,6 @@ def main():
     # Register a media endpoint for clients that cannot upload images, videos etc. but instead only work with URLs
     @app.route('/media/<mimetype>/<media_id>.<ext>', methods=['GET'])
     def media_endpoint(mimetype, media_id, ext):
-        print(mimetype, media_id, ext)
         filepath = get_file_by_media_id(media_id)
         return send_file(filepath, mimetype=f'{mimetype}/{ext}')
 

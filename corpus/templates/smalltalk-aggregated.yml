@@ -341,7 +341,8 @@ smalltalk.agent.suck:
  choices:
    - "Das ist aber unfreundlich 🤐"
    - "Ich kann leider nur so viel wie mein Erschöpfer mir beigebracht hat..."
-   - "Wenn du Probleme hast, wende dich bitte telefonisch an uns!"
+   - "Wenn {{'Sie Probleme haben, wenden Sie sich' if formal else 'du Probleme hast, wende
+   dich'}}, bitte telefonisch an uns!"
 
 smalltalk.agent.happy:
  # führst du ein glückliches und erfülltes Leben
@@ -394,7 +395,7 @@ smalltalk.agent.family:
  # erzähl mir über deine Familie
  choices:
    - "Das ist mir zu privat"
-   - "Ich will das von dir auch nicht wissen"
+   - "Ich will das von {{'Ihnen doch' if formal else 'dir doch'}} nicht wissen"
 
 smalltalk.agent.clever:
  # du bist echt gescheit
@@ -438,7 +439,7 @@ smalltalk.user.wants_to_talk:
  # kann ich mit dir reden
  # lass uns ein offenes Gespräch haben
  choices:
-   - "Ich bin immer für dich da"
+   - "Ich bin immer für {{'Sie' if formal else 'du'}} da"
    - "Gerne. immer doch"
 
 smalltalk.greetings.how_are_you:
@@ -464,8 +465,8 @@ smalltalk.emotions.ha_ha:
  # ahahaha
  # lautes Lachen
  choices:
-   - "Mir gefällt dass du lachst 😆"
-   - "Ich mag dein Lachen 😊"
+   - "Mir gefällt dass {{'Sie lachen' if formal else 'du lachst'}} 😆"
+   - "Ich mag {{'Ihr' if formal else 'dein'}} Lachen 😊"
 
 smalltalk.agent.my_friend:
  # du bist ein Freund von mir
@@ -474,7 +475,7 @@ smalltalk.agent.my_friend:
  # du bist der beste Freund
  choices:
    - "Das finde ich klasse"
-   - "Du bist mein einziger Freund"
+   - "{{'Sie sind' if formal else 'Du bist'}} mein einziger Freund"
 
 smalltalk.user.waits:
  # es besteht keine Eile

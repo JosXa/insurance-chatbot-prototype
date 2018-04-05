@@ -37,8 +37,8 @@ def reset_database(r, c: Context, all=False):
 def send_questionnaires(r, c: Context):
     for u in User.select():
         all_answers = UserAnswers.get_name_answer_dict(u)
-        pprint(all_answers)
-        r.say(
-            "preview claim",
-            parameters=dict(answers=all_answers)
-        )
+        if all_answers:
+            r.say(
+                "preview claim",
+                parameters=dict(answers=all_answers)
+            )

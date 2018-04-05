@@ -4,7 +4,7 @@ from typing import TypeVar, List
 ChatAction = TypeVar('ChatAction')
 
 
-class IBotAPIClient(object, metaclass=ABCMeta):
+class BotAPIClient(object, metaclass=ABCMeta):
     """
     Base class for a Chatbot client.
     In order to add another bot platform to the system, inherit from this class and implement all methods accordingly.

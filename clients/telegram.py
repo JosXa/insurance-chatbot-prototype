@@ -14,14 +14,14 @@ from telegram import ChatAction as TelegramChatAction, Update as TelegramUpdate
 from telegram.ext import CommandHandler, Filters, MessageHandler, Updater
 
 import util
-from clients.botapiclients import IBotAPIClient
+from clients.botapiclients import BotAPIClient
 from core import ChatAction
 from corpus.media import get_file_by_media_id
 from model import User
 from model.update import Update
 
 
-class TelegramClient(IBotAPIClient):
+class TelegramClient(BotAPIClient):
 
     def __init__(self, app: Flask, webhook_url, token, test_mode=False, log_level=logging.INFO):
         logzero.setup_logger(telegram.__name__, level=logging.INFO)
