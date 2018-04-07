@@ -6,7 +6,6 @@ from flask import Flask, send_file
 from logzero import logger as log
 from redis import StrictRedis
 
-import migrate
 import settings
 from clients.facebook import FacebookClient
 from clients.nluclients import DialogflowClient
@@ -15,10 +14,10 @@ from clients.telegramsupport import TelegramSupportChannel
 from clients.voice import VoiceRecognitionClient
 from core.context import ContextManager, States
 from core.dialogmanager import DialogManager
+from core.recorder import ConversationRecorder
 from corpus.media import get_file_by_media_id
 from logic.planning import PlanningAgent
-from logic.rules.controller import application_router
-from core.recorder import ConversationRecorder
+from logic.rules.dialogcontroller import application_router
 
 threads = list()  # type: List[Thread]
 
