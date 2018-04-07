@@ -20,7 +20,7 @@ personal details:
       required: yes
 
 phone_details:
-  title: "Als nächstes benötigen wir Informationen zum beschädigten Gerät"
+  title: "Als nächstes benötigen wir Informationen zum beschädigten Gerät..."
   questions:
     model_identifier:
       name: "Modellbezeichnung"
@@ -57,7 +57,7 @@ phone_details:
       required: no
 
 damage_description:
-  title: "Wir müssen nun erfassen, wie der Schaden zustande gekommen ist"
+  title: "Wir müssen nun erfassen, wie der Schaden zustande gekommen ist..."
   questions:
     damage_type:
       name: "Schadensart"
