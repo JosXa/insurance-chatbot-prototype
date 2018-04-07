@@ -4,7 +4,6 @@ from collections import Counter
 from typing import List, Union
 
 from logzero import logger as log
-from traitlets import Float
 
 from const import MONTHS
 from core import Context
