@@ -4,6 +4,7 @@ from collections import Counter
 from typing import List, Union
 
 from logzero import logger as log
+from traitlets import Float
 
 from const import MONTHS
 from core import Context
@@ -16,6 +17,15 @@ from model import UserAnswers
 
 
 class PlanningAgent(IPlanningAgent):
+    """
+    Concrete implementation of the IPlanningAgent interface.
+    This agent is responsible for matching and execution of the routes defined in the `application_router`,
+    which is a state machine.
+
+    In abstract terms, the planning agent builds up a series of `ChatActions` to be executed by a bot API
+    client.
+    """
+
     def __init__(self, router: Router):
         self.router = router
 

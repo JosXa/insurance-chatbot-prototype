@@ -2,7 +2,7 @@ ok_thank_you:
   choices:
     - ":white_check_mark: Okay, dankeschön."
     - ":white_check_mark: Alles klar, ist notiert."
-    - text: ":white_check_mark: Okay, vielen Dank{{' ' + user.name if user.name else ''}}."
+    - text: ":white_check_mark: Okay, vielen Dank{{' ' + user.name if user.name is not none}}."
       condition: "{{not user_recent('smalltalk.user.sad')}}"
     - text: ":white_check_mark: Klasse, vielen Dank."
       condition: "{{not user_recent('smalltalk.user.sad')}}"

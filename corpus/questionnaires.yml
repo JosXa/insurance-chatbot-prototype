@@ -50,7 +50,7 @@ phone_details:
       required: no
     phone_number:
       name: "Rufnummer"
-      title: "die Rufnummer des versicherten Gerätes, sofern vorhanden"
+      title: "die Rufnummer des versicherten Gerätes"
       match_regex: "([0-9+\\-\\s]{8,19})"
       hint: "die Telefonnummer, auf die {{'Ihr' if formal else 'dein'}} beschädigtes Gerät registriert ist."
       example: "\"Die Nummer lautet +49 1234 567 89\"."
