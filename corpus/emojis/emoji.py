@@ -1520,9 +1520,17 @@ emoji_sorted = sorted(all_emoji, key=len, reverse=True)
 def from_str(sentence: str):
     for emoji in emoji_sorted:
         while emoji in sentence:
-            sentence = sentence.replace(emoji, "",
-                                        1)  # Delete Emoji from string
+            sentence = sentence.replace(
+                emoji, "", 1)  # Delete Emoji string from string
             yield emoji
+
+
+def remove_emoji(text: str):
+    for emoji in emoji_sorted:
+        while emoji in text:
+            text = text.replace(
+                emoji, "", 1)  # Delete Emoji string from string
+    return text
 
 
 def replace_aliases(sentence: str):

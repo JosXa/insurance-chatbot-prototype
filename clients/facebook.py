@@ -6,13 +6,13 @@ import time
 from typing import Callable, List
 
 import requests
-from fbmq import Attachment, Event, Page, QuickReply
+from fbmq import Event, Page, QuickReply
 from flask import request
 from logzero import logger as log
 
-import settings
 from clients.botapiclients import BotAPIClient
 from core import ChatAction
+from corpus.emojis.emoji import remove_emoji
 from corpus.media import get_file_by_media_id
 from model import Update, User
 
@@ -78,10 +78,11 @@ class FacebookClient(BotAPIClient):
 
     @staticmethod
     def _delivery_handler(event):
-        delivery = event.delivery
-        message_ids = delivery.get("mids")
-        watermark = delivery.get("watermark")
-        log.debug(f"Message delivered: {message_ids} ({watermark})")
+        pass
+        # delivery = event.delivery
+        # message_ids = delivery.get("mids")
+        # watermark = delivery.get("watermark")
+        # log.debug(f"Message delivered: {message_ids} ({watermark})")
 
     def perform_actions(self, actions: List[ChatAction]):
         """
@@ -102,14 +103,18 @@ class FacebookClient(BotAPIClient):
                 quick_replies = None
                 if action.action_type == ChatAction.Type.ASKING_QUESTION:
                     if action.choices:
-                        quick_replies = [QuickReply(title=x, payload=f"test_{x}") for x in action.choices[:10]]
+                        quick_replies = [
+                            QuickReply(
+                                title=remove_emoji(x),
+                                payload=f"test_{x}"
+                            ) for x in action.choices[:10]]
                 elif action.action_type == ChatAction.Type.SENDING_MEDIA:
                     self.send_media(action.peer, action.media_id, caption=action.render())
                     return
 
                 self._page.send(
                     recipient_id=user_id,
-                    message=action.render(),
+                    message=action.render(remove_html=True),
                     quick_replies=quick_replies)
             finally:
                 self.end_typing(user_id)

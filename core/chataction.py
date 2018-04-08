@@ -1,5 +1,7 @@
 import datetime
+import re
 from enum import Enum
+from pprint import pprint
 from typing import List
 
 from model import User
@@ -43,8 +45,18 @@ class ChatAction:
         self.delay = delay
         self.date = datetime.datetime.now()
 
-    def render(self) -> str:
-        return self.__str__()
+    def render(self, remove_html=False) -> str:
+        text = self.__str__()
+
+        if remove_html:
+            text = LINK_PATTERN.sub("\\2 (\\1)", text)
+            text = HTML_PATTERN.sub("", text)
+
+        return text
 
     def __str__(self):
         return "".join([x for x in self.text_parts if x])
+
+
+HTML_PATTERN = re.compile(r'<.*?>', re.DOTALL)
+LINK_PATTERN = re.compile(r'<a\s*href=[\'"](.*?)[\'"]\s*>(.*)<\s*\/\s*a\s*>', re.DOTALL | re.IGNORECASE)
