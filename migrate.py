@@ -43,4 +43,6 @@ def reset_all():
 
 if __name__ == '__main__':
     # reset_all()
-    clear_redis()
+    user = User.get(id=2)
+    reset_answers([user])
+    clear_redis([user])

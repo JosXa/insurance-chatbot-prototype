@@ -4,15 +4,13 @@ from collections import Counter
 from typing import List, Union
 
 from logzero import logger as log
-from scipy.sparse.linalg.isolve.tests.test_iterative import params
 
 from const import MONTHS
 from core import Context
 from core.dialogmanager import StopPropagation
 from core.planningagent import IPlanningAgent
 from core.routing import Router
-from corpus.responsetemplates import ResponseTemplate, SelectiveTemplateLoader, TemplateRenderer, TemplateSelector, \
-    RandomTemplateSelector
+from corpus.responsetemplates import ResponseTemplate, SelectiveTemplateLoader, TemplateRenderer, TemplateSelector
 from logic.rules.claimhandlers import excuse_did_not_understand, no_rule_found
 from logic.sentencecomposer import SentenceComposer
 from model import UserAnswers
