@@ -51,23 +51,13 @@ class Context(collections.MutableMapping):
         self._initial_state = initial_state
         self._init_collections()
 
-        self._answered_question_ids = UserAnswers.get_answered_question_ids(self.user)
-
-        self._current_question = None  # type: Question
-        self._current_questionnaire = None  # type: Questionnaire
-
         # Utterances are synced with the redis database every couple of seconds, as opposed to immediately.
         self._sync_timeout = 5  # seconds
         self._scheduler = sched.scheduler(time.time, time.sleep)
         self.__sync_utt_job = None  # type: sched.Event
         self.__utt_sync_lock = threading.Lock()
 
-        self._all_done = False  # type: bool
-        self._update_question_context()
         self.__name__ = "Context"
-
-        # cached property
-        self.__last_user_utterance = None  # type: MessageUnderstanding
 
     def _init_collections(self):
         uid = self.user.id
@@ -91,6 +81,17 @@ class Context(collections.MutableMapping):
         else:
             self._utterances = deque()  # type: Deque[Union[MessageUnderstanding, ChatAction]]
             self._value_store = dict()
+
+        self._answered_question_ids = UserAnswers.get_answered_question_ids(self.user)
+
+        self._current_question = None  # type: Question
+        self._current_questionnaire = None  # type: Questionnaire
+
+        self._all_done = False  # type: bool
+        self._update_question_context()
+
+        # cached property
+        self.__last_user_utterance = None  # type: MessageUnderstanding
 
     def _sched_sync_utterance(self):
         if not isinstance(self._utterances, SyncableDeque):
