@@ -1,8 +1,9 @@
 claim_damage:
   "Soll ich {{'Ihnen' if formal else 'dir'}} helfen, {{render('dmg_type_snippet')}} an {{'Ihrem'
    if formal
-  else 'deinem'}} Smartphone zu melden?\n\nHinweis: Dieser Bot ist ein Prototyp, es wird also
-  nichts mit den erfassten Daten getan. Einfach mitspielen 😉"
+  else 'deinem'}} Smartphone zu melden?{% if not get('notice_sent') %}\n\nHinweis: Dieser Bot
+  ist ein Prototyp, es wird also
+  nichts mit den erfassten Daten getan. Einfach mitspielen 😉{% endif %}"
 
 start_claim:
   "Okay, legen wir los. {{'Sagen Sie' if formal else 'Sag'}} einfach Bescheid, wenn {{'Sie' if

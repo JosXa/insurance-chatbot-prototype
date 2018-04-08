@@ -7,7 +7,7 @@ def progress(scope):
     def decorator(func):
         def wrapped(r, c, *args, **kwargs):
             counter = c.setdefault("progress", {}).setdefault(scope, 0)
-            c.get_value("progress")[scope] = counter + 1
+            c.get("progress")[scope] = counter + 1
             log.debug(f"Progress of {scope} is now at {counter + 1}")
             return func(r, c, *args, **kwargs)
 
@@ -19,4 +19,4 @@ def progress(scope):
 
 def get_progress(context, scope):
     """ Returns the number of calls to callbacks registered in the specified `scope`. """
-    return context.get_value("progress", {}).get(scope)
+    return context.get("progress", {}).get(scope)

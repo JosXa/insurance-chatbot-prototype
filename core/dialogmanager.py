@@ -11,10 +11,10 @@ from clients.supportchannel import SupportChannel
 from clients.voice import VoiceRecognitionClient
 from core.context import ContextManager
 from core.planningagent import IPlanningAgent
+from core.recorder import ConversationRecorder
 from core.understanding import MessageUnderstanding
 from logic.intents import MEDIA_INTENT
 from model import Update
-from core.recorder import ConversationRecorder
 
 
 class DialogManager:
@@ -91,7 +91,7 @@ class DialogManager:
             try:
                 next_response = self.planning_agent.build_next_actions(context)
             except ForceReevaluation:
-                # Some handlers require to reevaluate the template parameters
+                # Some handlers require to reevaluate the template parameters (only once)
                 next_response = self.planning_agent.build_next_actions(context)
         finally:
             context.dialog_states.update_step()
@@ -102,17 +102,17 @@ class DialogManager:
             self.recorder.record_dialog(update, actions, context.dialog_states)
 
         if settings.NO_DELAYS:
-            # No delays while debugging
+            # No message delays while debugging
             for a in actions:
                 a.delay = None
 
         try:
             bot.perform_actions(actions)
         except Exception as e:
-            log.error("Error while processing update:")
+            log.error("Error while performing chat action:")
             log.exception(e)
-        context.add_actions(actions)
 
+        context.add_actions(actions)
         update.save()
 
 
@@ -120,5 +120,12 @@ class ForceReevaluation(Exception):
     """
     Raised when a handler changes e.g. context state and needs a refreshed set
     of rendering parameters.
+    """
+    pass
+
+
+class StopPropagation(Exception):
+    """
+    Raised when an update handler decides that the update should not be moved forward in the chain of matching handlers
     """
     pass

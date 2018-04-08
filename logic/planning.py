@@ -7,6 +7,7 @@ from logzero import logger as log
 
 from const import MONTHS
 from core import Context
+from core.dialogmanager import StopPropagation
 from core.planningagent import IPlanningAgent
 from core.routing import Router
 from corpus.responsetemplates import ResponseTemplate, SelectiveTemplateLoader, TemplateRenderer, TemplateSelector
@@ -47,7 +48,7 @@ class PlanningAgent(IPlanningAgent):
             overall_completion=context.overall_completion_ratio,
             num_actions=lambda intent: len(context.filter_outgoing_utterances(
                 lambda ca: intent in ca.intents, 12)),
-            get=lambda key: context.get_value(key, None),
+            get=lambda key: context.get(key, None),
             formal=context.user.formal_address,
             informal=not context.user.formal_address,
             chance=chance,
@@ -68,8 +69,16 @@ class PlanningAgent(IPlanningAgent):
 
         # Execute every matching stateless handler first
         for handler in self.router.iter_stateless_matches(u):
-            if handler.callback(composer, context):
-                log.debug(f"Stateless handler triggered: {handler}")
+            try:
+                if handler.callback(composer, context):
+                    log.debug(f"Stateless handler triggered: {handler}")
+            except StopPropagation:
+                # Some handlers may stop the propagation of the update through the chain of state handlers
+                if composer.is_empty:
+                    log.error("StopPropagation was raised but no chat actions were constructed.")
+                    return
+                self._log_actions(composer)
+                return composer
 
         next_state = None
         # Dialog states are a priority queue
@@ -114,13 +123,17 @@ class PlanningAgent(IPlanningAgent):
         if next_state is not None:
             # Handlers return a tuple with the next state, with an integer determining the lifetime of this state as
             # the last tuple value.
-            # E.g. `("asking", "do_something", 3)`  <-- lifetime of 3 incoming utterances
+            # For example: `("asking", "do_something", 3)`  <-- lifetime of 3 incoming utterances
             context.dialog_states.put(next_state)
             return composer
 
+        self._log_actions(composer)
+        return composer
+
+    @staticmethod
+    def _log_actions(composer):
         text = ', then '.join(f'"{x.render()}"' for x in composer.collect_actions())
         log.debug(f'Sending {text}')
-        return composer
 
 
 class LeastRecentlyUsedSelector(TemplateSelector):
@@ -144,5 +157,5 @@ class LeastRecentlyUsedSelector(TemplateSelector):
             selection = best_candidate[1]
 
         used_templates.update([selection.original_text])
-        self.context.set_value('used_templates', used_templates)
+        self.context['used_templates'] = used_templates
         return selection

@@ -25,6 +25,10 @@ class SentenceComposer:
     def collect_actions(self) -> List[ChatAction]:
         return self._sequence
 
+    @property
+    def is_empty(self):
+        return len(self._sequence) == 0
+
     def give_hint(self, question: Question):
         if "hint" in question.no_surrounding:
             text = self.renderer.render_string(question.hint)

@@ -39,9 +39,10 @@ def intro(r, c):
 
 
 def ask_to_start(r, c):
-    if c.get_value('user_no_claim', False):
+    if c.get('user_no_claim', False):
         r.say("changed mind")
     r.ask("claim damage", choices=['affirm_yes', 'negate_no'])
+    c["notice_sent"] = True
     return 'ask_to_start', 2
 
 
@@ -57,19 +58,19 @@ def record_phone_damage(r, c: Context):
     if not c.has_outgoing_intent("sorry for broken phone", 40):
         r.say("sorry for broken phone")  # Automatically grounds damage_type if given
 
-    c.set_value('is_phone_broken', True)
+    c['is_phone_broken'] = True
     return True
 
 
-def start_claim(r, c):
-    c.set_value("claim_started", True)
-    c.set_value("user_no_claim", False)
+def start_claim(r, c: Context):
+    c["claim_started"] = True
+    c["user_no_claim"] = False
     r.say("start claim").then_ask(c.current_question, delay=ChatAction.Delay.VERY_LONG)
     return States.ASKING_QUESTION
 
 
 def user_no_claim(r, c: Context):
-    c.set_value('user_no_claim', True)
+    c['user_no_claim'] = True
     r.say('pity_no_claim', 'chat on')
     return States.SMALLTALK
 
@@ -142,7 +143,7 @@ def check_answer(r, c):
 def store_answer(r, c, question=None, user_answer=None):
     # Assumes answer is checked for validity
     if not user_answer:
-        user_answer = c.get_value('user_answer')
+        user_answer = c.get('user_answer')
     if not question:
         question = c.current_question
 
@@ -159,7 +160,7 @@ def ask_to_confirm_answer(r, c, user_answer=None):
     if user_answer is None:
         user_answer = c.last_user_utterance.text
     r.ask_to_confirm(c.current_question, user_answer)
-    c.set_value('user_answer', user_answer)
+    c['user_answer'] = user_answer
     return 'user_confirming_answer', 1
 
 
@@ -225,7 +226,7 @@ def preview_claim(r, c):
 
 
 def submit_claim(r, c):
-    c.set_value('claim_started', False)
+    c['claim_started'] = False
     r.say("evaluate prototype")
     return States.SMALLTALK
 
@@ -239,9 +240,9 @@ def user_astonished(r, c):
 
 
 def change_formal_address(r, c: Context):
-    if c.get_value("we_say_du"):
+    if c.get("we_say_du"):
         r.say("we say du")
-        c.set_value("we_say_du", False)
+        c["we_say_du"] = False
         return
 
     ut = c.last_user_utterance
@@ -253,7 +254,7 @@ def change_formal_address(r, c: Context):
     if re.search(r'\b(du|dein|dich|dir)\b', ut.text, re.IGNORECASE):
         if c.user.formal_address is True:
             c.user.formal_address = False
-            c.set_value("we_say_du", True)
+            c["we_say_du"] = True
             c.user.save()
             raise ForceReevaluation
     elif re.search(r'\b([Ii]hr|Sie|Ihnen|Euer|haben [sS]ie|sind [Ss]ie)\b', ut.text):
@@ -265,7 +266,7 @@ def change_formal_address(r, c: Context):
 
 def no_rule_found(r, c):
     r.say("sorry", "what i understood", parameters={'understanding': c.last_user_utterance.intent})
-    if c.get_value('claim_started', False):
+    if c.get('claim_started', False):
         return
     if chance(0.6):
         return change_topic(r, c)

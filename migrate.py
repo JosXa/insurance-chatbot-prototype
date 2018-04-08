@@ -14,7 +14,7 @@ def reset_answers(users: List[User] = None):
         UserAnswers.drop_table()
         UserAnswers.create_table()
     else:
-        UserAnswers.delete().where(UserAnswers.user << users).execute()
+        return UserAnswers.delete().where(UserAnswers.user << users).execute()
 
 
 def clear_redis(users: List[User] = None):

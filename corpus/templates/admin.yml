@@ -1,2 +1,6 @@
 no_permission:
   "Keine Befugnis."
+
+system_reset:
+  "{{n_reset|string + ' Antworten' if n_reset != 0 else 'Konversation'}} zurückgesetzt, fangen wir
+  von vorne an"

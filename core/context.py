@@ -1,3 +1,4 @@
+import collections
 import sched
 import threading
 import time
@@ -28,7 +29,7 @@ class States(Enum):
     ASKING_QUESTION = 4
 
 
-class Context:
+class Context(collections.MutableMapping):
     """
     Stores machine-understandable data about the recent conversation context.
 
@@ -36,7 +37,7 @@ class Context:
     the questions a user has answered so far (`_answered_question_ids`), as well as a way to calculate the next
     question applicable for a user (done automatically when new utterances are added).
 
-    Acts like a dictionary with methods `set_value` and `get_value` to provide a persistent, random access data
+    Acts like a dictionary with methods `_set_value` and `_get_value` to provide a persistent, random access data
     storage for a particular user.
     """
 
@@ -45,25 +46,10 @@ class Context:
 
     def __init__(self, user: User, initial_state, redis=None):
         self.user = user
-        uid = user.id
 
-        self.dialog_states = DialogStates(initial_state, redis=redis, key=f'{uid}:ds')
-
-        # User and Bot utterances from newest to oldest
-        if redis:
-            self._utterances = SyncableDeque(
-                maxlen=self.SIZE_LIMIT,
-                redis=redis,
-                key=f'{uid}:utterances')  # type: Deque[Union[MessageUnderstanding, ChatAction]]
-            self._value_store = SyncableDict(  # type: Dict
-                redis=redis,
-                writeback=True,
-                key=f'{uid}:kv_store')
-            self._utterances.sync()
-            self._value_store.sync()
-        else:
-            self._utterances = deque()  # type: Deque[Union[MessageUnderstanding, ChatAction]]
-            self._value_store = dict()
+        self._redis = redis
+        self._initial_state = initial_state
+        self._init_collections()
 
         self._answered_question_ids = UserAnswers.get_answered_question_ids(self.user)
 
@@ -83,17 +69,28 @@ class Context:
         # cached property
         self.__last_user_utterance = None  # type: MessageUnderstanding
 
-    def set_value(self, key, value):
-        self._value_store[key] = value
-        if isinstance(self._value_store, SyncableDict):
+    def _init_collections(self):
+        uid = self.user.id
+        self.dialog_states = DialogStates(
+            self._initial_state,
+            redis=self._redis,
+            key=f'{uid}:ds')
+
+        # User and Bot utterances from newest to oldest
+        if self._redis:
+            self._utterances = SyncableDeque(
+                maxlen=self.SIZE_LIMIT,
+                redis=self._redis,
+                key=f'{uid}:utterances')  # type: Deque[Union[MessageUnderstanding, ChatAction]]
+            self._value_store = SyncableDict(  # type: Dict
+                redis=self._redis,
+                writeback=True,
+                key=f'{uid}:kv_store')
+            self._utterances.sync()
             self._value_store.sync()
-        return value
-
-    def setdefault(self, key, default=None):
-        return self._value_store.setdefault(key, default)
-
-    def get_value(self, key, default=None):
-        return self._value_store.get(key, default)
+        else:
+            self._utterances = deque()  # type: Deque[Union[MessageUnderstanding, ChatAction]]
+            self._value_store = dict()
 
     def _sched_sync_utterance(self):
         if not isinstance(self._utterances, SyncableDeque):
@@ -272,6 +269,27 @@ class Context:
         """ Returns a ratio of how many questions have been answered divided by the total number of questions. """
         return (all_questionnaires.index(self._current_questionnaire) / len(all_questionnaires)) + (
                 self.questionnaire_completion_ratio / len(all_questionnaires))
+
+    def reset_all(self):
+        self._init_collections()
+
+    def __setitem__(self, key, value):
+        self._value_store[key] = value
+        if isinstance(self._value_store, SyncableDict):
+            self._value_store.sync()
+        return value
+
+    def __delitem__(self, key):
+        del self._value_store[key]
+
+    def __getitem__(self, key):
+        return self._value_store[key]
+
+    def __len__(self):
+        return len(self._value_store)
+
+    def __iter__(self):
+        return iter(self._value_store)
 
 
 class ContextManager:

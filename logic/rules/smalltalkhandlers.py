@@ -1,7 +1,5 @@
 from functools import wraps
 
-from logzero import logger as log
-
 from core import Context
 from logic.intents import FEELING_INTENTS
 from logic.rules.progresstracker import get_progress, progress
@@ -25,7 +23,7 @@ def change_topic_on_threshold(func):
 
     @wraps(func)
     def wrapped(composer, context: Context):
-        if not context.get_value('user_no_claim', False):
+        if not context.get('user_no_claim', False):
             if get_progress(context, "smalltalk") >= 2:
                 result = func(composer, context)
                 # First enter the next dialog state result (probably None anyway)
@@ -56,7 +54,7 @@ def fallback_smalltalk(r, c):
 def change_topic(r, c):
     asked_questions = c.setdefault('random_questions', set())
 
-    if c.get_value("no_claim", False):
+    if c.get("no_claim", False):
         r.say("random topic")
         return
 
