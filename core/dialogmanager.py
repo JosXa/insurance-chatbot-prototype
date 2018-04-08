@@ -9,6 +9,7 @@ from clients.botapiclients import BotAPIClient
 from clients.nluclients import NLUEngine
 from clients.supportchannel import SupportChannel
 from clients.voice import VoiceRecognitionClient
+from core import ChatAction
 from core.context import ContextManager
 from core.planningagent import IPlanningAgent
 from core.recorder import ConversationRecorder
@@ -93,10 +94,9 @@ class DialogManager:
             except ForceReevaluation:
                 # Some handlers require to reevaluate the template parameters (only once)
                 next_response = self.planning_agent.build_next_actions(context)
+            actions = next_response.collect_actions()
         finally:
             context.dialog_states.update_step()
-
-        actions = next_response.collect_actions()
 
         if self.recorder:
             self.recorder.record_dialog(update, actions, context.dialog_states)

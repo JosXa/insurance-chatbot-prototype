@@ -4,13 +4,15 @@ from collections import Counter
 from typing import List, Union
 
 from logzero import logger as log
+from scipy.sparse.linalg.isolve.tests.test_iterative import params
 
 from const import MONTHS
 from core import Context
 from core.dialogmanager import StopPropagation
 from core.planningagent import IPlanningAgent
 from core.routing import Router
-from corpus.responsetemplates import ResponseTemplate, SelectiveTemplateLoader, TemplateRenderer, TemplateSelector
+from corpus.responsetemplates import ResponseTemplate, SelectiveTemplateLoader, TemplateRenderer, TemplateSelector, \
+    RandomTemplateSelector
 from logic.rules.claimhandlers import excuse_did_not_understand, no_rule_found
 from logic.sentencecomposer import SentenceComposer
 from model import UserAnswers
@@ -29,14 +31,16 @@ class PlanningAgent(IPlanningAgent):
     def __init__(self, router: Router):
         self.router = router
 
-    def build_next_actions(self, context: Context) -> Union[SentenceComposer, None]:
-        u = context.last_user_utterance
+    @staticmethod
+    def _get_shared_parameters(context):
+        """
+        Returns the rendering and condition evaluation environment for Jinja2 templates
+        """
 
         def chance(value: float) -> bool:
             return random.random() < value
 
-        # Declare parameters to be used in jinja2-templates
-        shared_parameters = dict(
+        return dict(
             user=context.user,
             get_answer=lambda identifier: UserAnswers.get_answer(context.user, identifier),
             has_answered=lambda identifier: UserAnswers.has_answered(context.user, identifier),
@@ -56,12 +60,24 @@ class PlanningAgent(IPlanningAgent):
             is_this_year=lambda y: y == datetime.datetime.now().year
         )
 
-        lru_selector = LeastRecentlyUsedSelector(context)
-        composer = SentenceComposer(
+    @staticmethod
+    def _create_composer(context):
+        """
+        Creates a SentenceComposer instance with shared parameters
+        """
+        params = PlanningAgent._get_shared_parameters(context)
+        return SentenceComposer(
             context.user,
-            SelectiveTemplateLoader(shared_parameters, template_selector=lru_selector),
-            TemplateRenderer(shared_parameters)
+            SelectiveTemplateLoader(
+                params,
+                template_selector=LeastRecentlyUsedSelector(context)),
+            TemplateRenderer(params)
         )
+
+    def build_next_actions(self, context: Context) -> Union[SentenceComposer, None]:
+        u = context.last_user_utterance
+
+        composer = self._create_composer(context)
 
         text = f'"{u.text[:40]}"' if u.text else ''
         log.info(f'Incoming message: {text}, {u}')
@@ -137,6 +153,12 @@ class PlanningAgent(IPlanningAgent):
 
 
 class LeastRecentlyUsedSelector(TemplateSelector):
+    """
+    Selects the template that was used the least when there are multiple
+    valid choices to select from.
+    Used the KV-store of a user's context to save the counter.
+    """
+
     def __init__(self, context: Context):
         self.context = context
 

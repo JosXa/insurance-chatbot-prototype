@@ -263,8 +263,6 @@ class Context(collections.MutableMapping):
     @property
     def questionnaire_completion_ratio(self):
         """ Returns a ratio of how many questions in the current questionnaire have been answered. """
-        if not self._current_questionnaire:
-            return 0.0  # hotfix
         return self._current_questionnaire.completion_ratio(self._answered_question_ids)
 
     @property
