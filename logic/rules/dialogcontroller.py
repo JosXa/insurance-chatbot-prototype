@@ -76,6 +76,7 @@ RULES = {
             NegationHandler(too_bad)
         ],
         'told_joke': [
+            IntentHandler(static_smalltalk_response, intents='smalltalk.emotions.ha_ha'),
             IntentHandler(tell_a_joke, intents='again_another')
         ],
         'explanation_given': [

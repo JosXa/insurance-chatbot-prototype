@@ -28,8 +28,10 @@ def change_topic_on_threshold(func):
                 result = func(composer, context)
                 # First enter the next dialog state result (probably None anyway)
                 context.dialog_states.put(result)
-                # Then return the next dialog state of the changed topic
-                return change_topic(composer, context)
+
+                if not context.get("claim_started", False):
+                    # Then return the next dialog state of the changed topic
+                    return change_topic(composer, context)
 
         wrapped.__name__ = func.__name__
         return func(composer, context)

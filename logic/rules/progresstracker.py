@@ -7,7 +7,7 @@ def progress(scope):
     def decorator(func):
         def wrapped(r, c, *args, **kwargs):
             counter = c.setdefault("progress", {}).setdefault(scope, 0)
-            c.get("progress")[scope] = counter + 1
+            c["progress"][scope] = counter + 1
             log.debug(f"Progress of {scope} is now at {counter + 1}")
             return func(r, c, *args, **kwargs)
 
