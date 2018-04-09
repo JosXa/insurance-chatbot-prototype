@@ -2,6 +2,14 @@ personal details:
   title: "Wir beginnen mit einigen Fragen zu {{'Ihrem' if formal else
   'deinem'}} Vertrag."
   questions:
+    date_and_time:
+      title: "das Datum und die Uhrzeit des Vorfalls"
+      confirm: "Es ist also am {{answer.day}}. {{month(answer.month)}}
+      {{answer.year|string + ' ' if not is_this_year(answer.year)}}um {{answer.strftime('%H:%M')}} passiert?"
+      hint: "Datum und Uhrzeit, am besten in deutschem Format. {{'Gib' if
+      informal else 'Geben Sie'}} diese einfach nach bestem Wissen an"
+      example: "10.3.2018 15:30"
+      required: yes
     policy_nr:
       name: "Versicherungsschein-Nr."
       title: "{{'Ihre' if formal else 'deine'}} Versicherungsschein-Nr."
@@ -70,14 +78,6 @@ damage_description:
         - Softwarefehler
         - Akku defekt
       hint: "die Art des Schadens an {{'Ihrem' if formal else 'deinem'}} Handy."
-      required: yes
-    date_and_time:
-      title: "das Datum und die Uhrzeit des Vorfalls"
-      confirm: "Es ist also am {{answer.day}}. {{month(answer.month)}}
-      {{answer.year|string + ' ' if not is_this_year(answer.year)}}um {{answer.hour}}:{{answer.minute}} passiert?"
-      hint: "Datum und Uhrzeit, am besten in deutschem Format. {{'Gib' if
-      informal else 'Geben Sie'}} diese einfach nach bestem Wissen an"
-      example: "10.3.2018 15:30"
       required: yes
     location:
       title: "den Ort des Vorfalls"
