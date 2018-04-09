@@ -5,11 +5,11 @@ how_can_i_help:
   "Wie kann ich {{'Ihnen' if formal else 'dir'}} helfen?"
 
 smartphone_damage_explanation:
-  "{{'Wussten Sie' if formal else 'Wusstest du'}}, dass fast 44% der Smartphone-Schäden dadurch entstehen, dass das
-  Handy aus den Händen gleitet und auf den Boden fällt?"
+  "{{'Wussten Sie' if formal else 'Wusstest du'}}, dass Apple-Geräte auf Nummer eins der
+  häufigsten Schadensmeldungen sind?"
 
 urge_to_start:
-  "Wenn {{'Sie' if formal else 'du'}} {{render('dmg_type_snippet')}} an {{'Ihrem' if formal else
+  "Wenn {{'Sie' if formal else 'du'}} {{render('dmg_typ e_snippet')}} an {{'Ihrem' if formal else
   'deinem'}} Smartphone melden {{'möchten, Sagen Sie' if formal else 'möchtest, sag'}} mir einfach was
   kaputt ist."
 
@@ -20,14 +20,16 @@ only_helpful_for_claims:
 random_topic:
   choices:
     - "{{'Sind Sie' if formal else 'Bist du'}} gerade an der frischen Luft?"
-    - "Ist Sodbrennen eigentlich gefährlich? Zum Glück kann ich das nicht bekommen..."
-    - "Violett ist übrigens magentaer als rot 🤔"
-    - "Fakt: Apple-Geräte sind auf Nummer eins der häufigsten Schadensmeldungen."
     - "Fakt: Mit 0,85% passieren Flüssigkeitsschäden an Smartphones relativ selten, dafür
     verursachen
     sie mit die höchsten Kosten."
+    - "Ist Sodbrennen eigentlich gefährlich? Zum Glück kann ich das nicht bekommen..."
     - "Fakt: Nordrhein-Westfalen meldet die meisten Schäden an Handys. Im bevölkerungsreichsten Bundesland Deutschlands passieren eben auch die meisten Handyunfälle"
+    - "Fakt: Fast 44% der Smartphone-Schäden entstehen dadurch, dass das
+  Handy aus den Händen gleitet und auf den Boden fällt."
     - "Fakt: Im Sommer passieren die meisten Schäden, im Winter die wenigsten."
-    - "Eine Statistik von blog.friendsinsurance.de zeigt, dass mit 44% deutlich weniger Handyschäden von Frauen gemeldet werden als von Männern."
+    - "Eine Statistik zeigt, dass mit 44% deutlich weniger Handyschäden von Frauen gemeldet
+     werden als von Männern (blog.friendsinsurance.de)."
     - "Wenn Ihr Handy in die Toilette gefallen oder aus Versehen in der Waschmaschine
     mitgewaschen wurde, ist der Schaden noch vergleichsweise gering. Salziges Meerwasser ist jedoch viel aggressiver und beschädigt die empfindliche Elektronik dauerhaft."
+    - "Violett ist übrigens magentaer als rot 🤔"
