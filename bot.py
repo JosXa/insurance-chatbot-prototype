@@ -1,6 +1,5 @@
 import os
 from threading import Thread
-from typing import List
 
 from flask import Flask, send_file
 from logzero import logger as log
@@ -18,10 +17,6 @@ from core.recorder import ConversationRecorder
 from corpus.media import get_file_by_media_id
 from logic.planning import PlanningAgent
 from logic.rules.dialogcontroller import application_router
-
-threads = list()  # type: List[Thread]
-
-USER_SEQ = dict()
 
 if not os.path.exists('tmp'):
     os.makedirs('tmp')
@@ -77,22 +72,21 @@ def main():
 
     conversation_recorder = None
     if settings.ENABLE_CONVERSATION_RECORDING:
-        conversation_recorder = ConversationRecorder(telegram_client.bot, support_client)
+        conversation_recorder = ConversationRecorder(
+            telegram_client.bot,
+            support_channel=support_client)
 
     planning_agent = PlanningAgent(router=application_router)
 
     DialogManager(
         context_manager=ContextManager(initial_state=States.SMALLTALK, redis=redis),
         bot_clients=[telegram_client, facebook_client],
-        nlp_client=dialogflow_client,
+        nlu_client=dialogflow_client,
         planning_agent=planning_agent,
         recorder=conversation_recorder,
         voice_recognition_client=voice_client,
         support_channel=support_client
     )
-
-    telegram_client.start_listening()
-    facebook_client.start_listening()
 
     if settings.DEBUG_MODE:
         host = 'localhost'
@@ -113,6 +107,8 @@ def main():
         # webhooks
         log.info("Listening...")
         app.run(host='0.0.0.0', port=settings.PORT)
+
+    # TODO: properly handle shutdown in DEBUG_MODE
 
 
 if __name__ == '__main__':

@@ -29,7 +29,7 @@ class DialogManager:
     def __init__(self,
                  context_manager: ContextManager,
                  bot_clients: List[BotAPIClient],
-                 nlp_client: NLUEngine,
+                 nlu_client: NLUEngine,
                  planning_agent: IPlanningAgent,
                  recorder: ConversationRecorder = None,
                  voice_recognition_client: VoiceRecognitionClient = None,
@@ -37,7 +37,7 @@ class DialogManager:
                  ):
         self.context_manager = context_manager
         self.bots = bot_clients
-        self.nlp = nlp_client
+        self.nlp = nlu_client
         self.recorder = recorder
         self.voice = voice_recognition_client
         self.planning_agent = planning_agent
@@ -48,6 +48,8 @@ class DialogManager:
             bot.add_plaintext_handler(self.text_update_received)
             bot.add_voice_handler(self.voice_received)
             bot.add_media_handler(self.media_received)
+
+            bot.start_listening()
 
     def __get_client_by_name(self, client_name: str) -> BotAPIClient:
         return next(x for x in self.bots if client_name == x.client_name)
