@@ -24,28 +24,35 @@ class ConversationRecorder:
     With `playconversation.py`, a recording made with this class can be replayed as an "integration test" in real time.
     """
 
-    # Time of inactivity, where the user does not say anything. When the duration has passed, publish the generated
+    # Time of inactivity where the user does not say anything. When the duration has passed, publish the generated
     # conversation.yml to a support channel.
     CLOSING_TIMEFRAME = datetime.timedelta(minutes=3)
+
+    # Whether to publish only the updated conversation when the user responds after the `CLOSING_TIMEFRAME` has passed
+    RESET_AFTER_PUBLISHING = False
 
     def __init__(self, telegram_bot, support_channel: SupportChannel):
         self.bot = telegram_bot
         self.support_channel = support_channel
         self.conversations = {}
+        self.conversation_starts = {}
 
         self.date_started = datetime.datetime.now()
         self._scheduler = sched.scheduler(time.time, time.sleep)
         self._wait_publish_events = {}
 
     def record_dialog(self, update: Update, actions: List[ChatAction], dialog_states: DialogStates):
-        entry = CommentedMap(  # ensures ordered key-value pairs
+        uid = update.user.id
+        start_time = self.conversation_starts.setdefault(uid, update.datetime)
+        entry = CommentedMap(  # ensures ordered key-value pairs in YAML
+            time=int((update.datetime - start_time).total_seconds()),
             user_says=update.message_text,
             intent=update.understanding.intent,
             parameters=update.understanding.parameters,
             new_states=[str(x) for x in list(dialog_states.iter_states())],
             responses=list(itertools.chain.from_iterable([a.intents for a in actions]))
         )
-        self.conversations.setdefault(update.user.id, []).append(entry)
+        self.conversations.setdefault(uid, []).append(entry)
         self._save(update.user, schedule_publish=True)
 
     def _close_and_publish(self, user):
@@ -62,7 +69,8 @@ class ConversationRecorder:
             log.error(f"Publishing conversation recording failed with error:")
             log.exception(e)
         finally:
-            del self.conversations[user.id]
+            if self.RESET_AFTER_PUBLISHING:
+                del self.conversations[user.id]
 
     def _get_filename(self, user):
         return f"{user.id}_{self.date_started.strftime('%Y%m%d-%H%M%S')}.yml"

@@ -5,7 +5,7 @@ import pytest
 from core import Context, MessageUnderstanding
 from corpus.responsetemplates import SelectiveTemplateLoader, TemplateRenderer
 from logic.rules import answercheckers as ans
-from logic.sentencecomposer import SentenceComposer
+from logic.sentencecomposer import ResponseComposer
 from model import User
 
 
@@ -47,7 +47,7 @@ def c(user):
 
 @pytest.fixture()
 def r(user):
-    return SentenceComposer(user,
+    return ResponseComposer(user,
                             template_loader=SelectiveTemplateLoader(),
                             template_renderer=TemplateRenderer({}))
 

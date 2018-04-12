@@ -9,7 +9,7 @@ from model import User
 NOT_SET = -1
 
 
-class SentenceComposer:
+class ResponseComposer:
     def __init__(
             self,
             peer: User,

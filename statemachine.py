@@ -138,7 +138,7 @@ def step(current_state, context, u):
     #     else:
     #         return None, None
     #
-    # if isinstance(next_state, SentenceComposer):
+    # if isinstance(next_state, ResponseComposer):
     #     # Lambdas return the senctence composer, which we don't need (call by reference)
     #     next_state = None
     #

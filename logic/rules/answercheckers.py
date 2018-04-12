@@ -11,10 +11,10 @@ import regex
 
 from corpus import phones
 from corpus.phones import format_device
-from logic.sentencecomposer import SentenceComposer
+from logic.responsecomposer import ResponseComposer
 
 
-def model_identifier(r: SentenceComposer, c, q):
+def model_identifier(r: ResponseComposer, c, q):
     answer = c.last_user_utterance.text
     results = phones.devices_by_name(answer)
     choices = [format_device(x[0]) for x in results]

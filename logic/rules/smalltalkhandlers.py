@@ -2,8 +2,8 @@ from functools import wraps
 
 from core import Context
 from logic.intents import FEELING_INTENTS
+from logic.responsecomposer import ResponseComposer
 from logic.rules.progresstracker import get_progress, progress
-from logic.sentencecomposer import SentenceComposer
 
 ORDERED_TOPICS = {
     # { intent:  return_value }
@@ -141,5 +141,5 @@ def another_time(r, c):
     r.say("another time")
 
 
-def sudo_make_sandwich(r: SentenceComposer, c):
+def sudo_make_sandwich(r: ResponseComposer, c):
     r.send_media('sandwich', caption_intent='here you go')

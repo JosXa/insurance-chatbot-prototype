@@ -11,8 +11,8 @@ from core.dialogmanager import StopPropagation
 from core.planningagent import IPlanningAgent
 from core.routing import Router
 from corpus.responsetemplates import ResponseTemplate, SelectiveTemplateLoader, TemplateRenderer, TemplateSelector
+from logic.responsecomposer import ResponseComposer
 from logic.rules.claimhandlers import excuse_did_not_understand, no_rule_found
-from logic.sentencecomposer import SentenceComposer
 from model import UserAnswers
 
 
@@ -61,10 +61,10 @@ class PlanningAgent(IPlanningAgent):
     @staticmethod
     def _create_composer(context):
         """
-        Creates a SentenceComposer instance with shared parameters
+        Creates a ResponseComposer instance with shared parameters
         """
         params = PlanningAgent._get_shared_parameters(context)
-        return SentenceComposer(
+        return ResponseComposer(
             context.user,
             SelectiveTemplateLoader(
                 params,
@@ -72,7 +72,7 @@ class PlanningAgent(IPlanningAgent):
             TemplateRenderer(params)
         )
 
-    def build_next_actions(self, context: Context) -> Union[SentenceComposer, None]:
+    def build_next_actions(self, context: Context) -> Union[ResponseComposer, None]:
         u = context.last_user_utterance
 
         composer = self._create_composer(context)
@@ -130,7 +130,7 @@ class PlanningAgent(IPlanningAgent):
             else:
                 next_state = no_rule_found(composer, context)
 
-        if isinstance(next_state, SentenceComposer):
+        if isinstance(next_state, ResponseComposer):
             # Lambdas return the senctence composer, which we don't need (call by reference)
             next_state = None
 
