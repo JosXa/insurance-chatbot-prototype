@@ -22,10 +22,6 @@ if not os.path.exists('tmp'):
     os.makedirs('tmp')
 
 
-def error_handler(bot, update, error):
-    log.exception(error)
-
-
 def main():
     app = Flask(__name__)
 
@@ -48,8 +44,8 @@ def main():
     redis = StrictRedis.from_url(settings.REDIS_URL)
 
     facebook_client = FacebookClient(
-        app,
-        settings.FACEBOOK_ACCESS_TOKEN
+        app=app,
+        token=settings.FACEBOOK_ACCESS_TOKEN
     )
     facebook_client.initialize()
 
@@ -60,7 +56,6 @@ def main():
         test_mode=settings.DEBUG_MODE
     )
     telegram_client.initialize()
-    telegram_client.add_error_handler(error_handler)
 
     support_client = TelegramSupportChannel(
         telegram_bot=telegram_client.bot,
@@ -107,8 +102,6 @@ def main():
         # webhooks
         log.info("Listening...")
         app.run(host='0.0.0.0', port=settings.PORT)
-
-    # TODO: properly handle shutdown in DEBUG_MODE
 
 
 if __name__ == '__main__':
