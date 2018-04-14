@@ -14,6 +14,7 @@ from corpus.responsetemplates import ResponseTemplate, SelectiveTemplateLoader, 
 from logic.responsecomposer import ResponseComposer
 from logic.rules.claimhandlers import excuse_did_not_understand, no_rule_found
 from model import UserAnswers
+from util import timing
 
 
 class PlanningAgent(IPlanningAgent):
@@ -77,7 +78,7 @@ class PlanningAgent(IPlanningAgent):
 
         composer = self._create_composer(context)
 
-        text = f'"{u.text[:40]}"' if u.text else ''
+        text = f'"{u.text[:50]}"' if u.text else ''
         log.info(f'Incoming message: {text}, {u}')
         log.debug(f'Current dialog states: {context.dialog_states}')
 

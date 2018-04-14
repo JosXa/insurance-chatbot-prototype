@@ -4,8 +4,8 @@ import pytest
 
 from core import Context, MessageUnderstanding
 from corpus.responsetemplates import SelectiveTemplateLoader, TemplateRenderer
+from logic.responsecomposer import ResponseComposer
 from logic.rules import answercheckers as ans
-from logic.sentencecomposer import ResponseComposer
 from model import User
 
 

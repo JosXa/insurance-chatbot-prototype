@@ -9,7 +9,6 @@ from clients.botapiclients import BotAPIClient
 from clients.nluclients import NLUEngine
 from clients.supportchannel import SupportChannel
 from clients.voice import VoiceRecognitionClient
-from core import ChatAction
 from core.context import ContextManager
 from core.planningagent import IPlanningAgent
 from core.recorder import ConversationRecorder

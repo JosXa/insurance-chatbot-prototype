@@ -86,7 +86,7 @@ class IntentHandler(BaseHandler):
     def __str__(self):
         return f"{self.__class__.__name__}(" \
                f"{self.callback.__name__}, " \
-               f"intents={str(self._intents)[:40]}, " \
+               f"intents={str(self._intents)[:70]}, " \
                f"parameters={self._parameters})"
 
     def __repr__(self):

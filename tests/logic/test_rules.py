@@ -1,27 +1,24 @@
 import datetime
-from pprint import pprint
-from unittest.mock import MagicMock
-
-import model
-import util
 import itertools
 import unittest
 import warnings
-from typing import List, ContextManager
+from typing import List
 
 import settings
-from clients.nlpclients import DialogflowClient
-from core import ChatAction
+import util
+from clients.nluclients import DialogflowClient
+from core import ChatAction, ContextManager, States
 from logic.planning import PlanningAgent
-from logic.rules.controller import application_router
+from logic.rules.dialogcontroller import application_router
 from model import Update, User
 
 
-class RuleTests(unittest.TestCase):
-    def setUp(self):
+# TODO: Migrate to py.test
+class RuleTests:
+    def __init__(self):
         self.router = application_router
         self.nlp = DialogflowClient(settings.DIALOGFLOW_ACCESS_TOKEN)
-        self.context_manager = ContextManager()
+        self.context_manager = ContextManager(States.SMALLTALK)
         self.planning_agent = PlanningAgent(self.router)
         self.msg_count = 0
         self.conversation = util.load_yaml_as_dict('conversation.yml')
@@ -55,10 +52,9 @@ class RuleTests(unittest.TestCase):
         if not isinstance(search, list):
             search = list(search)
         found_intents = list(itertools.chain.from_iterable([c.intents for c in collection]))
-        self.assertListEqual(found_intents, search, message)
+        assert found_intents == search, message
 
     def test_full_conversation(self):
-        pprint(self.conversation)
         for dialog in self.conversation:
             user_says = dialog.get('user_says')
             user_intent = dialog.get('intent')

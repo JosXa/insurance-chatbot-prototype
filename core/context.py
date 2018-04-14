@@ -20,6 +20,9 @@ from model import Update, User, UserAnswers
 
 
 class States(Enum):
+    """
+    Common conversation states for every user
+    """
     # Special
     SMALLTALK = 0
     FALLBACK = 1

@@ -23,7 +23,7 @@ from model.update import Update
 
 class TelegramClient(BotAPIClient):
 
-    def __init__(self, app: Flask, webhook_url, token, test_mode=False, log_level=logging.INFO):
+    def __init__(self, app: Flask, webhook_url, token, test_mode=False):
         logzero.setup_logger(telegram.__name__, level=logging.INFO)
         self._webhook_url = webhook_url
         self._app = app

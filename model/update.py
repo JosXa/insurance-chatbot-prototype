@@ -1,4 +1,4 @@
-from typing import TypeVar
+from typing import TypeVar, Union
 
 from fbmq import Event as FacebookEvent
 from peewee import *
@@ -20,7 +20,8 @@ class Update(BaseModel):
     media_location = CharField(null=True)  # type: str
 
     def __init__(self, *args, **kwargs):
-        self.original_update = None  # type: [FacebookEvent,TelegramUpdate]
+        # These fields will be lost when the object is retrieved from database
+        self.original_update = None  # type: Union[FacebookEvent, TelegramUpdate]
         self._understanding = None  # type: MessageUnderstanding
         self.voice_id = None  # type: str
 

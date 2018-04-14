@@ -1,6 +1,8 @@
 from abc import ABCMeta, abstractmethod
 from typing import TypeVar, List
 
+from util import timing
+
 ChatAction = TypeVar('ChatAction')
 
 

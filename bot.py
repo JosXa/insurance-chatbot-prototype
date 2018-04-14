@@ -35,12 +35,6 @@ def main():
         filepath = get_file_by_media_id(media_id)
         return send_file(filepath, mimetype=f'{mimetype}/{ext}')
 
-    # sms_client = SMSClient(
-    #     settings.TWILIO_ACCESS_TOKEN,
-    #     settings.TWILIO_ACCOUNT_SID
-    # )
-    # sms_client.initialize()
-
     redis = StrictRedis.from_url(settings.REDIS_URL)
 
     facebook_client = FacebookClient(
@@ -56,6 +50,12 @@ def main():
         test_mode=settings.DEBUG_MODE
     )
     telegram_client.initialize()
+
+    # sms_client = SMSClient(
+    #     settings.TWILIO_ACCESS_TOKEN,
+    #     settings.TWILIO_ACCOUNT_SID
+    # )
+    # sms_client.initialize()
 
     support_client = TelegramSupportChannel(
         telegram_bot=telegram_client.bot,

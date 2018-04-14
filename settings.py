@@ -1,5 +1,6 @@
 import json
 import os
+import pathlib
 
 from decouple import config
 
@@ -20,8 +21,9 @@ CONTEXT_LOOKUP_RECENCY = 15
 SUPPORT_CHANNEL_ID = -1001265422831
 GOOGLE_SERVICE_ACCOUNT_KEY = config('GOOGLE_SERVICE_ACCOUNT_KEY').replace("\\n", "\n")
 # Insert google private key into a template of the json configuration and add it to environment vars
-google_service_account_file = 'tmp/service-account-file.json'
-template = json.load(open("google-service-template.json", 'r'))
+_root_dir = pathlib.Path(os.path.dirname(os.path.abspath(__file__)))
+google_service_account_file = _root_dir / 'tmp' / 'service-account-file.json'
+template = json.load(open(_root_dir / "google-service-template.json", 'r'))
 template["private_key"] = GOOGLE_SERVICE_ACCOUNT_KEY
 json.dump(template, open(google_service_account_file, 'w'))
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = google_service_account_file
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = str(google_service_account_file)
