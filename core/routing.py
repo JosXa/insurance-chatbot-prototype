@@ -234,7 +234,7 @@ class Router(object):
 
     def iter_stateless_matches(self, understanding: MessageUnderstanding):
         for rule in self.stateless:
-            # Non-breaking, execute all
+            # Non-breaking, yield all
             if rule.matches(understanding):
                 yield rule
 
@@ -249,7 +249,6 @@ class Router(object):
         for rule in self.fallbacks:
             # break after first occurence
             if rule.matches(understanding):
-                # logger.debug(f"Fallback handler {rule} triggered.")
                 return rule
         return None
 
