@@ -112,10 +112,8 @@ class IntegrationTestBase(object):
             sleep_time = ChatAction.Delay.VERY_LONG.value + (0.3 if self.live_mode else 0.8)
         last_msg = self._last_response
 
-        print("sleeping", sleep_time)
         time.sleep(sleep_time)
         while self._last_response != last_msg:
-            print("waiting consecutive")
             last_msg = self._last_response
             time.sleep(sleep_time)
 

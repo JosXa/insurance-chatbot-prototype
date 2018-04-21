@@ -1,10 +1,12 @@
 import string
 from typing import List, Union
 
+import util
 from core import ChatAction
 from corpus.questions import Question, Questionnaire
 from corpus.responsetemplates import ResponseTemplate, SelectiveTemplateLoader, TemplateRenderer, format_intent
 from model import User
+from logzero import logger as log
 
 NOT_SET = -1
 
@@ -23,6 +25,14 @@ class ResponseComposer:
         self._inside_sentence = False
 
     def collect_actions(self) -> List[ChatAction]:
+        # Calculating delays based on the message length.
+        # This has proven to make the dialog feel more natural/human-like
+        for a in self._sequence:
+            if a.delay is not NOT_SET:
+                continue
+
+            human_delay = util.calculate_natural_delay(message_text=a.render(remove_html=True))
+            a.delay = human_delay
         return self._sequence
 
     @property
@@ -181,15 +191,6 @@ class ResponseComposer:
             raise ValueError("Multiple messages with choices are not sensible.")
 
         intent = format_intent(intent)
-
-        if delay is NOT_SET:
-            delay = None  # If empty sequence
-            if len(self._sequence) == 1:
-                delay = ChatAction.Delay.SHORT
-            elif len(self._sequence) >= 3:
-                delay = ChatAction.Delay.LONG
-            elif len(self._sequence) > 0:
-                delay = ChatAction.Delay.MEDIUM
 
         if as_new_message or len(self._sequence) == 0:
             # Create new message

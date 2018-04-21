@@ -112,14 +112,6 @@ class DialogManager:
             for a in actions:
                 a.delay = None
 
-        # Assign default value if no delay was set
-        for a in actions:
-            if a.delay is NOT_SET:
-                a.delay = ChatAction.Delay.MEDIUM
-
-        if settings.DEMO_MODE:
-            time.sleep(2.3)
-
         try:
             bot.perform_actions(actions)
         except Exception as e:

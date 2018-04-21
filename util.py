@@ -1,5 +1,6 @@
 import itertools
 from ruamel.yaml import YAML, ruamel
+from logzero import logger as log
 
 yaml = YAML(typ='safe')
 
@@ -58,3 +59,11 @@ def paginate(iterable, page_size):
         if len(page) == 0:
             break
         yield page
+
+
+def calculate_natural_delay(message_text: str):
+    from core import ChatAction
+    msg_len = len(message_text)
+    human_delay = min(ChatAction.Delay.VERY_LONG.value, (msg_len * 0.03 + 0.35))
+    log.debug(human_delay)
+    return human_delay

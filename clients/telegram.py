@@ -89,7 +89,7 @@ class TelegramClient(BotAPIClient):
             if action.show_typing:
                 self.bot.send_chat_action(action.peer.telegram_id, TelegramChatAction.TYPING, timeout=20)
             if action.delay:
-                time.sleep(action.delay.value)
+                time.sleep(action.delay.value if isinstance(action.delay, ChatAction.Delay) else action.delay)
 
             markup = None
             if action.action_type == ChatAction.Type.ASKING_QUESTION:

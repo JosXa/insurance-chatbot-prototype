@@ -36,8 +36,9 @@ class FullConversationIntegrationTests(IntegrationTestBase):
                     sl = random.randint(20, 40) / 10
                     print(f"Sleeping for {sl}")
                     time.sleep(sl)
-                if settings.DEMO_MODE:
-                    time.sleep(1.5)
+
+                time.sleep(util.calculate_natural_delay(text))
+
                 print(f'User says: "{text}"...', end=' ', flush=True)
                 reply_to = response.message_id if was_force_reply else None
 
@@ -52,5 +53,5 @@ class FullConversationIntegrationTests(IntegrationTestBase):
 
 if __name__ == '__main__':
     c = FullConversationIntegrationTests()
-    c.live_mode = settings.DEMO_MODE
+    c.live_mode = False
     c.play_recording(index=0, natural=False)

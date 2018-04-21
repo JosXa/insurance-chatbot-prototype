@@ -97,8 +97,9 @@ class FacebookClient(BotAPIClient):
                 if action.show_typing:
                     self.show_typing(user_id)
                 if action.delay:
+                    delay = action.delay.value if isinstance(action.delay, ChatAction.Delay) else action.delay
                     # Facebook bots are very slow, shorten timeout
-                    time.sleep(action.delay.value * 0.3)
+                    time.sleep(delay * 0.3)
 
                 quick_replies = None
                 if action.action_type == ChatAction.Type.ASKING_QUESTION:
