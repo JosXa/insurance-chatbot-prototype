@@ -135,7 +135,7 @@ class PlanningAgent(IPlanningAgent):
                 next_state = no_rule_found(composer, context)
 
         if isinstance(next_state, ResponseComposer):
-            # Lambdas return the senctence composer, which we don't need (call by reference)
+            # Lambdas return the sentence composer, which we don't need (call by reference)
             next_state = None
 
         if next_state is not None:

@@ -4,6 +4,7 @@ import pathlib
 
 from decouple import config
 
+DEMO_MODE = config('DEMO_MODE', cast=bool, default=False)
 PORT = config('PORT', cast=int, default=5000)
 APP_URL = 'https://bachelor-thesis.herokuapp.com/'
 DEBUG_MODE = config('DEBUG', cast=bool, default=False)
@@ -29,3 +30,6 @@ template = json.load(open(_root_dir / "google-service-template.json", 'r'))
 template["private_key"] = GOOGLE_SERVICE_ACCOUNT_KEY
 json.dump(template, open(google_service_account_file, 'w+'))
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = str(google_service_account_file)
+
+# Whether to remove the ForceReply markup in Telegram for any non-keyboard message (useful for demo)
+ALWAYS_REMOVE_MARKUP = DEMO_MODE

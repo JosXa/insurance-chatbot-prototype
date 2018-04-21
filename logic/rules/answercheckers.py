@@ -37,10 +37,10 @@ def _check_time(r, c, answer: datetime.datetime):
 
 
 def date_and_time(r, c, q):
-    answer = c.last_user_utterance.text
+    answer = c.last_user_utterance.text.lower()
 
     try:
-        answer = answer.replace(" Uhr", ":00")
+        answer = answer.replace(" uhr", ":00")
 
         result = dateparser.parse(answer, languages=['de'])
         if result:

@@ -10,5 +10,5 @@ scope_of_bot:
 what_you_can_say:
   "{{'Schreib' if informal else 'Schreiben Sie'}} mir z.B. \"Mein Handy hat
   einen Displayschaden\" ({{'du kannst' if informal else 'Sie können'}}
-  auch eine Sprachnachricht aufnehmen), wenn {{'du' if informal else 'Sie'}}
+  auch eine Sprachnachricht senden), wenn {{'du' if informal else 'Sie'}}
   einen Schaden aufnehmen {{'möchtest' if informal else 'möchten'}}."

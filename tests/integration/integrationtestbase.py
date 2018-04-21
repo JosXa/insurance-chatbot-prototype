@@ -109,7 +109,7 @@ class IntegrationTestBase(object):
         if settings.NO_DELAYS:
             sleep_time = 0.8
         else:
-            sleep_time = ChatAction.Delay.VERY_LONG.value + (0.5 if self.live_mode else 2.0)
+            sleep_time = ChatAction.Delay.VERY_LONG.value + (0.3 if self.live_mode else 0.8)
         last_msg = self._last_response
 
         print("sleeping", sleep_time)

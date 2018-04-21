@@ -13,11 +13,11 @@ from telegram import *
 from telegram import ChatAction as TelegramChatAction, Update as TelegramUpdate
 from telegram.ext import CommandHandler, Filters, MessageHandler, Updater
 
+import settings
 import util
 from clients.botapiclients import BotAPIClient
 from core import ChatAction
 from corpus.media import get_file_by_media_id
-from logic.responsecomposer import NOT_SET
 from model import User
 from model.update import Update
 
@@ -89,7 +89,7 @@ class TelegramClient(BotAPIClient):
             if action.show_typing:
                 self.bot.send_chat_action(action.peer.telegram_id, TelegramChatAction.TYPING, timeout=20)
             if action.delay:
-                time.sleep(action.delay.value if action.delay != NOT_SET else 1)
+                time.sleep(action.delay.value)
 
             markup = None
             if action.action_type == ChatAction.Type.ASKING_QUESTION:
@@ -108,8 +108,8 @@ class TelegramClient(BotAPIClient):
                 self.send_media(action.peer, action.media_id, action.render())
                 continue
 
-            # if markup is None:
-            #     markup = ReplyKeyboardRemove()
+            if markup is None and settings.ALWAYS_REMOVE_MARKUP:
+                markup = ReplyKeyboardRemove()
 
             text = action.render()
             self.send_message(peer=action.peer, text=text, markup=markup)

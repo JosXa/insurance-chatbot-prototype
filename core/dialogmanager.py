@@ -1,6 +1,7 @@
 import os
 from typing import List
 
+import time
 from logzero import logger as log
 
 import settings
@@ -9,11 +10,13 @@ from clients.botapiclients import BotAPIClient
 from clients.nluclients import NLUEngine
 from clients.supportchannel import SupportChannel
 from clients.voice import VoiceRecognitionClient
+from core import ChatAction
 from core.context import ContextManager
 from core.planningagent import IPlanningAgent
 from core.recorder import ConversationRecorder
 from core.understanding import MessageUnderstanding
 from logic.intents import MEDIA_INTENT
+from logic.responsecomposer import NOT_SET
 from model import Update
 
 
@@ -108,6 +111,14 @@ class DialogManager:
             # No message delays while debugging
             for a in actions:
                 a.delay = None
+
+        # Assign default value if no delay was set
+        for a in actions:
+            if a.delay is NOT_SET:
+                a.delay = ChatAction.Delay.MEDIUM
+
+        if settings.DEMO_MODE:
+            time.sleep(2.3)
 
         try:
             bot.perform_actions(actions)

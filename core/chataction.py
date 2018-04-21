@@ -21,10 +21,10 @@ class ChatAction:
         SENDING_MEDIA = 2
 
     class Delay(Enum):
-        SHORT = 1.3
-        MEDIUM = 1.6
-        LONG = 1.9
-        VERY_LONG = 3.0
+        SHORT = 1.6
+        MEDIUM = 1.9
+        LONG = 2.1
+        VERY_LONG = 2.3
 
     def __init__(self,
                  action_type: Type,

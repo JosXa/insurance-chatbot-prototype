@@ -54,7 +54,7 @@ RULES = {
         ],
         States.ASKING_QUESTION: [
             IntentHandler(clarify, intents=REQUEST_HELP),
-            IntentHandler(wait_for_user, intents='smalltalk.user.will_be_back'),
+            IntentHandler(wait_for_user, intents=['smalltalk.user.will_be_back', 'smalltalk.user.back']),
             IntentHandler(static_smalltalk_response, intents='smalltalk.appraisal.thank_you'),
             IntentHandler(send_example, intents='example'),
             IntentHandler(skip_question, intents='skip'),

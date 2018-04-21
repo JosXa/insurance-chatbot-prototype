@@ -1,6 +1,6 @@
 from functools import wraps
 
-from core import Context
+from core import Context, ChatAction
 from logic.intents import FEELING_INTENTS
 from logic.responsecomposer import ResponseComposer
 from logic.rules.progresstracker import get_progress, progress
@@ -73,7 +73,7 @@ def change_topic(r, c):
         return
 
     intent, return_value = question
-    r.then_ask(intent)
+    r.then_ask(intent, delay=ChatAction.Delay.MEDIUM)
     asked_questions.add(intent)
     return return_value
 

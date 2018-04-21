@@ -19,7 +19,7 @@ class FullConversationIntegrationTests(IntegrationTestBase):
 
     def play_recording(self, index=0, natural=False):
         print("Sending /reset to restart and reset the bot")
-        self.send_message_get_response("/reset", timeout=8 if self.live_mode else 4, raise_=False)
+        self.send_message_get_response("/reset", timeout=7, raise_=False)
         self.delete_history()
 
         filepath = self._get_latest_recording(index)
@@ -36,6 +36,8 @@ class FullConversationIntegrationTests(IntegrationTestBase):
                     sl = random.randint(20, 40) / 10
                     print(f"Sleeping for {sl}")
                     time.sleep(sl)
+                if settings.DEMO_MODE:
+                    time.sleep(1.5)
                 print(f'User says: "{text}"...', end=' ', flush=True)
                 reply_to = response.message_id if was_force_reply else None
 
@@ -50,5 +52,5 @@ class FullConversationIntegrationTests(IntegrationTestBase):
 
 if __name__ == '__main__':
     c = FullConversationIntegrationTests()
-    c.live_mode = True
+    c.live_mode = settings.DEMO_MODE
     c.play_recording(index=0, natural=False)
