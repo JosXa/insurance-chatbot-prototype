@@ -18,10 +18,6 @@ from corpus.media import get_file_by_media_id
 from logic.planning import PlanningAgent
 from logic.rules.dialogcontroller import application_router
 
-if not os.path.exists('tmp'):
-    os.makedirs('tmp')
-
-
 def main():
     app = Flask(__name__)
 

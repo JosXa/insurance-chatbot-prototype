@@ -22,7 +22,8 @@ SUPPORT_CHANNEL_ID = -1001265422831
 GOOGLE_SERVICE_ACCOUNT_KEY = config('GOOGLE_SERVICE_ACCOUNT_KEY').replace("\\n", "\n")
 # Insert google private key into a template of the json configuration and add it to environment vars
 _root_dir = pathlib.Path(os.path.dirname(os.path.abspath(__file__)))
-print(_root_dir)
+if not os.path.exists('tmp'):
+    os.makedirs('tmp')
 google_service_account_file = _root_dir / 'tmp' / 'service-account-file.json'
 template = json.load(open(_root_dir / "google-service-template.json", 'r'))
 template["private_key"] = GOOGLE_SERVICE_ACCOUNT_KEY
