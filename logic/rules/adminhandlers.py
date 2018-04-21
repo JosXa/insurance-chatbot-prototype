@@ -21,23 +21,18 @@ def restart_system(r, c: Context):
     os.execl(sys.executable, sys.executable, *sys.argv)
 
 
-def reset_database(r, c: Context, all=False):
-    if c.get("reset") is not None:
-        r.say("system reset", parameters={"n_reset": c.get("reset")})
-        c["reset"] = None
-        raise StopPropagation
+def reset_database(r, c: Context, for_all=False):
+    log.info("Resetting")
 
-    if all and c.user.telegram_id != 62056065:
+    if for_all and c.user.telegram_id != 62056065:
         return r.say("no permission")
 
-    users = None if all else [c.user]
+    users = None if for_all else [c.user]
     log.warning(f"Resetting and restarting for {'all' if all else [str(u) for u in users]}...")
 
     migrate.clear_redis(users)
-    n_reset = migrate.reset_answers(users)
-    c.reset_all()
-
-    c["reset"] = n_reset
+    migrate.reset_answers(users)
+    restart_system(r, c)
 
     raise ForceReevaluation
 

@@ -1,19 +1,46 @@
 import logging
 import time
+from datetime import datetime, timedelta
+from pprint import pprint
 
 import logzero
 from telethon import TelegramClient, events
+from telethon.events import NewMessage
 from telethon.tl.functions.messages import DeleteHistoryRequest
+from telethon.tl.types import ReplyKeyboardForceReply
 
 import settings
 from core import ChatAction
+from util import paginate
 
 logzero.setup_logger('telethon').setLevel(level=logging.WARNING)
 
 
 class Response:
-    def __init__(self, text):
+    def __init__(self, text, message_id, is_force_reply, buttons=None):
         self.text = text
+        self.message_id = message_id
+        self.is_force_reply = is_force_reply
+        self.buttons = buttons or []
+
+    @classmethod
+    def from_event(cls, event: NewMessage.Event):
+        markup = event.message.reply_markup
+        force_reply = isinstance(markup, ReplyKeyboardForceReply)
+
+        buttons = None
+        if markup:
+            if hasattr(markup, 'rows'):
+                buttons = [x.text for x in markup.rows[0].buttons]
+        if buttons:
+            pprint(buttons)
+
+        return cls(
+            text=event.message.message,
+            message_id=event.message.id,
+            is_force_reply=force_reply,
+            buttons=buttons
+        )
 
 
 class NoResponseReceived(Exception):
@@ -48,37 +75,51 @@ class IntegrationTestBase(object):
     def disconnect(self):
         self.client.disconnect()
 
-    def event_handler(self, event: events.NewMessage.Event):
-        self._last_response = Response(text=event.text)
+    def event_handler(self, event):
+        self._last_response = Response.from_event(event)
 
-    def delete_history(self, max_id=None):
-        self.client(DeleteHistoryRequest(self._peer, max_id or 2147483647))
+    def delete_history(self, max_id=None, full=False):
+        if full:
+            self.client(DeleteHistoryRequest(self._peer, max_id or 2147483647))
+        else:
 
-    def send_message_get_response(self, text) -> Response:
+            for m in paginate(self.client.iter_messages(self._peer, limit=10000), 100):
+                self.client.delete_messages(self._peer, m)
+
+    def send_message_get_response(self, text, timeout=10, raise_=True, **kwargs) -> Response:
+        """
+        Sends a message to the bot and waits for the response.
+        :param text: Message to send
+        :param timeout: Timout in seconds
+        :return:
+        """
         self._last_response = None
 
-        self.client.send_message(self._peer, text)
+        self.client.send_message(self._peer, text, **kwargs)
 
-        timeout = 10  # seconds
-        count = 0
+        end = datetime.now() + timedelta(seconds=timeout)
         while self._last_response is None:
-            if count >= timeout:
-                raise NoResponseReceived()
+            if datetime.now() > end:
+                if raise_:
+                    raise NoResponseReceived()
+                return
             time.sleep(0.4)
 
         # response received - wait a bit to see if the bot keeps sending messages
         if settings.NO_DELAYS:
-            max_sleep_time = 0.8
+            sleep_time = 0.8
         else:
-            max_sleep_time = ChatAction.Delay.VERY_LONG.value + 0.3
+            sleep_time = ChatAction.Delay.VERY_LONG.value + 1.5
         last_msg = self._last_response
-        parts = [last_msg.text]
 
-        time.sleep(max_sleep_time)
+        print("sleeping", sleep_time)
+        time.sleep(sleep_time)
         while self._last_response != last_msg:
+            print("waiting consecutive")
             last_msg = self._last_response
-            parts.append(last_msg.text)
-            time.sleep(max_sleep_time)
+            time.sleep(sleep_time)
 
         del self._last_response
-        return Response(', then '.join(f'"{x}"' for x in parts))
+
+        # Only the last response matters
+        return last_msg

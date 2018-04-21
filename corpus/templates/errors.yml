@@ -32,3 +32,4 @@ please_send_media:
   choices:
     - "Bitte {{'Senden Sie' if formal else 'sende'}} ein Foto, Video oder
     Dokument mit den geforderten Informationen"
+

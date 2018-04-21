@@ -18,6 +18,7 @@ from corpus.media import get_file_by_media_id
 from logic.planning import PlanningAgent
 from logic.rules.dialogcontroller import application_router
 
+
 def main():
     app = Flask(__name__)
 

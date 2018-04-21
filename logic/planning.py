@@ -76,6 +76,9 @@ class PlanningAgent(IPlanningAgent):
     def build_next_actions(self, context: Context) -> Union[ResponseComposer, None]:
         u = context.last_user_utterance
 
+        if u is None:
+            return
+
         composer = self._create_composer(context)
 
         text = f'"{u.text[:50]}"' if u.text else ''

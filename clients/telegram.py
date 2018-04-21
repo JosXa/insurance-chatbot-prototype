@@ -107,6 +107,9 @@ class TelegramClient(BotAPIClient):
                 self.send_media(action.peer, action.media_id, action.render())
                 continue
 
+            # if markup is None:
+            #     markup = ReplyKeyboardRemove()
+
             text = action.render()
             self.send_message(peer=action.peer, text=text, markup=markup)
 

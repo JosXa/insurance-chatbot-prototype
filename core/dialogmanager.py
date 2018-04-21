@@ -95,6 +95,8 @@ class DialogManager:
             except ForceReevaluation:
                 # Some handlers require to reevaluate the template parameters (only once)
                 next_response = self.planning_agent.build_next_actions(context)
+            if next_response is None:
+                return
             actions = next_response.collect_actions()
         finally:
             context.dialog_states.update_step()

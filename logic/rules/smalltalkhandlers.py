@@ -42,11 +42,15 @@ def change_topic_on_threshold(func):
 # TODO: add argument instead of an own decorator to control the checker-callback
 @progress("smalltalk")
 @change_topic_on_threshold
-def static_smalltalk_response(cp, ctx):
+def static_smalltalk_response(r, c):
     # This is called when no specific smalltalk handler is set up
     # We take the response from the sentence bank
-    intent = ctx.last_user_utterance.intent
-    cp.say(intent)
+    intent = c.last_user_utterance.intent
+    r.say(intent)
+
+
+def wait_for_user(r, c):
+    r.say("ok waiting")
 
 
 def fallback_smalltalk(r, c):

@@ -44,3 +44,9 @@ is_that_correct:
 
 claim_aborted:
   "In Ordnung. {{'Sagen Sie' if formal else 'Sag'}} dann Bescheid wenn {{'Sie mich wieder brauchen' if formal else 'du mich wieder brauchst'}} 😉"
+
+ok_waiting:
+  choices:
+    - "Klar, {{'Nehmen Sie sich' if formal else 'nimm dir'}} Zeit 😇"
+    - "Okay, ich warte"
+    - "Alles klar, bis gleich"

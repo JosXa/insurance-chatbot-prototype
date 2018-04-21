@@ -8,9 +8,10 @@ from logzero import logger as log
 from mock import Mock
 
 import util
-from core import MessageUnderstanding, States
+from core import MessageUnderstanding, States, Context
 from core.dialogstates import DialogStates
-from logic.rules.controller import Context, SentenceComposer, application_router
+from logic.responsecomposer import ResponseComposer
+from logic.rules.dialogcontroller import application_router
 from model import User
 
 log.setLevel(logging.INFO)
@@ -87,7 +88,7 @@ def context_mock(state, u):
 
 
 def composer_mock():
-    return Mock(SentenceComposer)
+    return Mock(ResponseComposer)
 
 
 def user_mock():

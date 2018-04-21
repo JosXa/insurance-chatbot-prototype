@@ -274,8 +274,8 @@ class Context(collections.MutableMapping):
         return (all_questionnaires.index(self._current_questionnaire) / len(all_questionnaires)) + (
                 self.questionnaire_completion_ratio / len(all_questionnaires))
 
-    def reset_all(self):
-        self._init_collections()
+    # def reset_all(self):
+    #     self._init_collections()
 
     def __setitem__(self, key, value):
         self._value_store[key] = value

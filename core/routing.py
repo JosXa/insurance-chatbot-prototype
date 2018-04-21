@@ -1,6 +1,5 @@
 import re
 from abc import ABCMeta, abstractmethod
-from pprint import pprint
 from typing import Callable
 
 from core import MessageUnderstanding, States
