@@ -19,7 +19,7 @@ class FullConversationIntegrationTests(IntegrationTestBase):
 
     def play_recording(self, index=0, natural=False):
         print("Sending /reset to restart and reset the bot")
-        self.send_message_get_response("/reset", timeout=6, raise_=False)
+        self.send_message_get_response("/reset", timeout=8 if self.live_mode else 4, raise_=False)
         self.delete_history()
 
         filepath = self._get_latest_recording(index)
@@ -50,5 +50,5 @@ class FullConversationIntegrationTests(IntegrationTestBase):
 
 if __name__ == '__main__':
     c = FullConversationIntegrationTests()
-    c.live_mode = False
+    c.live_mode = True
     c.play_recording(index=0, natural=False)

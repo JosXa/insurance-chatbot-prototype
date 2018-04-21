@@ -21,7 +21,7 @@ oh_no_user_sad:
 
 glad_to_see_user_happy:
   choices:
-    - "Freut mich zu sehen, dass {{'Ihnen' if formal else 'dir'}} das gefällt 😉"
+    - "Freut mich, dass {{'Ihnen' if formal else 'dir'}} das gefällt 😉"
     - "Ah, das gefällt {{'Ihnen' if formal else 'dir'}}? 😊"
     - "❤️🤗"  # emojis
 
