@@ -111,7 +111,7 @@ class FacebookClient(BotAPIClient):
                             ) for x in action.choices[:10]]
                 elif action.action_type == ChatAction.Type.SENDING_MEDIA:
                     self.send_media(action.peer, action.media_id, caption=action.render())
-                    return
+                    continue
 
                 self._page.send(
                     recipient_id=user_id,
