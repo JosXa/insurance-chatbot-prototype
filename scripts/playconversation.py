@@ -1,6 +1,7 @@
 import os
 import time
 
+import settings
 import util
 from tests.integration.integrationtestbase import IntegrationTestBase
 
@@ -35,8 +36,12 @@ class FullConversationIntegrationTests(IntegrationTestBase):
                 print(f'User says: "{text}"...', end=' ', flush=True)
                 reply_to = response.message_id if was_force_reply else None
 
-                time.sleep(util.calculate_natural_delay(text) + util.calculate_natural_delay(response.text) if
-                           response else 0.5)
+                delay = util.calculate_natural_delay(text) + util.calculate_natural_delay(
+                    response.text) if response else 0.5
+                if settings.LIVE_DEMO_MODE:
+                    delay += 0.8  # make sure we don't interrupt the bot
+
+                time.sleep(delay)
 
                 response = self.send_message_get_response(text, reply_to=reply_to)
 
