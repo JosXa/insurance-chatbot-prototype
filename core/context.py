@@ -289,7 +289,7 @@ class Context(collections.MutableMapping):
             self._sync_utterances()
 
         num_reset = UserAnswers.reset_answers(self.user)
-        self._answered_question_ids = []
+        self._answered_question_ids = set()
         self._update_question_context()
         # self.__last_user_utterance = None  # type: MessageUnderstanding
         return num_reset
