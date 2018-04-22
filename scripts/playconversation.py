@@ -40,6 +40,8 @@ class FullConversationIntegrationTests(IntegrationTestBase):
                     response.text) if response else 0.5
                 if settings.LIVE_DEMO_MODE:
                     delay += 0.8  # make sure we don't interrupt the bot
+                delay = min(delay, 5)
+                print("Sleeping for ", delay)
 
                 time.sleep(delay)
 
