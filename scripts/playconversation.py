@@ -1,8 +1,6 @@
 import os
-import random
 import time
 
-import settings
 import util
 from tests.integration.integrationtestbase import IntegrationTestBase
 
@@ -11,7 +9,8 @@ RECORDING_PATH = 'valid-recordings'
 
 class FullConversationIntegrationTests(IntegrationTestBase):
 
-    def _get_latest_recording(self, index=0):
+    @staticmethod
+    def _get_latest_recording(index=0):
         files = os.listdir(RECORDING_PATH)
         idx = - (index + 1)
         print(files[idx])
@@ -19,7 +18,7 @@ class FullConversationIntegrationTests(IntegrationTestBase):
 
     def play_recording(self, index=0):
         print("Sending /reset to restart and reset the bot")
-        self.send_message_get_response("/reset", timeout=7, raise_=False)
+        self.send_message_get_response("/reset", timeout=20, raise_=False)
         self.delete_history()
 
         recording_file = self._get_latest_recording(index)

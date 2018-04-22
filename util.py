@@ -64,5 +64,5 @@ def paginate(iterable, page_size):
 def calculate_natural_delay(message_text: str):
     from core import ChatAction
     msg_len = len(message_text)
-    human_delay = min(ChatAction.Delay.VERY_LONG.value, (msg_len * 0.03 + 0.35))
+    human_delay = min(ChatAction.Delay.VERY_LONG.value, (msg_len * 0.03 + 0.3))
     return human_delay

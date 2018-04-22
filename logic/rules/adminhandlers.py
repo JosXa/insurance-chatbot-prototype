@@ -13,8 +13,12 @@ from core.dialogmanager import ForceReevaluation, StopPropagation
 from model import User, UserAnswers
 
 
+def is_admin(u: User):
+    return u.telegram_id == 62056065 or u.facebook_id == 1841418505898164
+
+
 def restart_system(r, c: Context):
-    if c.user.telegram_id != 62056065:
+    if not is_admin(c.user):
         return r.say("no permission")
     log.warning("Restarting...")
     time.sleep(0.2)
@@ -28,7 +32,7 @@ def reset_database(r, c: Context, for_all=False):
         c["reset"] = None
         raise StopPropagation
 
-    if for_all and c.user.telegram_id != 62056065:
+    if for_all and not is_admin(c.user):
         return r.say("no permission")
 
     users = None if for_all else [c.user]
