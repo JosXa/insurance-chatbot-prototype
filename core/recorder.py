@@ -26,7 +26,7 @@ class ConversationRecorder:
 
     # Time of inactivity where the user does not say anything. When the duration has passed, publish the generated
     # conversation.yml to a support channel.
-    CLOSING_TIMEFRAME = datetime.timedelta(minutes=3)
+    CLOSING_TIMEFRAME = datetime.timedelta(minutes=2, seconds=30)
 
     # Whether to publish only the updated conversation when the user responds after the `CLOSING_TIMEFRAME` has passed
     RESET_AFTER_PUBLISHING = False
