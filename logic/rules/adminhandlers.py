@@ -14,8 +14,8 @@ from model import User, UserAnswers
 
 
 def restart_system(r, c: Context):
-    if c.user.telegram_id != 62056065:
-        return r.say("no permission")
+    # if c.user.telegram_id != 62056065:
+    #     return r.say("no permission")
     log.warning("Restarting...")
     time.sleep(0.2)
     os.execl(sys.executable, sys.executable, *sys.argv)
@@ -32,9 +32,7 @@ def reset_database(r, c: Context, for_all=False):
 
     migrate.clear_redis(users)
     migrate.reset_answers(users)
-    restart_system(r, c)
-
-    raise ForceReevaluation
+    return restart_system(r, c)
 
 
 def send_questionnaires(r, c: Context):
