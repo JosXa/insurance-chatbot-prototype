@@ -39,6 +39,7 @@ chat_on:
 
 now_you_know:
   choices:
+    - "Interessant, nicht wahr?"
     - "Jetzt {{'sind Sie' if formal else 'bist du'}} ein kleines bisschen klüger 😏"
     - "Jetzt {{'wissen Sie' if formal else 'weißt du'}} es 😏"
 
