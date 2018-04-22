@@ -52,6 +52,7 @@ class Context(collections.MutableMapping):
 
         self._redis = redis
         self._initial_state = initial_state
+
         self._init_collections()
 
         # Utterances are synced with the redis database every couple of seconds, as opposed to immediately.
@@ -274,8 +275,21 @@ class Context(collections.MutableMapping):
         return (all_questionnaires.index(self._current_questionnaire) / len(all_questionnaires)) + (
                 self.questionnaire_completion_ratio / len(all_questionnaires))
 
-    # def reset_all(self):
-    #     self._init_collections()
+    def reset_all(self):
+        self.dialog_states.reset()
+
+        self._utterances.clear()
+        self._value_store.clear()
+        if self._redis:
+            self._utterances.sync()
+            self._sync_utterances()
+
+        self._answered_question_ids = UserAnswers.get_answered_question_ids(self.user)
+        self._current_question = None  # type: Question
+        self._current_questionnaire = None  # type: Questionnaire
+        self._all_done = False  # type: bool
+        self._update_question_context()
+        # self.__last_user_utterance = None  # type: MessageUnderstanding
 
     def __setitem__(self, key, value):
         self._value_store[key] = value

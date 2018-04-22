@@ -35,9 +35,19 @@ class DialogStates(object):
         else:
             self._states_queue = []  # type: List[_StateLifetime]
 
+        self.initial_state = initial_state
+        self._init_states()
+
+    def reset(self):
+        self._states_queue.clear()
+        self._init_states()
+        if isinstance(self._states_queue, SyncableList):
+            self._states_queue.sync()
+
+    def _init_states(self):
         # There should always be a fallback state with infinite lifetime
         if not any(x.lifetime == INFINITE_LIFETIME for x in self._states_queue):
-            self._states_queue.append(_StateLifetime(initial_state, INFINITE_LIFETIME))
+            self._states_queue.append(_StateLifetime(self.initial_state, INFINITE_LIFETIME))
 
     def put(self, new_state: Union[Tuple, str]):
         """
