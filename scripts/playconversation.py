@@ -17,6 +17,7 @@ class FullConversationIntegrationTests(IntegrationTestBase):
         print(files[idx])
         return os.path.join(RECORDING_PATH, files[idx])
 
+    @util.timing
     def play_recording(self, index=0):
         print("Sending /reset to restart and reset the bot")
         self.send_message_get_response("/reset", timeout=20, raise_=False)

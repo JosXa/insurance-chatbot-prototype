@@ -27,6 +27,10 @@ class UserAnswers(BaseModel):
             UserAnswers.user == user,
         )}
 
+    @classmethod
+    def reset_answers(cls, user: User) -> int:
+        return UserAnswers.delete().where(UserAnswers.user == user).execute()
+
     @staticmethod
     def add_answer(user: User, question_id: str, answer: str):
         return UserAnswers.create(

@@ -38,11 +38,8 @@ def reset_database(r, c: Context, for_all=False):
     users = None if for_all else [c.user]
     log.warning(f"Resetting and restarting for {'all' if all else [str(u) for u in users]}...")
 
-    # First reset answers, then context
-    n_reset = migrate.reset_answers(users)
-    # migrate.clear_redis(users)
-    c.reset_all()
-
+    # Reset the whole context (including UserAnswers)
+    n_reset = c.reset_all()
     c["reset"] = n_reset
 
     raise ForceReevaluation

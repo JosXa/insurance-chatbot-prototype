@@ -267,15 +267,19 @@ class Context(collections.MutableMapping):
     @property
     def questionnaire_completion_ratio(self):
         """ Returns a ratio of how many questions in the current questionnaire have been answered. """
+        if self._all_done:
+            return 1.0
         return self._current_questionnaire.completion_ratio(self._answered_question_ids)
 
     @property
     def overall_completion_ratio(self):
         """ Returns a ratio of how many questions have been answered divided by the total number of questions. """
+        if self._all_done:
+            return 1.0
         return (all_questionnaires.index(self._current_questionnaire) / len(all_questionnaires)) + (
                 self.questionnaire_completion_ratio / len(all_questionnaires))
 
-    def reset_all(self):
+    def reset_all(self) -> int:
         self.dialog_states.reset()
 
         self._utterances.clear()
@@ -284,12 +288,11 @@ class Context(collections.MutableMapping):
             self._utterances.sync()
             self._sync_utterances()
 
-        self._answered_question_ids = UserAnswers.get_answered_question_ids(self.user)
-        self._current_question = None  # type: Question
-        self._current_questionnaire = None  # type: Questionnaire
-        self._all_done = False  # type: bool
+        num_reset = UserAnswers.reset_answers(self.user)
+        self._answered_question_ids = []
         self._update_question_context()
         # self.__last_user_utterance = None  # type: MessageUnderstanding
+        return num_reset
 
     def __setitem__(self, key, value):
         self._value_store[key] = value
