@@ -53,5 +53,5 @@ class FullConversationIntegrationTests(IntegrationTestBase):
 
 if __name__ == '__main__':
     c = FullConversationIntegrationTests()
-    c.live_mode = False
+    c.live_mode = True
     c.play_recording(index=0, natural=False)

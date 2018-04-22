@@ -1,14 +1,12 @@
 import random
 import re
-from pprint import pprint
 
-from core import Context, States, ChatAction
+from core import ChatAction, Context, States
 from core.dialogmanager import ForceReevaluation
 from logic.responsecomposer import ResponseComposer
 from logic.rules import answercheckers
 from logic.rules.smalltalkhandlers import change_topic
 from model import UserAnswers
-from logzero import logger as log
 
 
 def chance(value: float) -> bool:
