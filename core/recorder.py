@@ -9,6 +9,7 @@ from typing import List
 from logzero import logger as log
 from ruamel.yaml.comments import CommentedMap
 
+import settings
 import util
 from clients.supportchannel import SupportChannel
 from core import ChatAction
@@ -26,7 +27,11 @@ class ConversationRecorder:
 
     # Time of inactivity where the user does not say anything. When the duration has passed, publish the generated
     # conversation.yml to a support channel.
-    CLOSING_TIMEFRAME = datetime.timedelta(minutes=2, seconds=30)
+    CLOSING_TIMEFRAME = datetime.timedelta(
+        minutes=1, seconds=10
+    ) if settings.LIVE_DEMO_MODE else datetime.timedelta(
+        minutes=2, seconds=30
+    )
 
     # Whether to publish only the updated conversation when the user responds after the `CLOSING_TIMEFRAME` has passed
     RESET_AFTER_PUBLISHING = False
