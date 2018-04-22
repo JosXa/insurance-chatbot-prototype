@@ -17,13 +17,13 @@ class FullConversationIntegrationTests(IntegrationTestBase):
         print(files[idx])
         return os.path.join(RECORDING_PATH, files[idx])
 
-    def play_recording(self, index=0, natural=False):
+    def play_recording(self, index=0):
         print("Sending /reset to restart and reset the bot")
         self.send_message_get_response("/reset", timeout=7, raise_=False)
         self.delete_history()
 
-        filepath = self._get_latest_recording(index)
-        rec = util.load_yaml_as_dict(filepath)
+        recording_file = self._get_latest_recording(index)
+        rec = util.load_yaml_as_dict(recording_file)
 
         try:
             was_force_reply = False
@@ -32,15 +32,12 @@ class FullConversationIntegrationTests(IntegrationTestBase):
                 text = r['user_says']
                 if not text or text in ("", " "):
                     continue
-                if natural and not settings.NO_DELAYS:
-                    sl = random.randint(20, 40) / 10
-                    print(f"Sleeping for {sl}")
-                    time.sleep(sl)
-
-                time.sleep(util.calculate_natural_delay(text))
 
                 print(f'User says: "{text}"...', end=' ', flush=True)
                 reply_to = response.message_id if was_force_reply else None
+
+                time.sleep(util.calculate_natural_delay(text) + util.calculate_natural_delay(response.text) if
+                           response else 0.5)
 
                 response = self.send_message_get_response(text, reply_to=reply_to)
 
@@ -48,10 +45,10 @@ class FullConversationIntegrationTests(IntegrationTestBase):
                 print(f'Bot answers: {response.text}')
         finally:
             self.disconnect()
-        return filepath
+        return recording_file
 
 
 if __name__ == '__main__':
     c = FullConversationIntegrationTests()
     c.live_mode = True
-    c.play_recording(index=0, natural=False)
+    c.play_recording(index=0)

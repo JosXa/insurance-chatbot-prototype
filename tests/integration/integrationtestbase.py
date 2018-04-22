@@ -86,7 +86,7 @@ class IntegrationTestBase(object):
             for m in paginate(self.client.iter_messages(self._peer, limit=10000), 100):
                 self.client.delete_messages(self._peer, m)
 
-    def send_message_get_response(self, text, timeout=10, raise_=True, **kwargs) -> Response:
+    def send_message_get_response(self, text, timeout=20, raise_=True, **kwargs) -> Response:
         """
         Sends a message to the bot and waits for the response.
         :param text: Message to send
