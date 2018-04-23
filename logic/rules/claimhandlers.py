@@ -66,13 +66,13 @@ def start_claim(r, c: Context):
     return States.ASKING_QUESTION
 
 
-def user_no_claim(r, c: Context):
+def user_no_claim(r: ResponseComposer, c: Context):
     c['user_no_claim'] = True
     r.say('pity_no_claim', 'chat on')
     return States.SMALLTALK
 
 
-def send_example(r, c):
+def send_example(r: ResponseComposer, c: Context):
     r.give_example(c.current_question)
 
 
@@ -85,6 +85,7 @@ def clarify(r: ResponseComposer, c: Context):
     if c.has_outgoing_intent('give_hint', age_limit=2):
         should_send_example = True
     else:
+        # Renders hint from `questionnaires.yml`
         r.give_hint(c.current_question)
 
     if should_send_example:
@@ -186,16 +187,17 @@ def repeat_question(r, c):
 
 
 def skip_question(r, c):
-    if c.current_question.is_required:
-        r.say("sorry", "but", "cannot skip this question")
-        r.ask("continue anyway", choices=("affirm_yes", "negate_no"))
-        return "ask_continue_despite_no_skipping", 1
-    else:
+    if not c.current_question.is_required:
         if not c.current_question.id == 'remarks':
             r.say("skip this question", parameters={'question': c.current_question})
 
+        # Set `NO_ANSWER` flag
         c.add_answer_to_question(c.current_question, UserAnswers.NO_ANSWER)
         return ask_next_question(r, c)
+    else:
+        r.say("sorry", "but", "cannot skip this question")
+        r.ask("continue anyway", choices=("affirm_yes", "negate_no"))
+        return "ask_continue_despite_no_skipping", 1
 
 
 def excuse_did_not_understand(r, c):

@@ -53,7 +53,7 @@ phone_details:
       match_regex: "([0-9+\\-\\s]{8,19})"
       hint: "die Telefonnummer, auf die {{'Ihr' if formal else 'dein'}} beschädigtes Gerät registriert ist."
       example: "\"Die Nummer lautet +49 1234 567 89\"."
-      required: no
+      required: yes
 
 damage_description:
   title: "Wir müssen nun erfassen, wie der Schaden zustande gekommen ist..."

@@ -37,8 +37,7 @@ class FullConversationIntegrationTests(IntegrationTestBase):
         time.sleep(1.5)
         self.delete_history()
 
-        self.set_draft("/start")  # TODO: remove in demo
-        self.wait_outgoing("/start")
+        self.wait_user_send("/start")
 
         try:
             was_force_reply = False

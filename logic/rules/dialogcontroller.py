@@ -21,9 +21,10 @@ smalltalk_handlers.append(IntentHandler(
     intents=static_response_intents
 ))
 
-# region  dialog-oriented
+# region Handler Rules
 
-RULES = {
+RULES = {  # blueprint for state machine
+
     "stateless": [  # always viable
         RegexHandler(restart_system, pattern=r'^/r$'),
         RegexHandler(lambda r, c: reset_database(r, c, for_all=True), pattern=r'^/resetall$'),
@@ -52,7 +53,7 @@ RULES = {
             NegationHandler(abort_claim),
             IntentHandler(abort_claim, intents='no_damage'),
         ],
-        States.ASKING_QUESTION: [
+        States.ASKING_QUESTION: [  # List of rules applicable in this state
             IntentHandler(clarify, intents=REQUEST_HELP),
             IntentHandler(wait_for_user, intents=['smalltalk.user.will_be_back', 'smalltalk.user.back']),
             IntentHandler(static_smalltalk_response, intents='smalltalk.appraisal.thank_you'),

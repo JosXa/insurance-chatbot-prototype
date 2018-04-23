@@ -43,11 +43,11 @@ def reset_all():
 
 if __name__ == '__main__':
     # reset_all()
-    user = User.select().where(
+    users = User.select().where(
         (User.facebook_id == 1841418505898164) |
         (User.telegram_id == 62056065)
     )  # joscha
-    # reset_answers([user])
-    # clear_redis()
-    for u in user:
-        print(u.id, u.telegram_id, u.facebook_id)
+    reset_answers([users])
+    clear_redis()
+    # for u in user:
+    #     print(u.id, u.telegram_id, u.facebook_id)
