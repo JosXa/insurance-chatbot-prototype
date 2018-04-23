@@ -18,7 +18,9 @@ def policy_nr(r, c, q):
     answer = c.last_user_utterance.text
     numbers = [x for x in answer if str.isdigit(x)]
     if not numbers:
-        return False
+        # allow some smalltalk here
+        from logic.rules import smalltalkhandlers
+        return smalltalkhandlers.static_smalltalk_response(r, c)
     return ''.join(numbers)
 
 

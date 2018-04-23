@@ -1,6 +1,6 @@
 from functools import wraps
 
-from core import Context, ChatAction
+from core import ChatAction, Context
 from logic.intents import FEELING_INTENTS
 from logic.responsecomposer import ResponseComposer
 from logic.rules.claimhandlers import chance
@@ -27,12 +27,14 @@ def change_topic_on_threshold(func):
         if not context.get('user_no_claim', False):
             if get_progress(context, "smalltalk") >= 2:
                 result = func(composer, context)
-                # First enter the next dialog state result (probably None anyway)
-                context.dialog_states.put(result)
 
                 if not context.get("claim_started", False):
+                    # First enter the next dialog state result (probably None anyway)
+                    context.dialog_states.put(result)
                     # Then return the next dialog state of the changed topic
                     return change_topic(composer, context)
+                else:
+                    return result
 
         wrapped.__name__ = func.__name__
         return func(composer, context)
