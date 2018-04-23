@@ -1,0 +1,274 @@
+---
+- time: 0
+  user_says: /start
+  intent: start
+  parameters:
+  new_states:
+  - ('asking', 'how_are_you')
+  - States.SMALLTALK
+  responses:
+  - hello
+  - how_are_you
+- time: 7
+  user_says: Oh ganz gut, danke der Nachfrage
+  intent: smalltalk.appraisal.thank_you
+  parameters:
+  new_states:
+  - States.SMALLTALK
+  responses:
+  - with_pleasure
+  - i_feel_good
+- time: 12
+  user_says: Du bist also kein Mensch?
+  intent: smalltalk.agent.chatbot
+  parameters:
+  new_states:
+  - ('asking', 'should_i_tell_a_joke')
+  - States.SMALLTALK
+  responses:
+  - smalltalk.agent.chatbot
+  - should_i_tell_a_joke
+- time: 20
+  user_says: Ja, klar 😄
+  intent: yes
+  parameters:
+    yes: ''
+    yes1: ''
+  new_states:
+  - told_joke
+  - States.SMALLTALK
+  responses:
+  - tell_a_joke
+- time: 24
+  user_says: Hahaha
+  intent: smalltalk.emotions.ha_ha
+  parameters:
+  new_states:
+  - explanation_given
+  - told_joke
+  - States.SMALLTALK
+  responses:
+  - smalltalk.emotions.ha_ha
+  - smartphone_damage_explanation
+- time: 38
+  user_says: Nein, wusste ich nicht
+  intent: skip
+  parameters:
+    no: Nein
+    feeling: ''
+    formal_address: ''
+    music-artist: ''
+  new_states:
+  - States.SMALLTALK
+  responses:
+  - now_you_know
+- time: 42
+  user_says: Was kannst du denn?
+  intent: what_can_you_do
+  parameters:
+    formal_address: yes
+    feeling: ''
+  new_states:
+  - explanation_given
+  - States.SMALLTALK
+  responses:
+  - what_i_can_do
+  - what_you_can_say
+- time: 50
+  user_says: Oh, das trifft sich gut. Mein Handy ist nämlich __in die Toilette gefallen__ und jetzt
+   kaputt...
+  intent: phone_broken
+  parameters:
+    damage_type:
+    - Wasserschaden
+    yes: ''
+  new_states:
+  - ask_to_start
+  - States.SMALLTALK
+  responses:
+  - sorry_for_broken_phone
+  - claim_damage
+  auto: no
+- time: 56
+  user_says: Ja
+  intent: yes
+  parameters:
+    yes: ''
+    yes1: ''
+  new_states:
+  - States.ASKING_QUESTION
+  responses:
+  - start_claim
+  - policy_nr
+  auto: no
+- time: 64
+  user_says: Wo finde ich die?
+  intent: clarify
+  parameters:
+    no: ''
+  new_states:
+  - States.ASKING_QUESTION
+  responses:
+  - give_hint
+- time: 68
+  user_says: ah, da muss ich mal kurz suchen
+  intent: smalltalk.user.back
+  parameters:
+  new_states:
+  - States.ASKING_QUESTION
+  responses:
+  - ok_waiting
+- time: 73
+  user_says: '18623'
+  intent: fallback
+  parameters:
+  new_states:
+  - user_confirming_answer
+  - States.ASKING_QUESTION
+  responses:
+  - confirm_answer
+  - is_that_correct
+- time: 77
+  user_says: Korrekt
+  intent: correct
+  parameters:
+  new_states:
+  - States.ASKING_QUESTION
+  responses:
+  - ok_thank_you
+  - name
+- time: 85
+  user_says: Klaus Musterfritz
+  intent: fallback
+  parameters:
+  new_states:
+  - States.ASKING_QUESTION
+  responses:
+  - ok_thank_you_ground_name
+  - questionnaire_finished
+  - phone_details
+  - model_identifier
+- time: 98
+  user_says: samsung galaxy
+  intent: fallback
+  parameters:
+  new_states:
+  - States.ASKING_QUESTION
+  responses:
+  - please_select_choice
+  auto: no
+- time: 102
+  user_says: SAMSUNG GALAXY S4
+  intent: fallback
+  parameters:
+  new_states:
+  - States.ASKING_QUESTION
+  responses:
+  - sc-04e
+  - ok_thank_you
+  - imei
+  auto: no
+- time: 114
+  user_says: äh, und was ist das?
+  intent: clarify
+  parameters:
+    no: ''
+  new_states:
+  - States.ASKING_QUESTION
+  responses:
+  - give_hint
+  auto: no
+- time: 125
+  user_says: Hast du mir ein Beispiel dafür?
+  intent: example
+  auto: no
+- time: 123
+  user_says: Ne, die hab ich nicht. Weiter bitte
+  intent: skip
+  parameters:
+    no: Ne
+    feeling: ''
+    formal_address: ''
+    music-artist: ''
+  new_states:
+  - States.ASKING_QUESTION
+  responses:
+  - skip_this_question
+  - phone_number
+  auto: no
+- time: 131
+  user_says: Hmm, muss ich das wirklich beantworten?
+  intent: skip
+  parameters:
+    no: ''
+    feeling: ''
+    formal_address: ''
+    music-artist: ''
+  new_states:
+  - States.ASKING_QUESTION
+  responses:
+  - skip_this_question
+  - date_and_time
+- time: 132
+  user_says: +49 172 8656 973
+  intent: phone_number
+  auto: no
+- time: 492
+  user_says: Gestern um 13 Uhr
+  intent: fallback
+  parameters:
+  new_states:
+  - user_confirming_answer
+  - States.ASKING_QUESTION
+  responses:
+  - confirm_answer
+  - is_that_correct
+  auto: no
+- time: 495
+  user_says: Sieht gut aus
+  intent: yes
+  parameters:
+    yes: ''
+    yes1: ''
+  new_states:
+  - States.ASKING_QUESTION
+  responses:
+  - ok_thank_you
+  - location
+- time: 508
+  user_says: An der Universität Stuttgart
+  intent: smalltalk.agent.make_sandwich
+  parameters:
+    geo-city: Stuttgart
+    time: ''
+  new_states:
+  - States.ASKING_QUESTION
+  responses:
+  - ok_thank_you
+  - cause_of_damage
+- time: 569
+  user_says: Nach der Vorlesung bin ich auf die Toilette gegangen und habe meine Meme-Sammlung
+    durchstöbert, dabei war eines leider so verdammt lustig dass mir vor lachen mein
+    Handy in die Toilette gefallen ist 😢
+  intent: fallback
+  parameters:
+  new_states:
+  - States.ASKING_QUESTION
+  responses:
+  - ok_thank_you
+  - questionnaire_finished
+  - additional_info
+  - remarks
+- time: 582
+  user_says: Nö
+  intent: skip
+  parameters:
+    no: ''
+    feeling: ''
+    formal_address: ''
+    music-artist: ''
+  new_states:
+  - previewing_claim
+  responses:
+  - claim_finished
+  - preview_claim

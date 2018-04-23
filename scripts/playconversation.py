@@ -1,10 +1,5 @@
 import os
-import sys
 import time
-
-from telethon.events import NewMessage
-from telethon.tl.custom import Draft
-from telethon.tl.functions.messages import SaveDraftRequest
 
 import settings
 import util
@@ -24,6 +19,7 @@ class FullConversationIntegrationTests(IntegrationTestBase):
 
     def wait_user_send(self, next_message, reply_to=None):
         self.set_draft(next_message, reply_to=reply_to)
+
         return self.wait_outgoing(next_message)
 
     @util.timing

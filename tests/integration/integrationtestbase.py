@@ -1,4 +1,5 @@
 import logging
+import re
 import time
 from datetime import datetime, timedelta
 from pprint import pprint
@@ -158,7 +159,7 @@ class IntegrationTestBase(object):
         result = self._act_await_response(
             lambda: self._act_await_response(
                 None,
-                NewMessage(outgoing=True, pattern=no_markdown),
+                NewMessage(outgoing=True, pattern=re.escape(no_markdown)),
                 min_wait_consecutive=0,
                 timeout=99999
             ),
