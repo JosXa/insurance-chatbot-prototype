@@ -14,6 +14,14 @@ from corpus.phones import format_device
 from logic.responsecomposer import ResponseComposer
 
 
+def policy_nr(r, c, q):
+    answer = c.last_user_utterance.text
+    numbers = [x for x in answer if str.isdigit(x)]
+    if not numbers:
+        return False
+    return ''.join(numbers)
+
+
 def model_identifier(r: ResponseComposer, c, q):
     answer = c.last_user_utterance.text
     results = phones.devices_by_name(answer)
@@ -29,7 +37,6 @@ def model_identifier(r: ResponseComposer, c, q):
 
 
 def _check_time(r, c, answer: datetime.datetime):
-    print(answer)
     if answer > datetime.datetime.now():
         r.say("sorry", "but", "date in future")
         return None

@@ -12,7 +12,8 @@ from core.planningagent import IPlanningAgent
 from core.routing import Router
 from corpus.responsetemplates import ResponseTemplate, SelectiveTemplateLoader, TemplateRenderer, TemplateSelector
 from logic.responsecomposer import ResponseComposer
-from logic.rules.claimhandlers import excuse_did_not_understand, no_rule_found
+from logic.rules.claimhandlers import excuse_did_not_understand
+from logic.rules.smalltalkhandlers import no_rule_found
 from model import UserAnswers
 from util import timing
 

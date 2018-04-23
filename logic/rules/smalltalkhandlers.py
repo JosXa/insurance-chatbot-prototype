@@ -3,6 +3,7 @@ from functools import wraps
 from core import Context, ChatAction
 from logic.intents import FEELING_INTENTS
 from logic.responsecomposer import ResponseComposer
+from logic.rules.claimhandlers import chance
 from logic.rules.progresstracker import get_progress, progress
 
 ORDERED_TOPICS = {
@@ -147,3 +148,13 @@ def another_time(r, c):
 
 def sudo_make_sandwich(r: ResponseComposer, c):
     r.send_media('sandwich', caption_intent='here you go')
+
+
+def no_rule_found(r, c):
+    r.say("sorry", "what i understood", parameters={'understanding': c.last_user_utterance.intent})
+    if c.get('claim_started', False):
+        return
+    if chance(0.6):
+        return change_topic(r, c)
+    else:
+        r.say("ask something else")

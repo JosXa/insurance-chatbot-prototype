@@ -5,7 +5,7 @@ personal details:
     policy_nr:
       name: "Versicherungsschein-Nr."
       title: "{{'Ihre' if formal else 'deine'}} Versicherungsschein-Nr."
-      match_regex: "([0-9\\wöäÜÖÄÜ\\-\\/]{5,18})"
+#      match_regex: "([0-9\\wöäÜÖÄÜ\\-\\/]{5,18})"
       confirm: "Die Nummer lautet {{answer}}"
       hint: "die Identifikationsnummer, die oben auf {{'Ihrem' if formal else 'deinem'}} Vertrag
       steht."

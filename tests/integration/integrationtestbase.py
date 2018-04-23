@@ -94,6 +94,7 @@ class IntegrationTestBase(object):
         :return:
         """
         self._last_response = None
+        # TODO: num_expected_msgs=1
 
         self.client.send_message(self._peer, text, **kwargs)
 

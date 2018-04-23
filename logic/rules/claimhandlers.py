@@ -5,7 +5,6 @@ from core import ChatAction, Context, States
 from core.dialogmanager import ForceReevaluation
 from logic.responsecomposer import ResponseComposer
 from logic.rules import answercheckers
-from logic.rules.smalltalkhandlers import change_topic
 from model import UserAnswers
 
 
@@ -95,7 +94,7 @@ def check_answer(r, c):
     question = c.current_question
 
     # There are specific implementations of matchers that have a special functionality (e.g. getting phone model)
-    specific_answer_matcher = getattr(answercheckers, question.id, None)
+    specific_answer_matcher = getattr(answercheckers, question.id, None)  # get function by name
     if callable(specific_answer_matcher):
         result = specific_answer_matcher(r, c, question)
         if isinstance(result, (list, tuple)):  # Multiple results found
@@ -230,7 +229,7 @@ def submit_claim(r, c):
 
 
 def claim_needs_editing(r, c):
-    print("claim needs editing!")
+    print("claim needs editing!")  # TODO
 
 
 def user_astonished(r, c):
@@ -260,13 +259,3 @@ def change_formal_address(r, c: Context):
             c.user.formal_address = True
             c.user.save()
             raise ForceReevaluation
-
-
-def no_rule_found(r, c):
-    r.say("sorry", "what i understood", parameters={'understanding': c.last_user_utterance.intent})
-    if c.get('claim_started', False):
-        return
-    if chance(0.6):
-        return change_topic(r, c)
-    else:
-        r.say("ask something else")

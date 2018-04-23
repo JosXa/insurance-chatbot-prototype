@@ -1,6 +1,8 @@
 import os
 import time
 
+from telethon.events import NewMessage
+
 import settings
 import util
 from tests.integration.integrationtestbase import IntegrationTestBase
@@ -19,19 +21,34 @@ class FullConversationIntegrationTests(IntegrationTestBase):
 
     @util.timing
     def play_recording(self, index=0):
-        print("Sending /reset to restart and reset the bot")
+        recording_file = self._get_latest_recording(index)
+        rec = util.load_yaml_as_dict(recording_file)
+
+        print("Sending /reset to reset the bot")
         self.send_message_get_response("/reset", timeout=20, raise_=False)
         self.delete_history()
 
-        recording_file = self._get_latest_recording(index)
-        rec = util.load_yaml_as_dict(recording_file)
+        print("Waiting for /start command...")
+        global start_received
+        start_received = False
+
+        def wait_start(_):
+            print("/start received.")
+            time.sleep(2.2)
+            global start_received
+            start_received = True
+
+        self.client.add_event_handler(wait_start, NewMessage(outgoing=True, pattern=r'/start'))
+
+        while not start_received:
+            time.sleep(0.4)
 
         try:
             was_force_reply = False
             response = None
             for r in rec:
                 text = r['user_says']
-                if not text or text in ("", " "):
+                if not text or text in ("", " ", "/start"):
                     continue
 
                 print(f'User says: "{text}"...', end=' ', flush=True)
