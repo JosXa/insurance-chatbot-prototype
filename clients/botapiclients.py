@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
-from typing import TypeVar, List
+from typing import List, TypeVar, Any
 
-from util import timing
+from model import Update
 
 ChatAction = TypeVar('ChatAction')
 
@@ -60,7 +60,14 @@ class BotAPIClient(object, metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def unify_update(self, update):
+    def show_typing(self, user):
+        """
+        Displays an "is typing" notification to the user
+        """
+        pass
+
+    @abstractmethod
+    def unify_update(self, update: Any) -> Update:
         """
         Creates the internal `Update` object our backend works with
         from whatever type of update or event this particular bot API uses.
@@ -71,12 +78,5 @@ class BotAPIClient(object, metaclass=ABCMeta):
     def perform_actions(self, actions: List[ChatAction]):
         """
         Performs a sequence of `ChatActions` planned by the `DialogManager`
-        """
-        pass
-
-    @abstractmethod
-    def show_typing(self, user):
-        """
-        Displays an "is typing" notification to the user
         """
         pass

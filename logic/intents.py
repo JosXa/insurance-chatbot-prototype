@@ -105,6 +105,7 @@ SMALLTALK_INTENTS = [
 ]
 
 ASTONISHED_AMAZED = ['astonished_interest', 'smalltalk.user.wow']
+
 REQUEST_HELP = ['smalltalk.agent.can_you_help', 'clarify']
 
 START = ['start',

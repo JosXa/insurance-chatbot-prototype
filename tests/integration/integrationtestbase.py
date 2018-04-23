@@ -2,11 +2,13 @@ import logging
 import time
 from datetime import datetime, timedelta
 from pprint import pprint
+from typing import Callable
+from uuid import uuid4
 
 import logzero
 from telethon import TelegramClient, events
 from telethon.events import NewMessage
-from telethon.tl.functions.messages import DeleteHistoryRequest
+from telethon.tl.functions.messages import DeleteHistoryRequest, SaveDraftRequest
 from telethon.tl.types import ReplyKeyboardForceReply
 
 import settings
@@ -32,11 +34,9 @@ class Response:
         if markup:
             if hasattr(markup, 'rows'):
                 buttons = [x.text for x in markup.rows[0].buttons]
-        if buttons:
-            pprint(buttons)
 
         return cls(
-            text=event.message.message,
+            text=event.text,
             message_id=event.message.id,
             is_force_reply=force_reply,
             buttons=buttons
@@ -60,8 +60,17 @@ class IntegrationTestBase(object):
         self._live_mode = False
 
         self._last_response = None
+        self._responses = {}
         self.client.add_event_handler(self.event_handler, events.NewMessage(
             chats=('@InsuranceBaBot', '@josxasandboxbot'), incoming=True))
+
+    def set_draft(self, text, reply_to=None):
+        return self.client(SaveDraftRequest(
+            peer=self._peer,
+            message=text,
+            no_webpage=True,
+            reply_to_msg_id=reply_to
+        ))
 
     @property
     def live_mode(self):
@@ -86,39 +95,74 @@ class IntegrationTestBase(object):
             for m in paginate(self.client.iter_messages(self._peer, limit=10000), 100):
                 self.client.delete_messages(self._peer, m)
 
-    def send_message_get_response(self, text, timeout=20, raise_=True, **kwargs) -> Response:
+    def send_message_get_response(self, text, timeout=20, raise_=True, min_wait_consecutive=None, **kwargs) -> Response:
         """
         Sends a message to the bot and waits for the response.
         :param text: Message to send
         :param timeout: Timout in seconds
         :return:
         """
-        self._last_response = None
-        # TODO: num_expected_msgs=1
+        if min_wait_consecutive is None:
+            min_wait_consecutive = ChatAction.Delay.VERY_LONG.value + (0.3 if self.live_mode else 0.8)
 
-        self.client.send_message(self._peer, text, **kwargs)
+        return self._act_await_response(
+            lambda: self.client.send_message(self._peer, text, **kwargs),
+            NewMessage(incoming=True, chats=[self._peer]),
+            timeout=timeout,
+            raise_=raise_,
+            min_wait_consecutive=min_wait_consecutive
+        )
 
+    def _act_await_response(self, action: Callable, event_builder: NewMessage, timeout=20, raise_=True,
+                            min_wait_consecutive=5):
+
+        id_ = uuid4()
+        self._responses[id_] = None
+
+        def await_(event):
+            self._responses[id_] = Response.from_event(event)
+
+        handler = self.client.add_event_handler(await_, event_builder)
+
+        if action:
+            action()
+
+        # Wait `timeout` seconds for a response
         end = datetime.now() + timedelta(seconds=timeout)
-        while self._last_response is None:
+        while self._responses[id_] is None:
             if datetime.now() > end:
                 if raise_:
                     raise NoResponseReceived()
                 return
-            time.sleep(0.4)
+            time.sleep(0.3)
 
         # response received - wait a bit to see if the bot keeps sending messages
         if settings.NO_DELAYS:
             sleep_time = 0.8
         else:
-            sleep_time = ChatAction.Delay.VERY_LONG.value + (0.3 if self.live_mode else 0.8)
-        last_msg = self._last_response
+            sleep_time = min_wait_consecutive
 
+        last_response = self._responses[id_]
         time.sleep(sleep_time)
-        while self._last_response != last_msg:
-            last_msg = self._last_response
+        while self._responses[id_] != last_response:
+            last_response = self._responses[id_]
             time.sleep(sleep_time)
 
-        del self._last_response
+        self.client.remove_event_handler(handler)
+        result = self._responses.pop(id_)
+        time.sleep(0.15)
+        return result
 
-        # Only the last response matters
-        return last_msg
+    def wait_outgoing(self, text):
+        no_markdown, _ = self.client._parse_message_text(text, 'markdown')
+        result = self._act_await_response(
+            lambda: self._act_await_response(
+                None,
+                NewMessage(outgoing=True, pattern=no_markdown),
+                min_wait_consecutive=0,
+                timeout=99999
+            ),
+            NewMessage(incoming=True, chats=[self._peer]),
+            min_wait_consecutive=3
+        )
+        return result

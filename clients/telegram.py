@@ -40,7 +40,7 @@ class TelegramClient(BotAPIClient):
     def client_name(self):
         return 'telegram'
 
-    def unify_update(self, update: TelegramUpdate):
+    def unify_update(self, update: TelegramUpdate) -> Update:
         """
         Creates the common representation of an `Update` object from the update returned by Telegram.
         """

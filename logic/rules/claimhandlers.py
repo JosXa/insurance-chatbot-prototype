@@ -76,8 +76,9 @@ def send_example(r, c):
     r.give_example(c.current_question)
 
 
-def clarify(r, c: Context):
+def clarify(r: ResponseComposer, c: Context):
     should_send_example = False
+
     if c.last_user_utterance.intent == 'example':
         should_send_example = True
 

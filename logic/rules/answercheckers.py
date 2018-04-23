@@ -115,7 +115,7 @@ def name(r, c, question):
     # We implicitly ground the user's first_name here
     r.say("ok thank you ground name")
 
-    c.add_answer_to_question(question, f"{names.first_name}, {names.last_name}")
+    c.add_answer_to_question(question, f"{names.last_name}, {names.first_name}")
 
     from logic.rules.claimhandlers import ask_next_question
     ask_next_question(r, c)
