@@ -7,7 +7,7 @@ DIR = Path(os.path.dirname(os.path.abspath(__file__)))
 
 
 def get_emoji_sentiments():
-    with open(DIR / 'Emoji_Sentiment_Data_v1.0.csv', mode='r') as data:
+    with open(DIR / 'Emoji_Sentiment_Data_v1.0.csv', mode='r', encoding="utf8") as data:
         reader = csv.reader(data)
         results = {}
         for row in reader:

@@ -20,7 +20,7 @@ def similarity(user_input, compare_to) -> float:
 
 
 def load_devices():
-    devices_dict = json.load(open('{}/phonedata/devices-latest.json'.format(PATH), 'r'))
+    devices_dict = json.load(open('{}/phonedata/devices-latest.json'.format(PATH), 'r', encoding="utf8"))
     results = list()
 
     for k, v in devices_dict.items():
