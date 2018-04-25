@@ -1,5 +1,6 @@
 import os
 from threading import Thread
+from typing import List
 
 from flask import Flask, send_file
 from logzero import logger as log
@@ -11,6 +12,7 @@ from clients.nluclients import DialogflowClient
 from clients.telegram import TelegramClient
 from clients.telegramsupport import TelegramSupportChannel
 from clients.voice import VoiceRecognitionClient
+from core import ChatAction, DialogStates
 from core.context import ContextManager, States
 from core.dialogmanager import DialogManager
 from core.recorder import ConversationRecorder
@@ -64,9 +66,16 @@ def main():
 
     conversation_recorder = None
     if settings.ENABLE_CONVERSATION_RECORDING:
+        def publish_trigger(_, actions: List[ChatAction], *args) -> bool:
+            if any('preview_claim' in a.intents for a in actions):
+                return True
+            return False
+
         conversation_recorder = ConversationRecorder(
             telegram_client.bot,
-            support_channel=support_client)
+            support_channel=support_client,
+            publish_trigger=publish_trigger
+        )
 
     planning_agent = PlanningAgent(router=application_router)
 

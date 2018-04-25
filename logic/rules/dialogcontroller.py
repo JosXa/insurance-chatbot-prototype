@@ -26,12 +26,12 @@ smalltalk_handlers.append(IntentHandler(
 RULES = {  # blueprint for state machine
 
     "stateless": [  # always viable
+        IntentHandler(change_formal_address),
         RegexHandler(restart_system, pattern=r'^/r$'),
         RegexHandler(lambda r, c: reset_database(r, c, for_all=True), pattern=r'^/resetall$'),
         RegexHandler(reset_database, pattern=r'^/reset$'),
         RegexHandler(send_questionnaires, pattern=r'^/query$'),
         IntentHandler(record_phone_damage, intents='phone_broken'),
-        IntentHandler(change_formal_address),
     ],
     "dialog_states": {  # triggered when context is in the key's dialog_states
         States.SMALLTALK: [
@@ -54,7 +54,7 @@ RULES = {  # blueprint for state machine
             IntentHandler(abort_claim, intents='no_damage'),
         ],
         States.ASKING_QUESTION: [  # List of rules applicable in this state
-            IntentHandler(clarify, intents=REQUEST_HELP),
+            IntentHandler(clarify, intents=['clarify', 'smalltalk.agent.can_you_help']),
             IntentHandler(wait_for_user, intents=['smalltalk.user.will_be_back', 'smalltalk.user.back']),
             IntentHandler(static_smalltalk_response, intents='smalltalk.appraisal.thank_you'),
             IntentHandler(send_example, intents='example'),

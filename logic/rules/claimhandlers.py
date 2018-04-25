@@ -250,7 +250,7 @@ def change_formal_address(r, c: Context):
         return
 
     # If the formal address changes, we need to force a reevaluation of the response templates parameters,
-    # so that the changes go into effect
+    # so that the changes in shared parameters go into effect
     if re.search(r'\b(du|dein|dich|dir)\b', ut.text, re.IGNORECASE):
         if c.user.formal_address is True:
             c.user.formal_address = False

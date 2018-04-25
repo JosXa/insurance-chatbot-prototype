@@ -4,7 +4,8 @@ import os
 import sched
 import threading
 import time
-from typing import List
+import traceback
+from typing import Callable, List
 
 from logzero import logger as log
 from ruamel.yaml.comments import CommentedMap
@@ -36,11 +37,17 @@ class ConversationRecorder:
     # Whether to publish only the updated conversation when the user responds after the `CLOSING_TIMEFRAME` has passed
     RESET_AFTER_PUBLISHING = False
 
-    def __init__(self, telegram_bot, support_channel: SupportChannel):
+    def __init__(
+            self,
+            telegram_bot,
+            support_channel: SupportChannel,
+            publish_trigger: Callable[[Update, List[ChatAction], DialogStates], bool] = None
+    ):
         self.bot = telegram_bot
         self.support_channel = support_channel
         self.conversations = {}
         self.conversation_starts = {}
+        self.publish_trigger = publish_trigger
 
         self.date_started = datetime.datetime.now()
         self._scheduler = sched.scheduler(time.time, time.sleep)
@@ -59,6 +66,15 @@ class ConversationRecorder:
         )
         self.conversations.setdefault(uid, []).append(entry)
         self._save(update.user, schedule_publish=True)
+        self._check_publish_trigger(update, actions, dialog_states)
+
+    def _check_publish_trigger(self, update: Update, actions: List[ChatAction], dialog_states: DialogStates):
+        try:
+            if callable(self.publish_trigger) and self.publish_trigger(update, actions, dialog_states):
+                self._close_and_publish(update.user)
+        except Exception as e:
+            log.error("Error while checking recording publish trigger.")
+            log.exception(e)
 
     def _close_and_publish(self, user):
         # if settings.DEBUG_MODE:
