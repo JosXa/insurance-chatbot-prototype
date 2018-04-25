@@ -30,7 +30,7 @@ class FullConversationIntegrationTests(IntegrationTestBase):
         self.set_draft("", reply_to=None)
         print("Sending /reset to reset the bot")
         self.send_message_get_response("/reset", timeout=20, raise_=False, min_wait_consecutive=0)
-        time.sleep(1.5)
+        time.sleep(2.2)
         self.delete_history()
 
         self.wait_user_send("/start")
