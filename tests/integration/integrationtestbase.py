@@ -65,12 +65,14 @@ class IntegrationTestBase(object):
         self.client.add_event_handler(self.event_handler, events.NewMessage(
             chats=('@InsuranceBaBot', '@josxasandboxbot'), incoming=True))
 
-    def set_draft(self, text, reply_to=None):
+    def set_draft(self, markdown_text, reply_to=None):
+        text, entities = self.client._parse_message_text(markdown_text, 'markdown')
         return self.client(SaveDraftRequest(
             peer=self._peer,
             message=text,
             no_webpage=True,
-            reply_to_msg_id=reply_to
+            reply_to_msg_id=reply_to,
+            entities=entities
         ))
 
     @property

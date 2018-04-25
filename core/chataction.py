@@ -11,8 +11,8 @@ class ChatAction:
     """
     Data class representing a message to be sent by any one of the clients.
 
-    The `DialogManager` lays out the message or media that should be sent to the user, while it stores all relevant
-    information in an instance of this class.
+    The `DialogManager` lays out the message or media that should be sent to the user, while it
+    stores all relevant information in an instance of this class.
     """
 
     class Type(Enum):

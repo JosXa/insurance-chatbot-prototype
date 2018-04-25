@@ -31,8 +31,8 @@ phone_details:
       name: "IMEI"
       title: "die IMEI Seriennummer des beschädigten Gerätes"
       match_regex: "([0-9]{15})"
-      hint: "die elektronische Gerätenummer - diese 15-stellige Nummer ist auf dem Typenschild des Gerätes oder
-      über die Tastenkombination *#06# zu finden"
+      hint: "die elektronische Gerätenummer - diese 15-stellige Nummer ist auf dem Typenschild des
+      Gerätes oder über die Tastenkombination *#06# zu finden"
       example: "990000862471854"
       required: no
     imei_photo:
@@ -51,7 +51,8 @@ phone_details:
       name: "Rufnummer"
       title: "die Rufnummer des versicherten Gerätes"
       match_regex: "([0-9+\\-\\s]{8,19})"
-      hint: "die Telefonnummer, auf die {{'Ihr' if formal else 'dein'}} beschädigtes Gerät registriert ist."
+      hint: "die Telefonnummer, auf die {{'Ihr' if formal else 'dein'}} beschädigtes Gerät
+      registriert ist."
       example: "\"Die Nummer lautet +49 1234 567 89\"."
       required: yes
 
