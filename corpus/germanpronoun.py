@@ -1,4 +1,8 @@
 class GermanPronoun:
+    """
+    LEFT AS A REMINDER NOT TO TRY THIS AT HOME!
+    """
+
     class Kind:
         POSSESSIVE = 'possessive'
         PERSONAL = 'personal'
@@ -78,6 +82,7 @@ class GermanPronoun:
 if __name__ == '__main__':
     def print_it(args):
         print('formal' if args[0] else 'informal', *args[1:], ": ", GermanPronoun.pronoun(*args))
+
 
     args = (True, 'possessive', 'dative', 'masculine')
     print_it(args)
