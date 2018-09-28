@@ -1,3 +1,5 @@
+# Chatbot Prototype for Smartphone Insurance Damage Claims
+
 ## Local Installation
 
 1. `git clone https://github.com/JosXa/bachelor-thesis-insurance`
