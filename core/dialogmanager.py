@@ -15,28 +15,30 @@ from core.context import ContextManager
 from core.planningagent import IPlanningAgent
 from core.recorder import ConversationRecorder
 from core.understanding import MessageUnderstanding
-from logic.intents import MEDIA_INTENT
+from logic.intents import MEDIA_RECEIVED_INTENT
 from logic.responsecomposer import NOT_SET
 from model import Update
 
 
 class DialogManager:
     """
-    Responsible for handling incoming `Updates` and generating a response.
+    Responsible for the main control flow of the chatbot, i.e. handling incoming `Updates` and consulting a
+    `IPlanningAgent` for which response to send.
 
     Enriches incoming updates with a `MessageUnderstanding` and lets the `PlanningAgent` decide on which actions to
     perform next. Then calls `perform_actions` on the respective client with the laid-out `ChatActions`.
     """
 
-    def __init__(self,
-                 context_manager: ContextManager,
-                 bot_clients: List[BotAPIClient],
-                 nlu_client: NLUEngine,
-                 planning_agent: IPlanningAgent,
-                 recorder: ConversationRecorder = None,
-                 voice_recognition_client: VoiceRecognitionClient = None,
-                 support_channel: SupportChannel = None
-                 ):
+    def __init__(
+            self,
+            context_manager: ContextManager,
+            bot_clients: List[BotAPIClient],
+            nlu_client: NLUEngine,
+            planning_agent: IPlanningAgent,
+            recorder: ConversationRecorder = None,
+            voice_recognition_client: VoiceRecognitionClient = None,
+            support_channel: SupportChannel = None
+    ):
         self.context_manager = context_manager
         self.bots = bot_clients
         self.nlp = nlu_client
@@ -72,6 +74,7 @@ class DialogManager:
 
         text = self.voice.recognize(converted)
         if text is None:
+            # TODO: Inform the user about failed SR
             log.warning("Could not recognize user input.")
             return
 
@@ -81,15 +84,16 @@ class DialogManager:
         self.text_update_received(bot, update)
 
     def media_received(self, bot: BotAPIClient, update: Update):
-        update.understanding = MessageUnderstanding(None, MEDIA_INTENT, media_location=update.media_location)
+        update.understanding = MessageUnderstanding(None, MEDIA_RECEIVED_INTENT, media_location=update.media_location)
         self._process_update(bot, update)
 
     def text_update_received(self, bot: BotAPIClient, update: Update):
         self.nlp.insert_understanding(update)
         self._process_update(bot, update)
 
-    def _process_update(self, bot: BotAPIClient, update: Update):
+    def _process_update(self, bot: BotAPIClient, update: Update) -> None:
         print()  # newline on incoming request makes the logs more readable
+
         context = self.context_manager.add_incoming_update(update)
 
         try:
@@ -125,13 +129,13 @@ class DialogManager:
 class ForceReevaluation(Exception):
     """
     Raised when a handler changes e.g. context state and needs a refreshed set
-    of rendering parameters.
+    of rendering parameters. This will cause the control flow to repeat with updated state.
     """
     pass
 
 
 class StopPropagation(Exception):
     """
-    Raised when an update handler decides that the update should not be moved forward in the chain of matching handlers
+    Raised when an update handler decides that the update should not be moved forward in the chain of matching handlers.
     """
     pass
